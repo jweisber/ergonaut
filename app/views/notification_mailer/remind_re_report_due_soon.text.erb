@@ -1,0 +1,9 @@
+Dear <%= @recipients_list %>,
+
+This is an early reminder that your review of "<%= @submission.title %>" will be due on <%= @referee_assignment.date_due_pretty %>. You can complete your report here:
+
+  <%= one_click_review_url(@referee_assignment.auth_token) %>
+
+Thank you for agreeing to perform this review.
+
+<%= render 'email_footer' %>

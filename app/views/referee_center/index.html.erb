@@ -1,0 +1,48 @@
+<table class="table table-striped table-hover">  
+  <thead>  
+    <tr>  
+      <th>Subm. #</th>  
+      <th>Title</th>  
+      <th>Invited</th>
+			<th>Accepted</th>
+			<th>Due</th>
+			<th>Manuscript</th>
+    </tr>  
+  </thead>  
+  <tbody>
+	<% @referee_assignments.each do |r| %>
+		<% s = r.submission %>
+		<tr class="<%= referee_assignment_tr_class(r) %>">
+			<td class="ellips15">
+				 <%= s.id.to_s %>
+			</td>  
+		  <td class="ellips15">
+				<%= link_to s.title, edit_referee_center_path(r) %>
+			</td>
+      <td class="ellips15">
+				<%= r.assigned_at ? r.date_assigned_pretty : "\u2014" %>
+			</td>
+      <td class="ellips15">
+				<%= r.agreed_at ? r.date_agreed_pretty : "\u2014" %>
+			</td> 
+      <td class="ellips15">
+				<%= r.report_due_at ? r.date_due_pretty : "\u2014" %>
+			</td>
+			<td class="ellips15">
+				<%= link_to "Download", s.manuscript_file.to_s %>
+			</td> 
+	  </tr>
+	<% end %>
+	<% if @referee_assignments.length < 1 %>
+		<tr>
+			<td colspan="10" style="text-align: center;">
+				<span style="color: gray; font-style: italic;">No pending assignments</span>
+			</td>
+		</tr>
+	<% end %>
+	</tbody>
+</table>
+
+<div class="row" style="text-align: center">
+	<%= link_to "View previous assignments", archives_referee_center_index_path %>
+</div>

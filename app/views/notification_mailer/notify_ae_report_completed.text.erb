@@ -1,0 +1,19 @@
+Dear <%= @recipients_list %>,
+
+<%= @referee_assignment.referee.full_name %> has submitted a report for "<%= @submission.title %>".
+
+Please log in and take any necessary action at your earliest convenience.
+
+<% if @submission.area_editor %>
+You can access the submission here: <%= one_click_edit_url(@submission.auth_token) %>
+
+<% end %>
+----
+
+Recommendation: <%= @referee_assignment.recommendation %>
+
+Comments for the editor: <%= @referee_assignment.comments_for_editor %>
+
+Comments for the author: <%= @referee_assignment.comments_for_author %>
+
+<%= render 'email_footer' %>

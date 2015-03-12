@@ -1,0 +1,60 @@
+<div class="row">
+	<div class="offset4 span4">
+		<%= form_for User.new,
+								 url: user_path(1), method: :get,
+								 html: { class: 'form-inline', 
+									 			 id: 'user_search_form' } do |f| %>
+
+			<%= render 'shared/error_messages', object: f.object %>
+
+			<%= f.text_field :query, class: 'user-fuzzy-search regular-width-input', 
+															 placeholder: 'Search',
+															 autocomplete: 'off' %>
+  		<%= f.submit 'Go', class: 'btn btn-primary' %>
+
+		<% end %>
+		
+		<div class="center">
+			<%= link_to fa_icon("user-plus", text: 'New User'), new_user_path %>
+		</div>
+	</div>
+</div>
+
+<div class="center">
+	<%= paginate @users, theme: 'twitter-bootstrap' %>
+</div>
+
+<table class="table table-striped table-hover">
+  <thead>  
+		  <tr>
+		    <th>Last name</th>
+		    <th>First name</th>				
+		    <th>Email</th>
+				<th>Role</th>
+				<% if current_user.managing_editor? %>
+					<th></th>
+				<% end %>
+		  </tr> 
+  </thead>  
+
+<% @users.each do |user| %>
+  <tr>
+    <td><%= link_to user.last_name, user %></td>
+		<td><%= link_to user.first_name, user %></td>		
+    <td><%= user.email %></td>
+		<td><%= user.role %></td>
+		<% if current_user.managing_editor? %>
+		<td>
+			<%= link_to fa_icon('sign-in'), 
+									sessions_path(session: {user_id: user.id}), 
+									method: :post, 
+									class: "btn btn-mini" %>
+		</td>
+		<% end %>
+  </tr>
+<% end %>
+</table>
+
+
+
+

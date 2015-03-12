@@ -1,0 +1,20 @@
+<% content_for :open_graph do %>
+  <%= tag :meta, property: "og:site_name", content: "ErgoSubmissions.org" %>
+  <%= tag :meta, property: "og:type", content: "website" %>
+  <%= tag :meta, property: "og:title", content: "Contact" %>
+  <%= tag :meta, property: "og:url", content: contact_url %>
+  <%= tag :meta, property: "og:image", content: request.protocol +
+																								request.host_with_port +
+																								image_path('E600.png') %>
+<% end %>
+
+<div class="row">
+	<div class="offset2 span8">
+		
+		<h1>Contact</h1>
+		<br/>
+		
+		<div class="center"><%= mail_to @email %></div>
+		
+	</div>
+</div>

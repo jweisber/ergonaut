@@ -1,0 +1,135 @@
+<div class="row">
+  <div class="span8 offset2">
+		
+		<h3 class="center">
+			<%= link_to "\"#{@submission.title}\"", 
+									@submission.manuscript_file.to_s, 
+									target: "_blank" %>
+		</h3>
+		<% if current_user.managing_editor? %>
+			<h4 class="center">
+				by <%= @submission.author.full_name %>
+			</h4>
+		<% end %>
+		
+		<% if @submission.revision_number > 0 %>
+			<h5 class="center">
+				Previously <%= link_to "Submission \##{@submission.previous_revision.id}", @submission.previous_revision %>
+			</h5>
+			<h5 class="center">
+				Resubmitted <%= @submission.date_submitted_pretty %>
+			</h5>
+		<% else %>
+		<h5 class="center">
+			Submitted <%= @submission.date_submitted_pretty %>
+		</h5>
+		<% end %>
+	
+		<h6 class="center">
+			<%= "Area: #{@submission.area.name}" %>
+		</h6>
+		
+		<% if area_editor? %>
+		<div class="center">
+			<%= link_to fa_icon('compass', style: 'font-size: 1.2em;'), guide_path %>
+			<%= link_to 'Editor\'s guide', guide_path %>
+		</div>
+		<% end %>
+		
+    <legend>Edit</legend>
+		
+    <%= form_for @submission do |f| %>
+		
+		<%= render 'shared/error_messages', object: f.object %>
+		
+      <table align="center">
+        <tr>
+          <td style="text-align: right;">
+            Area Editor:
+          </td>
+          <td>
+            <% if current_user.managing_editor? %>
+							<%= f.fields_for @submission.area_editor do |b| %>
+								<%= b.collection_select :id, 
+		                @all_area_editors.all,
+		                :id,
+		                :full_name,
+		                { include_blank: "Choose" },
+		                { style: "margin-bottom: 3px; width: 90%;" } %>
+								<span class="referee-histories-popover">
+									<%= link_to(fa_icon("calendar", style: "font-size: 1.5em; margin-left: 5px;"), 
+															'#', 
+															class: 'popover-link', 
+															placement: 'right',  
+															'data-content' => User.area_editor_histories_table) %>
+								</span>
+							<% end %>
+            <% else %>
+              <%= @submission.area_editor.full_name unless @submission.area_editor.nil? %>
+            <% end %>
+          </td>
+        </tr>
+				<tr>
+					<td style="text-align: right; vertical-align: top; white-space: nowrap;">
+						Confidential comments:
+					</td>
+					<td>
+						<%= f.text_area :area_editor_comments_for_managing_editors, 
+														size: "100x10", 
+														placeholder: placeholder_text(:area_editor_comments_for_managing_editors) %>
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align: right; vertical-align: top; white-space: nowrap;">
+						Comments for the author(s):
+					</td>
+					<td>
+						<%= f.text_area :area_editor_comments_for_author, 
+														size: "100x10", 
+														placeholder: placeholder_text(:area_editor_comments_for_author) %>
+					</td>
+				</tr>
+        <tr>
+          <td style="text-align: right;">
+            Decision:
+          </td>
+          <td>
+            <%= select_tag  "submission[decision]", 
+                            options_for_select(Decision.all, 
+																			selected: @submission.decision, 																			disabled: Decision.disabled(@submission)),
+                            style: "margin-bottom: 0px;" %>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: right;">
+            Decision Approved: 
+          </td>
+          <td>
+						<% if current_user.managing_editor? %>
+	            <%= f.check_box :decision_approved %>
+						<% else %>
+							<% if @submission.review_complete? %>
+								<%= @submission.decision_approved ? "Yes" : "Not yet" %>
+							<% else %>
+								<%= "\u2014" %>
+							<% end %>
+						<% end %>
+          </td>
+        </tr>
+				<tr>
+					<td>
+					</td>
+					<td>
+						<%= link_to 'Cancel', submission_path(@submission), class: "btn" %>
+						<% if @submission.needs_more_reports? && !current_user.managing_editor? %>
+							<%= f.submit 'Save', class: "btn btn-primary", id: 'submitBtn' %>
+						<% else %>
+							<%= f.submit 'Save', class: "btn btn-primary" %>
+						<% end %>
+					</td>
+				</tr>
+      </table>
+    <hr>
+    <% end %>
+  </div>
+</div>

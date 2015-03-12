@@ -1,0 +1,21 @@
+
+<div class="row">
+  <div class="span8 offset2">
+		<legend>Decline request</legend>
+		<%= form_for([@referee_assignment.submission, @referee_assignment], html: {class: "form-horizontal" }) do |f| %>
+			
+			<div class="control-group">
+	      <%= f.label :decline_comment, "Suggestions:", class: "control-label" %>
+				<div class="controls">
+					<%= f.text_area :decline_comment, size: "60x10", placeholder: "Please suggest alternate referees, and record any other comments."%>
+		    </div>
+		  </div>
+			
+			<div class="control-group">
+				<div class="controls">
+					<%= f.submit "Submit", class: "btn btn-primary" %>
+		    </div>
+		  </div>
+    <% end %>
+  </div>
+</div>

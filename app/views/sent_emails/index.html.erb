@@ -1,0 +1,43 @@
+<table class="table table-striped table-hover">  
+  <thead>  
+    <tr>  
+			<th>To</th>			
+      <th>Subject</th>
+			<th>Sent</th>
+    </tr>  
+  </thead>  
+  <tbody>
+	<% @emails.each do |e| %>
+    <tr>
+			<td class="ellips25">
+				<%= e.to %>
+			</td>
+			<% if @referee_assignment %>
+				<% if @submission.archived? %>
+					<td class="ellips25">
+						<%= link_to e.subject, 												archive_referee_assignment_sent_email_path(@submission, 
+																								@referee_assignment, e) %>
+					</td> 
+				<% else %>
+					<td class="ellips25">
+						<%= link_to e.subject, 												submission_referee_assignment_sent_email_path(@submission, 																								@referee_assignment, e) %>
+					</td> 
+				<% end %>
+			<% else %>
+				<% if @submission.archived?%>
+					<td class="ellips25">
+						<%= link_to e.subject, archive_sent_email_path(@submission, e) %>
+					</td>
+				<% else %>
+					<td class="ellips25">
+						<%= link_to e.subject, submission_sent_email_path(@submission, e) %>
+					</td> 
+				<% end %>
+			<% end %>
+			<td class="ellips25">
+					<%= e.date_sent_pretty %>
+			</td>
+    </tr>
+	<% end %>
+  </tbody>  
+</table>

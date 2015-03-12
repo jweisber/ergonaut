@@ -1,0 +1,25 @@
+Dear <%= @recipients_list %>,
+
+We thought you might like to know the outcome of the review process for "<%= @submission.title %>". In light of your suggestion<% if @other_completed_assignments.size > 0 %> and that of <%= @humanize[@other_completed_assignments.size] %> other <%= 'referee'.pluralize(@other_completed_assignments.size) %>, whose <%= 'report'.pluralize(@other_completed_assignments.size) %> we include below,<% end %> the decision reached was: <%= @submission.decision %>.
+
+We hope the author(s) appreciate(s) your hard work and generous feedback as much as we <% if @submission.area_editor %>and <%= @submission.area_editor.first_name %> <% end %>do.
+
+<% if @submission.area_editor_comments_for_author && !@submission.area_editor_comments_for_author.to_s.empty? %>
+----
+Area Editor: 
+
+<%= @submission.area_editor_comments_for_author.to_s %>
+
+<% end %>
+<% @other_completed_assignments.each do |assignment| %>
+----
+Referee <%= assignment.referee_letter %>
+
+Recommendation: <%= assignment.recommendation %>
+
+Comments for the author:
+
+<%= assignment.comments_for_author %>
+<% end %>
+
+<%= render 'email_footer' %>

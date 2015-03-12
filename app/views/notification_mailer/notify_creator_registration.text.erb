@@ -1,0 +1,12 @@
+Dear <%= @recipients_list %>,
+
+<%= @third_party.full_name %> has registered you with Ergo's online editorial system:
+
+	<%= @login_url %>
+
+Your login information is:
+
+	Email: <%= @email %>
+	Password: <%= @password %>
+
+<%= render 'email_footer' %>

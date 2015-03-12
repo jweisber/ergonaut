@@ -1,0 +1,5 @@
+Dear <%= @recipients_list %>,
+
+Submission #<%= @submission.id %>, "<%= @submission.title %>", has been withdrawn by the author. Any referees assigned to review this submission will be notified by email. No action is required on your part.
+
+<%= render 'email_footer' %>

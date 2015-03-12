@@ -1,0 +1,31 @@
+<table class="table table-striped">  
+  <thead>  
+    <tr>  
+      <th>#</th>  
+      <th>Title</th>  
+			<th>Area</th>
+      <th>Submitted</th>  
+      <th>Status</th>
+			<th style="text-align: center;">Download</th>
+    </tr>  
+  </thead>  
+  <tbody>
+	<% @submissions.each do |s| %>
+    <tr>  
+      <td><%= s.id.to_s %></td>  
+      <td><%= @current_user.editor? ? link_to(s.title, s) : s.title %></td> 
+			<td><%= s.area.short_name %></td>  
+      <td><%= s.created_at.to_date %></td>
+      <td><%= s.display_status_for_authors %></td> 
+			<td><%= link_to "Download", s.manuscript_file.to_s, target: "_blank" %></td> 
+    </tr>
+	<% end %>
+	<% if @submissions.length < 1 %>
+		<tr>
+			<td colspan="10" style="text-align: center;">
+				<span style="color: gray; font-style: italic;">No archived submissions</span>
+			</td>
+		</tr>
+	<% end %>
+  </tbody>  
+</table>

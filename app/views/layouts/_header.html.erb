@@ -1,0 +1,100 @@
+<header>
+		<div class="navbar">
+			<div class="navbar-inner navbar-fixed-top">
+				<div class="container">
+			
+	    <%= link_to "Ergo", "/about", id: "logo" %>
+			
+			<% if current_user && current_user.editor? %>
+	      <div>
+	        <ul class="nav">
+						<% if (controller_name.in? ['submissions', 'archives', 'sent_emails']) ||
+									(controller_name == "referee_assignments" &&
+										(params[:submission_id] || params[:archive_id])) %>
+							<li class="active">
+						<% else %>
+							<li>
+						<% end %>
+							<%= link_to fa_icon("inbox", text: "&nbsp;<b>Review</b>".html_safe), submissions_path %>
+						</li>
+						<% if controller_name == "users" %>
+							<li class="active">
+						<% else %>
+							<li>
+						<% end %>
+							<%= link_to fa_icon("users", text: "&nbsp;<b>Users</b>".html_safe), users_path %>
+						</li>
+						<% if current_user.managing_editor? %>
+							<% if controller_name == 'journal_settings' %>
+								<li class="active">
+							<% else %>
+								<li>
+							<% end %>
+							<%= link_to fa_icon("cog", text: "&nbsp;<b>Settings</b>".html_safe), journal_settings_path %>
+						</li>
+						<% end %>
+	        </ul>
+				</div>
+			<% elsif current_user && current_user.author? %>
+	      <div>
+	        <ul class="nav">
+						<% if controller_name.in? ['author_center', 'revisions'] %>
+							<li class="active">
+						<% else %>
+							<li>
+						<% end %>
+							<%= link_to fa_icon("pencil", text: "&nbsp;<b>Author</b>".html_safe), author_center_index_path %>
+						</li>
+	          <li>
+							<% if controller_name == "referee_center" %>
+								<li class="active">
+							<% else %>
+								<li>
+							<% end %>
+							<%= link_to fa_icon("check-square-o", text: "&nbsp;<b>Referee</b>".html_safe), referee_center_index_path %>
+						</li>
+	        </ul>
+				</div>
+			<% end %>
+			
+			
+      <nav>
+        <ul class="nav pull-right">
+          <% if signed_in? %>
+            <li id="fat-menu" class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+								<% user_icon = current_user.editor? ? "" : fa_icon("user")  %>
+                <b><%= user_icon + " " + current_user.full_name %></b> <b><%= fa_icon("caret-down") %></b>
+              </a>
+              <ul class="dropdown-menu">
+								<% if editor? %>
+								<li><%= link_to "Editor's guide", guide_path %></li>
+								<% end %>
+                <li><%= link_to "My Profile", current_user %></li>
+                <li class="divider"></li>
+                <li><%= link_to "Sign out", signout_path, method: "delete" %></li>
+              </ul>
+            </li>
+          <% else %>
+						<% unless current_page?('/signup') %>
+						<li>
+							<%= form_tag signup_path do %>
+								<%= button_tag 'Sign up', type: 'submit', class: 'btn btn-success btn-small'%>
+							<% end %>
+						</li>
+						<% end %>
+						<% unless current_page?('/signin') %>
+						<li>
+							<%= form_tag signin_path do %>
+								<%= button_tag 'Sign in', type: 'submit', class: 'btn btn-small'%>
+							<% end %>
+						</li>
+						<% end %>
+          <% end %>
+        </ul>
+      </nav>
+			
+		</div>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,37 @@
+<div class="well">
+  <legend>
+    <%= "#{@referee_assignment.referee.full_name}'s review" %>
+	</legend>
+	<dl class="dl-horizontal">
+	    <dt>
+	      To the editors
+			</dt>
+	    <dd>
+	      <%= simple_format(@referee_assignment.comments_for_editor) %>
+				<% if @attachment_for_editor.url %>
+					<%= link_to fa_icon('file-text') +
+											' ' + 
+											File.basename(@attachment_for_editor.url),
+											@attachment_for_editor.url, target: '_blank' %>
+				<% end %>
+	    </dd>
+			<dt>
+				To the author(s)
+			</dt>
+			<dd>
+				<%= simple_format(@referee_assignment.comments_for_author) %>
+				<% if @attachment_for_author.url %>
+					<%= link_to fa_icon('file-text') + 
+											' ' + 
+											File.basename(@attachment_for_author.url),
+											@attachment_for_author.url, target: '_blank' %>
+				<% end %>
+			</dd>
+	    <dt>
+	      Recommendation
+			</dt>
+	    <dd>
+        <%= @referee_assignment.recommendation %>
+	    </dd>
+	</dl>
+</div>

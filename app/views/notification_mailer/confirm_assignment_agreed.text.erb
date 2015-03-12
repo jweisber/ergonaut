@@ -1,0 +1,13 @@
+Dear <%= @recipients_list %>
+
+Thank you for agreeing to review "<%= @submission.title %>" for Ergo. You can complete your report here:
+
+    <%= one_click_review_url(@referee_assignment.auth_token) %>
+
+The report is due <%= @referee_assignment.date_due_pretty %>.
+
+<% if @submission.revision_number > 0 %>
+Please bear in mind that the only decisions available to the editors at this stage are <%= Decision::ACCEPT %> and <%= Decision::REJECT %>. The author(s) can be encouraged to make changes if the submission is accepted, but revisions cannot be made a precondition of acceptance.
+
+<% end %>
+<%= render 'email_footer' %>

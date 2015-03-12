@@ -1,0 +1,313 @@
+@import "bootstrap";
+@import url(//fonts.googleapis.com/css?family=PT+Sans:400,700,400italic);
+
+/* MIXINS, VARIABLES, ETC. */
+
+$grayMediumLight: #eaeaea;
+$defaultFont: 'PT Sans', 'Trebuchet MS', Helvetica, Arial, sans-serif;
+$legendFont: 'Arvo', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+@mixin box_sizing {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+
+/* UNIVERSAL */
+
+html {
+  overflow-y: scroll;
+}
+
+body {
+	font-family: $defaultFont;
+	font-size: 12pt;
+  padding-top: 70px;
+}
+
+input, button, select, textarea, label {
+	font-family: $defaultFont;
+	font-size: 12pt;
+}
+
+section {
+  overflow: auto;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.center {
+  text-align: center;
+  h1 {
+    margin-bottom: 10px;
+  }
+}
+
+.text-center {
+  text-align: center;
+}
+
+
+/* TYPOGRAPHY */
+
+h1 {
+  font-size: 2em;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+h2 {
+  font-size: 1.5em;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+h3 {
+  font-size: 1.3em;
+	margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+	line-height: 1;
+}
+
+h4 {
+  font-size: 1.2em;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+h5 {
+  font-size: 1.1em;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+h6 {
+  font-size: 1em;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+legend {
+	font-family: $legendFont;
+	font-size: 19px;
+	.btn {
+		font-family: $defaultFont;
+	}
+}
+
+.legend-sans-rule {
+	font-family: $legendFont;
+	font-size: 19px; 
+	padding: 10px 0px 10px 0px;
+	.btn {
+		font-family: $defaultFont;
+	}
+}
+
+hr {
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+p {
+	font-size: 1em;
+	line-height: 1.3em;
+}
+
+dl p {
+	line-height: 1.3em;
+}
+
+dt {
+  padding-top: 5px;
+  padding-bottom: 5px;
+	line-height: 1.3em;
+}
+
+dd {
+  padding-top: 5px;
+  padding-bottom: 5px;
+	line-height: 1.3em;
+}
+
+
+.dl-horizontal dd {
+  min-height: 20px;		/* fix for empty dd */
+}
+
+
+/* TABLES */
+
+th {
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+td {
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+td.text-center {
+   text-align: center;   
+}
+
+th.text-center {
+   text-align: center;   
+}
+
+.ellips10 {
+	max-width: 10em;
+	white-space: nowrap; 
+	overflow: hidden; 
+	text-overflow: ellipsis;
+	.tooltip-inner {
+	  white-space: normal;
+	}
+}
+
+.ellips15 {
+	max-width: 15em;
+	white-space: nowrap; 
+	overflow: hidden; 
+	text-overflow: ellipsis;
+	.tooltip-inner {
+	  white-space: normal;
+	}
+}
+
+.ellips25 {
+	max-width: 25em;
+	white-space: nowrap; 
+	overflow: hidden; 
+	text-overflow: ellipsis;
+	.tooltip-inner {
+	  white-space: normal;
+	}
+}
+
+
+/* HEADER */
+
+#logo {
+  float: left;
+  margin-right: 10px;
+  font-size: 1.8em;
+  color: grey;
+  padding-top: 6px;
+  font-weight: bold;
+  line-height: 1;
+  &:hover {
+    color: black;
+    text-decoration: none;
+  }
+}
+
+.navbar-inner .btn {
+	font-weight: bold;
+	margin-top: 5px;
+	margin-right: 10px;
+	margin-bottom: -12px;
+}
+
+/* Required on IE8 for dropdown to be visible */
+.navbar-inner {
+	filter: none !important;
+}
+
+.navbar .fa {
+	font-size: 1.2em;
+}
+
+
+/* FOOTER */
+
+footer {
+  margin-top: 45px;
+  padding-top: 5px;
+  border-top: 1px solid $grayMediumLight;
+  color: $grayLight;
+  a {
+    color: $gray;
+    &:hover { 
+      color: $grayDarker;
+    }
+  }  
+  small { 
+    float: left; 
+  }
+  ul {
+    float: right;
+    list-style: none;
+    li {
+      float: left;
+      margin-left: 10px;
+    }
+  }
+}
+
+
+/* MISC */
+
+.debug_dump {
+  clear: both;
+  float: left;
+  width: 100%;
+  margin-top: 45px;
+  @include box_sizing;
+}
+
+
+/* FORMS */
+
+.btn {
+	font-weight: 500;
+}
+
+input, textarea, .uneditable-input {
+  border: 1px solid #bbb;
+  width: 100%; //screws up form-inline
+  height: auto;
+  margin-bottom: 15px;
+}
+
+.regular-width-input {
+	width: 210px;
+}
+
+.file_field {
+  border: 0px;
+}
+
+#error_explanation {
+  color: #f00;
+  ul {
+    list-style: none;
+    margin: 0 0 18px 0;
+  }
+}
+
+.field_with_errors {
+  @extend .control-group;
+  @extend .error;
+}
+
+// Fix line-breaking when errors are present in a horizontal form
+.form-horizontal .field_with_errors {
+  margin: 0;
+}
+
+.form-horizontal .field_with_errors:before, .form-horizontal .field_with_errors::after  {
+  display: block;
+  clear: none;
+}

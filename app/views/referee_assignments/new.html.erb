@@ -1,0 +1,112 @@
+<div class="row">
+  <div class="offset3 span6">	
+
+	    <legend>
+	      Registered user
+			</legend>
+
+			<%= form_for User.new,
+									 url: { action: :select_existing_user, 
+										 			controller: :referee_assignments },
+									 html: { class: 'form-horizontal',
+										 	 		 id: 'existing_user'} do |f| %>
+
+				<%= render 'shared/error_messages', object: f.object %>
+				<fieldset>
+					<div class="control-group">
+						<%= f.label :query, 'Search', class: 'control-label' %>
+							<div class="controls">
+								<%= f.text_field :query, 
+																class: 'user-fuzzy-search', 
+																placeholder: 'name or email',
+																autocomplete: 'off' %>
+							</div>
+					</div>
+					
+					<%= f.hidden_field 'no_editors', id: 'no_editors', value: true %>
+					
+					<%= f.hidden_field :id, id: 'existing_user_id' %>
+
+					<div class="control-group">
+						<div class="controls">
+	    				<%= f.submit 'Continue...', 
+													 class: 'btn btn-primary', 
+													 id: 'existing_user_submit_button' %>
+						</div>
+					</div>
+				</fieldset>
+			<% end %>
+
+	</div>
+</div>
+
+<div class="row">
+  <div class="offset2 span8 text-center">
+	</div>
+</div>
+
+<div class="row">
+  <div class="offset3 span6">
+				
+	    <legend>
+	      New user
+			</legend>
+			
+			<%= form_for @new_user, 
+									 url: { action: :register_new_user, 
+										 			controller: :referee_assignments }, 
+									 html: { class: "form-horizontal" } do |f| %>
+										 
+			<%= render 'shared/error_messages', object: f.object %>
+					
+				<fieldset>
+				
+					<div class="control-group">
+			      <%= f.label :first_name, "First name", class: "control-label"  %>
+						<div class="controls">
+							<%= f.text_field :first_name, placeholder: 'required' %>
+						</div>
+					</div>
+				
+					<div class="control-group">
+			      <%= f.label :middle_name, "Middle name", class: "control-label"  %>
+						<div class="controls">
+							<%= f.text_field :middle_name %>
+						</div>
+					</div>
+				
+					<div class="control-group">
+			      <%= f.label :last_name, "Last name", class: "control-label"  %>
+						<div class="controls">
+							<%= f.text_field :last_name, placeholder: 'required' %>
+						</div>
+					</div>
+				
+					<div class="control-group">
+			      <%= f.label :affiliation, "Affiliation", class: "control-label"  %>
+						<div class="controls">
+							<%= f.text_field :affiliation %>
+						</div>
+					</div>
+				
+					<div class="control-group">
+			      <%= f.label :email, "Email", class: "control-label"  %>
+						<div class="controls">
+							<%= f.text_field :email, placeholder: 'required' %>
+						</div>
+					</div>
+
+					<div class="control-group">
+						<div class="controls">
+		      		<%= f.submit 'Continue...',
+														class: 'btn btn-primary', 
+														id: 'new_user_submit_button' %>
+						</div>
+					</div>
+				
+			</fieldset>
+			
+		<% end %>
+		
+	</div>
+</div>

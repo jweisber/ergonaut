@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Ergo Submissions</title>
+		<%= favicon_link_tag 'favicon.ico' %>
+    <%= stylesheet_link_tag    "application", media: "all" %>
+    <%= javascript_include_tag "application" %>
+    <%= csrf_meta_tags %>
+    <!--[if lt IE 9]>
+    <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+		<%= yield :open_graph %>
+  </head>
+  <body>
+    <%= render 'layouts/header' %>
+    <div class="container">
+			
+      <div class="row" style="margin-top: -15px;">
+				<% flash.each do |key, value| %>
+			
+	        <div class="offset1 span9 center alert alert-<%= key %> fade in">
+						<a class="close" data-dismiss="alert">&times;</a>
+	          <%= value %>
+	        </div>
+      	<% end %>
+			</div>
+			
+			<%= render 'layouts/bread_crumbs' if current_user %>
+			
+      <%= yield %>
+			
+      <%= render 'layouts/footer' %>
+			
+      <%= debug(params) if Rails.env.development? %>
+    </div>    
+  </body>
+</html>

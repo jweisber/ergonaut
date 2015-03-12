@@ -1,0 +1,2 @@
+module RefereeAssignmentsHelper
+end

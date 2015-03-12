@@ -1,0 +1,43 @@
+<div class="row">
+	<div class="offset3 span6">
+		
+		<legend>
+			Submit a revision
+		</legend>
+		
+		<p class="alert">Please submit a <b>single</b>, <b>thoroughly anonymized file</b>, comprising the revised manuscript along with any replies to editors/referees.</p>
+						
+		<%= form_for @revised_submission, 
+								 url: { controller: :revisions, action: :create }, 
+								 html: { multipart: true, class: "form-horizontal" } do |f| %>
+		<%= render 'shared/error_messages', object: f.object %>
+				
+			<fieldset>
+			
+				<div class="control-group">
+		      <%= f.label :title, "Title:", class: "control-label"  %>
+					<div class="controls">
+						<%= f.text_field :title %>
+					</div>
+				</div>
+				
+				<div class="control-group">
+		      <%= f.label :manuscript_file, "File:", class: "control-label"  %>
+					<div class="controls">
+						<%= f.file_field :manuscript_file %>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<div class="controls">
+						<%= f.submit "Submit", class: "btn btn-primary" %>
+					</div>
+				</div>
+			
+			</fieldset>
+			
+		<% end %>
+	    
+			
+	</div>
+</div>

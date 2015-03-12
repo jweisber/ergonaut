@@ -1,0 +1,9 @@
+Dear <%= @recipients_list %>,
+
+Your report on "<%= @submission.title %>" was originally due <%= @referee_assignment.date_originally_due_pretty %>. We've taken the liberty of setting a new deadline of <%= @referee_assignment.date_due_pretty %>. You can complete the report here:
+
+    <%= one_click_review_url(@referee_assignment.auth_token) %>
+
+Thank you for agreeing to perform this review.
+
+<%= render 'email_footer' %>

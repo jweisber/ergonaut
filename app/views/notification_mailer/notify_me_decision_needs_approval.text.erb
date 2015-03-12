@@ -1,0 +1,9 @@
+Dear <%= @recipients_list %>,
+
+A decision has been reached regarding submission #<%= @submission.id %>, "<%= @submission.title %>".
+
+  Decision: <%= @submission.decision %>
+
+Please log in to approve the decision within <%= JournalSettings.days_to_remind_overdue_decision_approval %> <%= 'day'.pluralize(JournalSettings.days_to_remind_overdue_decision_approval) %>.
+
+<%= render 'email_footer' %>

@@ -1,0 +1,15 @@
+<%= @referee_assignment.custom_email_opening %>
+
+If you know the identity of the author, please decline *without revealing the author's identity* to the editor sending this request. Ergo uses triple-anonymous review, so it's even possible that you are the author, unbeknownst to the editor sending this request. If this is the case, *please do not say so*. Simply decline without explanation and suggest other qualified referees you honestly believe would provide an unbiased review.
+
+View submission: <%= one_click_review_url(@referee_assignment.auth_token) %>
+
+Agree: <%= agree_one_click_review_url(@referee_assignment.auth_token) %>
+
+Decline: <%= decline_one_click_review_url(@referee_assignment.auth_token) %>
+
+We ask that you respond to this request within <%= JournalSettings.days_to_respond_to_referee_request %> days. Should you accept, your report would be due <%= JournalSettings.days_for_external_review %> days from today.
+
+Thank you for considering this request.
+
+<%= render 'email_footer' %>

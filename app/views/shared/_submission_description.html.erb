@@ -1,0 +1,24 @@
+<h3 class="center">
+	<%= link_to "\"#{@submission.title}\"", 
+							@submission.manuscript_file.url, 
+							target: "_blank" %>
+</h3>
+
+<% unless @submission.revision_number > 0 %>
+	<h5 class="center">
+		Submitted <%= @submission.date_submitted_pretty %>
+	</h5>
+<% else %>
+	<h5 class="center">
+		Resubmitted <%= @submission.date_submitted_pretty %>
+	</h5>
+	<h5 class="center">
+		<%= link_to "Previous version", 
+								@submission.previous_revision.manuscript_file.url %>
+		<% previous_report = @submission.previous_assignment(current_user) %>
+		<% if previous_report %>
+			<%= tag 'br' %>
+			<%= link_to "Previous report", referee_center_path(previous_report) %>
+		<% end %>
+	</h5>
+<% end %>

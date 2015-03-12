@@ -1,0 +1,7 @@
+Dear <%= @recipients_list %>,
+
+A new manuscript has been submitted to Ergo: submission #<%= @submission.id %>, "<%= @submission.title %>".
+
+Please log in and assign an area editor within <%= JournalSettings.days_to_assign_area_editor %> <%= 'day'.pluralize(JournalSettings.days_to_assign_area_editor) %>.
+
+<%= render 'email_footer' %>

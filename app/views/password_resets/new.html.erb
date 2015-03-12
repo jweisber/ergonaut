@@ -1,0 +1,22 @@
+<div class="row">
+  <div class="span6 offset3">
+		<legend>Reset password</legend>
+		
+	  <%= form_tag password_resets_path, method: :post, class: "form-horizontal" do %>
+
+			<div class="control-group">
+	      <%= label_tag :email, "Email", class: "control-label" %>
+				<div class="controls">
+					<%= text_field_tag :email %>
+		    </div>
+		  </div>
+		
+			<div class="control-group">
+				<div class="controls">
+					<%= submit_tag "Email me", class: "btn btn-primary" %>
+				</div>
+		  </div>
+		
+	  <% end %>
+  </div>
+</div>

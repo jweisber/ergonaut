@@ -1,0 +1,46 @@
+<table class="table table-striped table-hover">  
+  <thead>  
+    <tr>  
+      <th>#</th>  
+      <th>Title</th>
+			<% if current_user.managing_editor? %>
+				<th>Author</th>  
+			<% end %>
+      <th>Submitted</th>  
+			<th>Area</th>
+			<th>Area editor</th>
+      <th>Status</th>
+    </tr>  
+  </thead>  
+  <tbody>
+	<% @submissions.each do |s| %>
+  
+  	<tr class="<%= current_user.managing_editor? ? submission_tr_class_for_managing_editor(s) : submission_tr_class_for_area_editor(s) %>"> 
+      <td class="ellips15"><%= s.id.to_s %></td>
+      <td class="ellips15"><%= link_to(s.title, s) %></td> 
+			<% if current_user.managing_editor? %>
+				<td class="ellips10"><%= s.author.full_name %></td> 
+			<% end %>
+      <td class="ellips15"><%= s.date_submitted_pretty %></td>
+			<td class="ellips15"><%= s.area.short_name %></td>  			
+			<td class="ellips15"><%= s.area_editor ? s.area_editor.full_name : "\u2014" %></td>
+      <td class="ellips15"><%= s.display_status_for_editors %></td> 
+    </tr>
+	<% end %>
+	<% if @submissions.length < 1 %>
+		<tr>
+			<td colspan="10" style="text-align: center;">
+				<% if params[:controller] == 'archives' %>
+					<span style="color: gray; font-style: italic;">
+						No archived submissions
+					</span>
+				<% else %>
+					<span style="color: gray; font-style: italic;">
+						No active submissions
+					</span>
+				<% end %>
+			</td>
+		</tr>
+	<% end %>
+  </tbody>  
+</table>

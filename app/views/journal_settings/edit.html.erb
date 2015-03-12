@@ -1,0 +1,235 @@
+<div class="row">
+	<div class="offset1 span10">
+		
+		<legend>
+			Contact
+		</legend>
+		<%= form_for @settings, html: { class: 'form-inline center' } do |f| %>
+			<% unless @settings.errors[:journal_email].empty? %>
+				<%= render 'shared/error_messages', object: f.object %>
+			<% end %>
+
+      <%= f.label :journal_email, 'The journal\'s conact address is ' %>
+      <%= f.email_field :journal_email, class: 'regular-width-input' %>
+			<%= f.submit 'Save', class: "btn btn-primary" %>
+		<% end %>
+		
+		
+		<legend>
+			Areas
+		</legend>
+			
+			<%= form_for @new_area, 
+									 url: create_area_journal_setting_url(@settings), 
+									 html: { action: 'create_area', 
+										 			 class: 'form-inline center' } do |f| %>
+			  <%= render 'shared/error_messages', object: f.object %>
+			  <%= f.text_field :name, placeholder: 'Full name',
+																class: 'regular-width-input' %>
+				<%= f.text_field :short_name, 
+												 placeholder: 'Short name: &le;12 chars'.html_safe,
+												 class: 'regular-width-input' %>
+				<%= button_tag type: 'submit',
+											 class: 'btn btn-success',
+											 id: 'add_area_button' do %>
+					<%=  fa_icon('plus') %>
+				<% end %>
+			<% end %>
+			
+			
+			<%= form_for :area, 
+									 url: remove_area_journal_setting_url(@settings), 
+									 html: { action: 'remove_area', method: :delete, 
+									 id: 'remove-area-form', class: 'form-inline center' } do |f| %>			
+				<%= collection_select :remove_area, 
+															:area_id, 
+															Area.active_ordered_by_name, 
+															:id, 
+															:name,
+															{},
+															{ class: 'regular-width-input' } %>
+				<%= button_tag type: 'submit', 
+											 class: 'btn btn-danger', 
+											 id: 'remove_area_button' do %>
+					<%=  fa_icon 'minus' %>
+				<% end %>
+			<% end %>
+		
+		
+		<legend>
+			Reports Expected
+		</legend>
+		
+		<%= form_for @settings, html: { class: 'form-inline center' } do |f| %>
+			<% if @settings.errors[:journal_email].empty? %>
+				<%= render 'shared/error_messages', object: f.object %>
+			<% end %>
+			<%= f.label :number_of_reports_expected, "Number of reports expected for any decision besides '#{ Decision::REJECT }': " %>
+      <%= f.text_field :number_of_reports_expected, class: 'input-mini' %>
+			<%= f.submit 'Save', class: "btn btn-primary" %>
+		<% end %>
+		
+		
+		<legend>
+			Deadlines
+		</legend>
+		
+		<%= form_for @settings, html: { class: "form-inline" } do |f| %>
+		<% if @settings.errors[:journal_email].empty? %>
+			<%= render 'shared/error_messages', object: f.object %>
+		<% end %>
+
+		<table align="center">
+		  <tr>
+		    <td style="text-align: right;">
+		      An area editor should be assigned within
+		    </td>
+		    <td>
+	        <%= f.text_field :days_to_assign_area_editor, class: "input-mini" %>
+					<%= 'day'.pluralize(@settings.days_to_assign_area_editor) %>
+		    </td>
+		  </tr>
+			<tr>
+		    <td style="text-align: right;">
+		      Initial reviews should be completed within
+		    </td>
+		    <td>
+	        <%= f.text_field :days_for_initial_review, class: "input-mini" %>
+					<%= 'day'.pluralize(@settings.days_for_initial_review) %>
+		    </td>
+		  </tr>
+		  <tr>
+		    <td style="text-align: right;">
+		      Remind an area editor when an initial review is overdue by
+		    </td>
+		    <td>
+	        <%= f.text_field :days_to_remind_area_editor, class: "input-mini" %>
+					<%= 'day'.pluralize(@settings.days_to_remind_area_editor) %>
+		    </td>
+		  </tr>
+		  <tr>
+		    <td style="text-align: right;">
+		      Referee requests should be answered within
+		    </td>
+		    <td>
+	        <%= f.text_field :days_to_respond_to_referee_request, 
+													 class: "input-mini" %>
+					<%= 'day'.pluralize(@settings.days_to_respond_to_referee_request) %>
+		    </td>
+		  </tr>
+		  <tr>
+		    <td style="text-align: right;">
+		      Remind a referee when a response to a request is overdue by
+		    </td>
+		    <td>
+	        <%= f.text_field :days_to_remind_unanswered_invitation, 
+													 class: "input-mini" %>
+					<%= 'day'.pluralize(@settings.days_to_remind_unanswered_invitation) %>
+		    </td>
+		  </tr>
+		  <tr>
+		    <td style="text-align: right;">
+		      Notify the area editor when a referee hasn't responded to a reminder after
+		    </td>
+		    <td>
+	        <%= f.text_field :days_to_wait_after_invitation_reminder, 
+													 class: "input-mini" %>
+					<%= 'day'.pluralize(@settings.days_to_wait_after_invitation_reminder) %>
+		    </td>
+		  </tr>
+		  <tr>
+		    <td style="text-align: right;">
+		      External reviews should be completed within
+		    </td>
+		    <td>
+		      <%= f.text_field :days_for_external_review, class: "input-mini" %>
+					<%= 'day'.pluralize(@settings.days_for_external_review) %>
+		    </td>
+		  </tr>
+		  <tr>
+		    <td style="text-align: right;">
+		      Send referees an early reminder when the deadline is in
+		    </td>
+		    <td>
+	        <%= f.text_field :days_before_deadline_to_remind_referee, 
+													 class: "input-mini" %>
+					<%= 'day'.pluralize(@settings.days_before_deadline_to_remind_referee) %>
+		    </td>
+		  </tr>
+		  <tr>
+		    <td style="text-align: right;">
+		      Remind a referee when a review is overdue by
+		    </td>
+		    <td>
+	        <%= f.text_field :days_to_remind_overdue_referee, 
+													 class: "input-mini" %>
+					<%= 'day'.pluralize(@settings.days_to_remind_overdue_referee) %>
+		    </td>
+		  </tr>
+		  <tr>
+		    <td style="text-align: right;">
+		      When a review is overdue, extend the deadline by 
+		    </td>
+		    <td>
+	        <%= f.text_field :days_to_extend_missed_report_deadlines, 
+													 class: "input-mini" %>
+					<%= 'day'.pluralize(@settings.days_to_extend_missed_report_deadlines) %>
+		    </td>
+		  </tr>
+		  <tr>
+		    <td style="text-align: right;">
+		      Once reports are complete, the area editor should submit a decision within
+		    </td>
+		    <td>
+	        <%= f.text_field :days_after_reports_completed_to_submit_decision, 													 class: "input-mini" %>
+					<%= 'day'.pluralize(@settings.days_after_reports_completed_to_submit_decision) %>
+		    </td>
+		  </tr>
+		  <tr>
+		    <td style="text-align: right;">
+		      Decisions should be approved within
+		    </td>
+		    <td>
+	        <%= f.text_field :days_to_remind_overdue_decision_approval, 
+													 class: "input-mini" %>
+					<%= 'day'.pluralize(@settings.days_to_remind_overdue_decision_approval) %>
+		    </td>
+		  </tr>
+		  <tr>
+		    <td style="text-align: right;">
+		    </td>
+		    <td>
+					<%= f.submit 'Save', class: "btn btn-primary" %> 
+		    </td>
+		  </tr>
+		</table>
+		<% end %>
+		
+		<legend>
+			Email Templates
+		</legend>
+		
+		<table class="table table-striped table-hover">
+		  <thead>  
+		    <tr>  
+		      <th>Description</th>  
+		      <th>Recipient(s)</th>
+		    </tr>  
+		  </thead>
+			<tbody>
+			<% @templates.each do |template, attributes| %>
+			  <tr>
+					<td>
+						<%= link_to attributes[:description], 											show_email_template_journal_setting_path(template) %>
+					</td>
+					<td>
+						<%= attributes[:to] %>
+					</td>
+				</tr>
+			<% end %>
+			</tbody>
+		</table>
+
+		
+	</div>
+</div>

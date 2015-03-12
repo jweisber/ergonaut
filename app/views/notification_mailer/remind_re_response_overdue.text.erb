@@ -1,0 +1,13 @@
+Dear <%= @recipients_list %>,
+
+This is a reminder of our request for a report on "<%= @referee_assignment.submission.title %>", a manuscript submitted to Ergo. To respond to this request, just use one of the following links:
+
+View submission: <%= one_click_review_url(@referee_assignment.auth_token) %>
+
+Agree: <%= agree_one_click_review_url(@referee_assignment.auth_token) %>
+
+Decline: <%= decline_one_click_review_url(@referee_assignment.auth_token) %>
+
+We would be grateful if you would respond at your earliest convenience.
+
+<%= render 'email_footer' %>

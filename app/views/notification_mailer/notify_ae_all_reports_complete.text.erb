@@ -1,0 +1,9 @@
+Dear <%= @recipients_list %>,
+
+All the reports commissioned for "<%= @submission.title %>" have been completed. Please log in and take appropriate action at your earliest convenience.
+
+<% if @submission.area_editor %>
+You can access the submission here: <%= one_click_edit_url(@submission.auth_token) %>
+
+<% end %>
+<%= render 'email_footer' %>

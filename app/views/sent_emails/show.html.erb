@@ -1,0 +1,49 @@
+<div class="row">
+	<div class="offset1 span10">
+		
+		<div class="well">
+			<dl class="dl-horizontal">
+					<dt>
+						To
+					</dt>
+					<dd>
+						<%= @email.to %>
+					</dd>
+					<% if !@email.cc.blank? %>
+					<dt>
+						Cc
+					</dt>
+					<dd>
+						<%= @email.cc %>
+					</dd>
+					<% end %>
+			    <dt>
+			      Subject
+					</dt>
+			    <dd>
+			      <%= @email.subject %>
+			    </dd>
+					<dt>
+						Sent
+					</dt>
+					<dd>
+						<%= @email.datetime_sent_pretty %>
+					</dd>
+			    <dt>
+			      Message
+					</dt>
+			    <dd>
+						<%= simple_format(@email.body) %>
+			    </dd>
+					<% if !@email.attachments.blank? %>
+					<dt>
+						Attachments
+					</dt>
+					<dd>
+						<%= @email.attachments %>
+					</dd>
+					<% end %>
+			</dl>
+		</div>
+	</div>
+</div>

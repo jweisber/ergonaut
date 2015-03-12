@@ -1,0 +1,32 @@
+Dear <%= @recipients_list %>,
+
+<% if @submission.decision == Decision::REJECT %>
+We are sorry to inform you that your submission, "<%= @submission.title %>", has not been accepted for publication. Please understand that even high-quality submissions can end up being declined, as the bar for acceptance is very high and the peer-review process imperfect.
+
+<% if @submission.area_editor_comments_for_author.blank? &&
+ !(@submission.referee_assignments.where(report_completed: true).size > 0) %>
+We also regret that the handling editor did not provide feedback for the author in this case, per their prerogative under journal policy (<%= peer_review_url %>).
+
+<% end %>
+Thank you for submitting your paper to Ergo. We hope to publish other work of yours in the future.
+<% elsif @submission.decision == Decision::MAJOR_REVISIONS %>
+While we have decided not to publish your submission, "<%= @submission.title %>", in its present form, we invite you to resubmit a revised version that takes into account the comments below.
+
+Should you decide to submit a revised version, please do so within three months. We also ask that you include a covering letter explaining your revisions and responses to the referees' comments. Please upload all materials as a single file.
+
+On behalf of the editorial team, we thank you for submitting your work to Ergo.
+<% elsif @submission.decision == Decision::MINOR_REVISIONS %>
+In view of the positive feedback we have received about your submission, "<%= @submission.title %>", we  invite you to submit a somewhat revised version that takes into account of the comments below.
+
+We ask that you submit your revisions within two months. We also ask that you include a covering letter explaining your revisions and responses to the referees' comments. Please upload all materials as a single file.
+
+On behalf of the editorial team, we thank you for submitting your work to Ergo.
+<% elsif @submission.decision == Decision::ACCEPT %>
+We are delighted to inform you that your submission, "<%= @submission.title %>", has been accepted for publication in Ergo.
+
+Please prepare a final version of your paper and send it to our copyeditor, Robert Mason (r.mason@mail.utoronto.ca), within two months.
+
+On behalf of the editorial team, we thank you for submitting your work to Ergo.
+<% end %>
+<%= @submission.all_comments_to_s %>
+<%= render 'email_footer' %>

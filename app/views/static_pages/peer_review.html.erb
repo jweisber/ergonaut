@@ -1,0 +1,57 @@
+<% content_for :open_graph do %>
+  <%= tag :meta, property: "og:site_name", content: "ErgoSubmissions.org" %>
+  <%= tag :meta, property: "og:type", content: "website" %>
+  <%= tag :meta, property: "og:title", content: "Peer Review Policy" %>
+  <%= tag :meta, property: "og:url", content: peer_review_url %>
+  <%= tag :meta, property: "og:image", content: request.protocol +
+																								request.host_with_port +
+																								image_path('E600.png') %>
+<% end %>
+
+<div class="row">
+	<div class="offset2 span8" style="text-align: justify;">		
+		<h1>Peer Review Policy</h1>
+
+
+		<h2>Overview</h2>
+
+		<p><em>Ergo</em> uses a triple-anonymous peer review process.
+		The author submits an anonymized manuscript which is reviewed by an area editor. The area editor issues a decision, advised by external reviewers when appropriate. The managing editors approve this decision except in extraordinary cases, such as negligence or bias on the part of an area editor or reviewer.</p>
+
+		<p>Authors are not identified to area editors or to reviewers, and vice versa. Attempting to identify the author(s) of a submission, e.g. by Googling the title, is strictly prohibited. The managing editors know the identities of all parties.</p>
+
+
+		<h2>Details</h2>
+		<h3>Initial Review</h3>
+
+		<p>Each submission prepared for anonymous review will be assigned to one area editor by the managing editors, in accordance with the area designated by the author(s) whenever possible. The area editor reads the submission.</p>
+
+		<h3>Rejection Without External Review</h3>
+
+		<p>If the area editor believes the submission has less than a 50% chance of being accepted, s/he rejects the submission without sending it out to external referees. The area editor should do so within two weeks of submission, except in the case of an unusually long or difficult manuscript.</p>
+
+		<p>Approximately two thirds of all submissions will be rejected without external review. While the area editor is free to provide feedback to the author(s), this is not mandatory. The area editor only has to briefly justify to the managing editors the decision to reject without external review.</p>
+
+		<p>Without external review, area editors can only recommend rejection.</p>
+
+		<h3>External Review</h3>
+
+		<p>If the area editor believes the submission has at least a 50% chance of being accepted, they send the submission to external referees. In this case the area editor should submit a decision to the managing editors within six weeks of submission, except for unusually long or difficult manuscripts. The area editor strives to recommend acceptance or rejection.</p>
+
+		<p>The area editor should secure at least two referee reports. However, should one negative report be received before a second can be successfully commissioned, the area editor may decide to reject the submission on the basis of the one report. Otherwise, at least two reports are required for a decision.</p>
+
+		<p>Approximately one third of all submissions will be sent out to external referees. External referees are asked to recommend one of the following: accept, minor revisions, major revisions, reject. In each case the external referee has to justify their decision.</p>
+
+		<p>The job of editors and referees is to evaluate submissions, not improve them. Additional feedback for the author(s) is welcome, but mandatory only when revisions are recommended. In this case the external referee has to specify which parts of the submission need revision, and in what respects. </p>
+
+		<p>While a request for minor revisions does not guarantee acceptance, it should only be recommended if the area editor believes that a revised submission has at least a 90% chance of being accepted. Major revisions should only be recommended when the area editor believes that a revised submission has at least a 70% chance of being accepted.</p>
+
+		<h3>Resubmission</h3>
+
+		<p>The managing editors try to assign resubmissions to the same area editor who handled the original submission. The area editor must then secure at least one external referee report, preferably from the same external referee(s) who recommended revisions (though not from referees who recommended acceptance or rejection). The area editor must also read the resubmission.</p>
+
+		<p>A decision should be recommended within six weeks of resubmission, except in the case of an unusually long or difficult manuscript.</p>
+
+		<p>The area editor can only recommend acceptance or rejection of a resubmission.</p>
+	</div>
+</div>

@@ -1,0 +1,11 @@
+Dear <%= @recipients_list %>
+
+This is a reminder that an initial decision regarding "<%= @submission.title %>" is now overdue. Please decide whether it should be sent out for external review or, if not, enter your decision.
+
+<% if @submission.area_editor %>
+You can access the submission here: <%= one_click_edit_url(@submission.auth_token) %>
+
+<% end %>
+For a refresher on journal policies and practices, the Editor's Guide is here: <%= guide_url %>
+
+<%= render 'email_footer' %>

@@ -1,0 +1,60 @@
+<div class="row">
+	<div class="offset3 span6">
+		
+		<legend>
+			Submit a paper
+		</legend>
+		
+		<%= form_for @submission, 
+								 url: { controller: :author_center, action: :create }, 
+								 html: { multipart: true, class: "form-horizontal" } do |f| %>
+			<%= render 'shared/error_messages', object: f.object %>
+				
+			<fieldset>
+			
+				<div class="control-group">
+		      <%= f.label :title, "Title", class: "control-label"  %>
+					<div class="controls">
+						<%= f.text_field :title %>
+					</div>
+				</div>
+			
+				<div class="control-group">
+		      <%= f.label :area_id, "Area", class: "control-label"  %>
+					<div class="controls">
+						<%= f.collection_select :area_id, @areas, :id, :name %>
+					</div>
+				</div>
+				
+				<div class="control-group">
+		      <%= f.label :manuscript_file, "File", class: "control-label"  %>
+					<div class="controls">
+						<%= f.file_field :manuscript_file %>
+					</div>
+				</div>
+				
+				<div class="control-group">
+					<div class="controls">
+						<%= f.submit "Submit", class: "btn btn-primary" %>
+					</div>
+				</div>
+			
+			</fieldset>
+			
+		<% end %>  
+			
+	</div>
+</div>
+
+<!-- PROGRESS BAR MODAL -->
+<div class="modal hide fade" id="uploading-modal">
+	<div class="modal-header">
+		<h3>Uploading...</h3>
+	</div>
+	<div class="modal-body">
+		<div class="progress progress-striped">
+			<div class="bar" style="width: 100%;">
+			</div>
+		</div>
+	</div>
+</div>

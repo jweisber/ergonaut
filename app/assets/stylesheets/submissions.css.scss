@@ -1,0 +1,14 @@
+// Place all the styles related to the Submissions controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+.referee-histories-popover .popover {
+  max-width: 500px;
+  z-index: 100000;
+}
+
+.referee-histories-popover .popover-content {
+  max-height: 500px;
+	overflow-x: scroll;										
+  overflow-y: scroll;
+}

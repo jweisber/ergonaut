@@ -1,0 +1,20 @@
+<% if @bread_crumbs && @bread_crumbs.size > 0 %>
+<div class="row">
+	<div class="center offset3 span6">
+			<ul class="breadcrumb">  
+				<% @bread_crumbs.each_with_index do |crumb, index| %>
+					<% break if index + 1 == @bread_crumbs.size %>
+					<li>
+						<%= link_to crumb.title, crumb.path %>
+						<span class="divider">
+							>
+						</span>  
+					</li>
+				<% end %>
+				<li>
+					<%= "#{@bread_crumbs.last.title}" %>
+				</li>
+			<ul>
+	</div>
+</div>
+<% end %>

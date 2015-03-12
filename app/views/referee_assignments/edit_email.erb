@@ -1,0 +1,46 @@
+<div class="row">
+  <div class="offset2 span8">
+		
+		<legend>Send email</legend>
+		<%= form_for RefereeAssignment.new, 
+								 url: { action: :create, controller: :referee_assignments },
+								 html: { class: "form-horizontal" } do |f| %>
+		<%= render 'shared/error_messages', object: f.object %>
+				
+			<fieldset>
+				
+				<%= hidden_field_tag 'referee_id', @referee.id %>
+			
+				<div class="control-group">
+		      <%= f.label :custom_email_opening, "Opening:", class: "control-label"  %>
+					<div class="controls">
+						<%= text_area_tag :custom_email_opening,
+															"Dear #{@referee.full_name},\n\nI think you would make an excellent referee for the manuscript " +
+							 								"\"#{@submission.title}\", which has been submitted to Ergo. Procedural details about this request are in the " +
+															"boilerplate below.\n\nBest,\n#{current_user.full_name}",
+															rows: 8 %>
+					</div>
+				</div>
+				
+				<div class="control-group">
+		      <%= f.label "Body:", class: "control-label"  %>
+					<div class="controls">
+						<%= simple_format @email.multipart? ? 
+																@email.text_part.body.to_s : 
+																@email.body.to_s %>
+					</div>
+				</div>
+				
+				<div class="control-group">
+					<div class="controls">
+						<%= link_to 'Cancel', new_submission_referee_assignment_path(@submission), class: "btn" %>
+						<%= f.submit 'Send', class: "btn btn-primary"%>
+					</div>
+				</div>
+			
+			</fieldset>
+			
+		<% end %>
+		
+  </div>
+</div>

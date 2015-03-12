@@ -1,0 +1,13 @@
+Dear <%= @recipients_list %>,
+
+<%= @referee_assignment.referee.full_name %> still hasn't responded to your invitation to referee "<%= @submission.title %>" despite the reminder sent <%= pluralize(JournalSettings.days_to_wait_after_invitation_reminder, 'day') %> ago.
+
+If <%= @referee_assignment.referee.first_name %> agreed in personal correspondence, please enter this information in the system: just click 'Yes' next to their name.
+
+Otherwise, please invite another referee to avoid delays down the line.
+
+<% if @submission.area_editor %>
+You can access the submission here: <%= one_click_edit_url(@submission.auth_token) %>
+
+<% end %>
+<%= render 'email_footer' %>

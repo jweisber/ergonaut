@@ -1,0 +1,15 @@
+<footer class="footer">
+  <nav>
+    <ul>
+			<% if editor? %>
+      <li><%= link_to "Editor's guide", guide_path %></li>
+			<li class="divider">&nbsp;</li>
+			<% end %>
+      <li><%= link_to "About the journal", about_path %></li>
+			<li class="divider">&nbsp;</li>
+      <li><%= link_to "Review policy", peer_review_path %></li>
+			<li class="divider">&nbsp;</li>
+      <li><%= link_to "Contact", contact_path %></li>
+    </ul>
+  </nav>
+</footer>

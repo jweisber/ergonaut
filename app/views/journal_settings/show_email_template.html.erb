@@ -1,0 +1,43 @@
+<div class="row">
+	<div class="offset2 span8">
+		
+		<div class="well">
+			<dl class="dl-horizontal">
+				<dt>
+					To
+				</dt>
+				<dd>
+					<%= @template[:to] %>
+				</dd>
+				<% if !@template[:cc].nil? %>
+				<dt>
+					Cc
+				</dt>
+				<dd>
+					<%= @template[:cc] %>
+				</dd>
+				<% end %>
+		    <dt>
+		      Subject
+				</dt>
+		    <dd>
+		      <%= @template[:subject] %>
+		    </dd>
+		    <dt>
+		      Body
+				</dt>
+		    <dd>
+					<%= simple_format(h(@body)) %>
+		    </dd>
+				<% if !@template[:attachments].nil? %>
+				<dt>
+					Attachments
+				</dt>
+				<dd>
+					<%= @template[:attachments] %>
+				</dd>
+				<% end %>
+			</dl>
+		</div>
+	</div>
+</div>

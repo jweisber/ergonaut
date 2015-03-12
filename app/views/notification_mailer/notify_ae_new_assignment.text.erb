@@ -1,0 +1,17 @@
+Dear <%= @recipients_list %>,
+
+Submission #<%= @submission.id %>, "<%= @submission.title %>", has been assigned to you to see through the review process.
+
+<% if @submission.revision_number == 0 %>
+Please decide within <%= JournalSettings.days_for_initial_review %> days whether it should be declined or sent out for review. If you do send it out for review, <%= JournalSettings.number_of_reports_expected %> reports are normally required for a decision.
+<% else %>
+Please secure at least one external report before making your final decision. Bear in mind that, because this is a resubmission, the only decisions permitted at this stage are <%= Decision::ACCEPT %> and <%= Decision::REJECT %>. The author(s) can be encouraged to make certain changes if the submission is accepted, but revisions cannot be made a precondition of acceptance.
+<% end %>
+
+<% if @submission.area_editor %>
+You can access the submission here: <%= one_click_edit_url(@submission.auth_token) %>
+
+<% end %>
+For a refresher on journal policies and practices, the Editor's Guide is here: <%= guide_url %>
+
+<%= render 'email_footer' %>

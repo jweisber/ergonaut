@@ -1,0 +1,7 @@
+Dear <%= @recipients_list %>,
+
+The managing editors have approved your decision ('<%= @submission.decision %>') for submission #<%= @submission.id %>, "<%= @submission.title %>".
+
+Thank you for your contribution to the journal.
+
+<%= render 'email_footer' %>
