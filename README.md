@@ -1,5 +1,4 @@
-Ergonaut – Journal editing made easy
-=====================================
+# Ergonaut – Journal Editing Made Easy
 
 Ergonaut is the ergonomic way to edit an academic journal. It is designed to be:
 
@@ -7,7 +6,7 @@ Ergonaut is the ergonomic way to edit an academic journal. It is designed to be:
 * Attractive
 * Free and open source
 
-Ergonaut was designed for the open access philosophy journal, [*Ergo*](http://www.ergophiljournal.org). Several of *Ergo*'s distinctive editorial policies are thus baked in:
+Ergonaut was created for the open access philosophy journal, [*Ergo*](http://www.ergophiljournal.org). Several of *Ergo*'s distinctive editorial policies are thus baked in:
 
 * Two-tiered editorial structure:
     + Managing editors designate area editors, assign submitted manuscripts to them, and approve/finalize their decisions.
@@ -16,7 +15,7 @@ Ergonaut was designed for the open access philosophy journal, [*Ergo*](http://ww
     + Area editors are not shown authors' identities.
     + Authors are not shown their referees' or area editor's identities.
     + Referees are not shown authors' identities.
-* Four decisions about a subbmission are available:
+* Four decisions about a submission are possible:
     + Accept
     + Minor revisions
     + Major revisions
