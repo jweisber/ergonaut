@@ -5,5 +5,3 @@ jQuery ->
   $('textarea').each ->
     if $(this).val() == $(this).attr('placeholder')
       $(this).val ''
-    return
-  return
