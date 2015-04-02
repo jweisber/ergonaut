@@ -110,13 +110,13 @@ describe "Application" do
     
     
     # some referees decline, two eventually accept
-    valid_sign_in(referee_one)
-    click_link submission.title
-    choose 'referee_assignment_agreed_false'
-    fill_in 'referee_assignment_decline_comment', with: 'Ask someone else.'
+    visit decline_one_click_review_path(referee_one.referee_assignments.first.auth_token)
+    fill_in 'Suggestions:', with: 'Ask someone else.'
     click_button 'Submit'
     expect(deliveries).to include_email(subject_begins: 'Referee Assignment Declined', to: area_editor.email)
     expect(SentEmail.all).to include_record(subject_begins: 'Referee Assignment Declined', to: area_editor.email)
+    expect(deliveries).to include_email(subject_begins: 'Comments from', to: area_editor.email)
+    expect(SentEmail.all).to include_record(subject_begins: 'Comments from', to: area_editor.email)
     click_link referee_one.full_name
     click_link 'Sign out'
     
@@ -229,13 +229,13 @@ describe "Application" do
     click_link 'Add'
     fill_in 'Search', with: referee_two.full_name
     click_link referee_two.full_name_affiliation_email
-    click_button 'existing_user_submit_button'
+    find_button('existing_user_submit_button').trigger('click')
     click_button 'Send'
     
     click_link 'Add'
     fill_in 'Search', with: referee_three.full_name
     click_link referee_three.full_name_affiliation_email
-    click_button 'existing_user_submit_button'
+    find_button('existing_user_submit_button').trigger('click')
     click_button 'Send'
     click_link area_editor.full_name
     click_link 'Sign out'

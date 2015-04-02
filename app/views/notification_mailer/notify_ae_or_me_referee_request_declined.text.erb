@@ -1,11 +1,11 @@
 Dear <%= @recipients_list %>,
 
-<%= @referee_assignment.referee.full_name %> has declined to referee "<%= @submission.title %>". Additional remarks: <% if @referee_assignment.decline_comment && !@referee_assignment.decline_comment.empty? %>
-"<%= @referee_assignment.decline_comment %>"
-<% else %>
-none.
-<% end %>
+<%= @referee_assignment.referee.full_name %> has declined to referee "<%= @submission.title %>".
 
+<% if @referee_assignment.decline_comment && !@referee_assignment.decline_comment.empty? %>
+<%= @referee_assignment.referee.first_name %> added the following comments: "<%= @referee_assignment.decline_comment %>"
+
+<% end %>
 Please invite another reviewer as soon as possible to avoid delays down the line. (<%= JournalSettings.number_of_reports_expected %> reports are normally required for a decision. See the editor's guide for more: <%= guide_url %>.)
 
 <% if @submission.area_editor %>

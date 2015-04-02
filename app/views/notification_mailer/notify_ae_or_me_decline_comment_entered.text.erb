@@ -1,0 +1,11 @@
+Dear <%= @recipients_list %>,
+
+<%= @referee_assignment.referee.full_name %> added the following comments upon declining the request to review "<%= @submission.title %>":
+
+"<%= @referee_assignment.decline_comment %>"
+
+<% if @submission.area_editor %>
+You can access the submission here: <%= one_click_edit_url(@submission.auth_token) %>
+
+<% end %>
+<%= render 'email_footer' %>

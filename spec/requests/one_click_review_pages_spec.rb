@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe "One-click review pages" do
   
+  let!(:managing_editor) { create(:managing_editor) }
   let(:submission) { create(:submission_sent_out_for_review) }
   let(:assignment) { submission.referee_assignments.first }
 
@@ -65,6 +66,31 @@ describe "One-click review pages" do
       it "notifies the editor" do
         expect(deliveries).to include_email(subject_begins: 'Referee Assignment Declined', to: submission.area_editor.email)
         expect(SentEmail.all).to include_record(subject_begins: 'Referee Assignment Declined', to: submission.area_editor.email)
+      end
+    end
+
+    # record_decline_comment
+    describe "record decline comment" do
+      before do
+        visit decline_one_click_review_path(assignment.auth_token)
+        fill_in 'Suggestions:', with: 'Nulla vitae elit libero, a pharetra augue.'
+        click_button 'Submit'
+      end
+
+      it "sets decline_comment" do
+        assignment.reload
+        expect(assignment.decline_comment).to eq('Nulla vitae elit libero, a pharetra augue.')
+      end
+
+      it "redirects to the referee center and flashes success" do
+        expect(page).to have_selector('th', text: 'Invited')
+        expect(page).to have_selector('th', text: 'Accepted')
+        expect(page).to have_success_message('Thank you')
+      end
+
+      it "emails the area editor" do
+        expect(deliveries).to include_email(subject_begins: 'Comments from', to: assignment.submission.area_editor.email)
+        expect(SentEmail.all).to include_record(subject_begins: 'Comments from', to: assignment.submission.area_editor.email)
       end
     end
   end
@@ -151,6 +177,20 @@ describe "One-click review pages" do
       before { visit decline_one_click_review_path("invalid_auth_token") }
       
       it_behaves_like "a bad attempt to agree/decline using an invalid auth_token"
+    end
+
+    # record_decline_comments
+    describe "record decline comments" do
+      before do
+        @referee_assignment = { decline_comment: 'Vehicula Ridiculus Mollis'}
+        put record_decline_comments_one_click_review_path('invalid_auth_token'), referee_assignment: @referee_assignment
+      end
+
+      it "leaves the decline_comment nil and bounces to security breach" do
+        assignment.reload
+        expect(assignment.decline_comment).to be_nil
+        expect(response).to redirect_to(security_breach_path)
+      end
     end
   end
 end

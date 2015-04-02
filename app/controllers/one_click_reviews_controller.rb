@@ -26,6 +26,17 @@ class OneClickReviewsController < ApplicationController
     end
   end
   
+  def record_decline_comments
+    decline_comment = params[:referee_assignment][:decline_comment]
+    if @referee_assignment.update_attributes(decline_comment: decline_comment)
+      NotificationMailer.notify_ae_or_me_decline_comment_entered(@referee_assignment).save_and_deliver
+      flash[:success] = "Thank you for your response."
+      redirect_to referee_center_index_path
+    else
+      flash.now[:error] = "Something went wrong recording your response."
+      render :decline
+    end
+  end
   
   private
    
@@ -39,7 +50,7 @@ class OneClickReviewsController < ApplicationController
         if @referee_assignment.canceled
           flash[:error] = "This request was canceled."
           redirect_to referee_center_index_path
-        elsif @referee_assignment.agreed == false
+        elsif @referee_assignment.agreed == false && action_name != 'record_decline_comments'
           flash[:error] = "You've already declined to perform this review."
           redirect_to referee_center_index_path
         elsif @referee_assignment.report_completed == true

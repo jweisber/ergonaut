@@ -26,6 +26,7 @@ Ergonaut::Application.routes.draw do
       member do
         get 'agree'
         get 'decline'
+        put 'record_decline_comments'
       end
     end
   
