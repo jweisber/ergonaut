@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150124211449) do
+ActiveRecord::Schema.define(:version => 20150205191643) do
 
   create_table "area_editor_assignments", :force => true do |t|
     t.integer  "user_id"
@@ -106,6 +106,10 @@ ActiveRecord::Schema.define(:version => 20150124211449) do
     t.string   "auth_token"
     t.datetime "decision_entered_at"
   end
+
+  add_index "submissions", ["area_id"], :name => "index_submissions_on_area_id"
+  add_index "submissions", ["original_id"], :name => "index_submissions_on_original_id"
+  add_index "submissions", ["user_id"], :name => "index_submissions_on_user_id"
 
   create_table "trigrams", :force => true do |t|
     t.string  "trigram",     :limit => 3

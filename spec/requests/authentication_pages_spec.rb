@@ -31,11 +31,11 @@ describe "Authentication" do
       
       it { should have_link('Profile',      href: user_path(user)) }
       it { should have_link('Sign out',     href: signout_path) }
-      it { should_not have_link('Sign in',  href: signin_path) }
+      it { should_not have_button('Sign in') }
       
       describe "followed by signout" do
         before { click_link 'Sign out' }
-        it { should have_link('Sign in') }
+        it { should have_button('Sign in') }
       end
     end
     
@@ -102,7 +102,7 @@ describe "Authentication" do
       
       describe "visiting Users#index" do
         before { visit users_path }
-        it { should have_link('New user') }
+        it { should have_link('New User') }
       end
     end
     
@@ -112,7 +112,7 @@ describe "Authentication" do
       
       describe "visiting Users#index" do
         before { visit users_path }
-        it { should_not have_link('New user') }
+        it { should_not have_link('New User') }
       end
     end
     

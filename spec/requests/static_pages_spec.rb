@@ -4,7 +4,7 @@ describe "Static pages" do
   describe "Root Page" do
     before { visit root_path }
     subject { page }
-    it { should have_content('Password') }
+    it { should have_content('About Ergo') }
   end
 
   describe "Guide Page" do

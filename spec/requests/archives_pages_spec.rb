@@ -4,7 +4,7 @@ describe "Archives pages" do
   
   let(:user) { create(:user) }
   let(:area_editor) { create(:area_editor) }
-  let(:managing_editor) { create(:managing_editor) }
+  let!(:managing_editor) { create(:managing_editor) }
   
   let!(:desk_rejected_submission) { create(:desk_rejected_submission) }
   let!(:accepted_submission) { create(:accepted_submission) }

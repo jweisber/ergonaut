@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe "One-click edits pages" do
   
+  let!(:managing_editor) { create(:managing_editor) }
   let(:submission) { create(:submission_assigned_to_area_editor) }
   
   context "when supplied the auth_token of some submission" do

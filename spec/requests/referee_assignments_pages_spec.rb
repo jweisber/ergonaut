@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "Referee assignment pages" do
-  
+
   let!(:managing_editor) { create(:managing_editor) }
   let(:wrong_area_editor) { create(:area_editor) }
   let(:submission) { create(:submission_with_one_completed_referee_assignment_one_open_request) }

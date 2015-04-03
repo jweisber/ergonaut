@@ -434,15 +434,15 @@ describe "User pages" do
     #new
     describe "signup page" do
       before { visit signup_path } 
-      it "should redirect to security_breach_path" do
-        expect(current_path).to eq(security_breach_path)
+      it "should redirect to author center index" do
+        expect(current_path).to eq(author_center_index_path)
       end
     end
   
     describe "new user page" do
       before { visit new_user_path }
-      it "should redirect to security_breach_path" do
-        expect(current_path).to eq(security_breach_path)
+      it "should redirect to author center" do
+        expect(current_path).to eq(author_center_index_path)
       end
     end
     

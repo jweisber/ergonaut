@@ -43,7 +43,7 @@ class PasswordResetsController < ApplicationController
         @user.save
         flash[:success] = "Your password has been reset."
         sign_in @user
-        redirect_to root_url
+        redirect_to_role_home
       else
         flash.now[:error] = "Couldn't reset your password."
         render :edit

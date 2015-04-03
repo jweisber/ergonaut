@@ -184,6 +184,14 @@ class JournalSettingsController < ApplicationController
             subject:         'Referee Assignment Declined: #{@referee_assignment.referee.full_name}',
             attachments:     nil
           },
+          
+          notify_ae_or_me_decline_comment_entered: {
+            description:     'Decline Comment Entered',
+            to:              'Area Editor',
+            cc:              'Managing Editors',
+            subject:         'Comments from #{@referee_assignment.referee.full_name}',
+            attachments:     nil
+          },
 
           notify_ae_response_reminder_unanswered: {
             description:     'Notify: Referee Request Unanswered Despite Reminder',

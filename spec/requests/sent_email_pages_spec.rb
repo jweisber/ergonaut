@@ -4,7 +4,7 @@ describe "SentEmail pages" do
   
   let(:user) { create(:user) }
   let(:area_editor) { create(:area_editor) }
-  let(:managing_editor) { create(:managing_editor) }
+  let!(:managing_editor) { create(:managing_editor) }
   
   let(:new_submission) { create(:submission) }
   let(:submission_with_one_completed_referee_assignment) { create(:submission_with_one_completed_referee_assignment) }
@@ -46,6 +46,7 @@ describe "SentEmail pages" do
       context "for an unassociated email" do
         before do
           User.first.send_password_reset
+          valid_sign_in(managing_editor)
           visit submission_sent_email_path(@submission, SentEmail.last)
         end
         

@@ -429,6 +429,7 @@ class NotificationMailer < ActionMailer::Base
         'notify_ae_assignment_canceled',
         'notify_ae_referee_assignment_agreed',
         'notify_ae_or_me_referee_request_declined',
+        'notify_ae_or_me_decline_comment_entered',
         'notify_ae_report_completed',
         'remind_ae_decision_based_on_external_reviews_overdue',
         'remind_ae_internal_review_overdue',
