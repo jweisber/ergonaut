@@ -112,11 +112,6 @@ class SubmissionsController < ApplicationController
         params[:submission].delete_if do |key, value|  # ignore blank comments
           (key == 'area_editor_comments_for_managing_editors' || key == 'area_editor_comments_for_author') && (value.nil? || value.empty?)
         end
-        params[:submission].delete_if do |key, value|  # IE placeholder bug
-          (key == 'area_editor_comments_for_managing_editors' || key == 'area_editor_comments_for_author') && 
-          (value == placeholder_text(:area_editor_comments_for_author) || 
-           value == placeholder_text(:area_editor_comments_for_managing_editors))
-        end
         params[:submission].permit!
       elsif current_user.area_editor?
         params[:submission].permit(:area_editor_comments_for_managing_editors, :area_editor_comments_for_author, :decision)
