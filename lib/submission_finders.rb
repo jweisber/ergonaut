@@ -4,7 +4,7 @@ module SubmissionFinders
     scope :active, -> { where(archived: false, withdrawn: false) }
     scope :undecided, -> { where("decision = ?", Decision::NO_DECISION) }
     scope :not_sent_out_for_review, -> { where('submissions.id NOT IN (SELECT submission_id FROM referee_assignments WHERE canceled != ?)', true) }
-    scope :internal_review_deadline_passed, -> { where('area_editor_assignments.created_at < ?', Time.current - JournalSettings.current.days_for_initial_review.days) }
+    scope :internal_review_deadline_passed, -> { where('area_editor_assignments.updated_at < ?', Time.current - JournalSettings.current.days_for_initial_review.days) }
     scope :no_email_with_action, ->(action) { where('submissions.id NOT IN (SELECT submission_id FROM sent_emails WHERE action = ?)', action) }
     scope :no_email_with_action_for_n_days, ->(action, n) { where('submissions.id NOT IN (SELECT submission_id FROM sent_emails WHERE action = ? AND created_at > ?)', action, n.days.ago) }
   end
