@@ -9,11 +9,14 @@ module ApplicationHelper
       #@bread_crumbs.push BreadCrumb.new("Review", submissions_path) unless action_name == 'index'
       if action_name == "show"
         @bread_crumbs.push BreadCrumb.new("Submission \##{params[:id]}", submission_path(params[:id]))
-      elsif action_name == "new"
-        @bread_crumbs.push BreadCrumb.new("Submit a paper", new_submission_path)
       elsif action_name == "edit" || action_name == "update"
         @bread_crumbs.push BreadCrumb.new("Submission \##{params[:id]}", submission_path(params[:id]))
         @bread_crumbs.push BreadCrumb.new("Edit", edit_submission_path(params[:id]))
+      elsif action_name == "edit_manuscript_file"
+        @bread_crumbs.push BreadCrumb.new("Submission \##{params[:id]}", submission_path(params[:id]))
+        @bread_crumbs.push BreadCrumb.new('Replace manuscript', '#')
+      elsif action_name == 'update_manuscript_file'
+        @bread_crumbs.push BreadCrumb.new("Submission \##{params[:id]}", submission_path(params[:id]))
       end
     end
       

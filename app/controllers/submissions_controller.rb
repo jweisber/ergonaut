@@ -2,7 +2,8 @@ class SubmissionsController < ApplicationController
   
   before_filter :assigned_area_editor_or_managing_editor, except: [:index, :download]
   before_filter :editor, only: [:index]  
-  before_filter :managing_editor_or_assigned_author_referee_or_area_editor, only: [:download]  
+  before_filter :managing_editor_or_assigned_author_referee_or_area_editor, only: [:download]
+  before_filter :managing_editor, only: [:edit_manuscript_file, :update_manuscript_file]
   before_filter :bread_crumbs
 
 	def index
@@ -49,6 +50,26 @@ class SubmissionsController < ApplicationController
     submission = Submission.find(params[:id])
     send_file submission.manuscript_file.current_path, x_sendfile: true
   end
+  
+  def edit_manuscript_file
+  end
+  
+  def update_manuscript_file
+    if params[:submission] && params[:submission][:manuscript_file]
+      path = @submission.manuscript_file.current_path
+      FileUtils.copy(path, path + '.bak') if File.exist?(path)
+      if @submission.update_attributes(manuscript_file: params[:submission][:manuscript_file])
+        flash.now[:success] = "Manuscript file replaced."
+        render :show
+      else
+        flash.now[:error] = "Something went wrong replacing the file."
+        render :edit_manuscript_file
+      end
+    else
+      flash.now[:error] = "Did you forget to choose a new file?"
+      render :edit_manuscript_file
+    end
+  end
 
   private
   
@@ -73,6 +94,10 @@ class SubmissionsController < ApplicationController
       unless current_user.managing_editor? or (@submission and current_user == @submission.area_editor)
         redirect_to security_breach_path
       end
+    end
+    
+    def managing_editor
+      redirect_to security_breach_path unless current_user.managing_editor?
     end
     
     def editor

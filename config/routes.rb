@@ -31,6 +31,10 @@ Ergonaut::Application.routes.draw do
     end
   
   resources :submissions, except: [:new] do 
+    member do
+      get 'edit_manuscript_file'
+      put 'update_manuscript_file'
+    end
     resources :referee_assignments, only: [:new, :create, :show, :destroy] do
       resources :sent_emails, only: [:index, :show]
       collection do

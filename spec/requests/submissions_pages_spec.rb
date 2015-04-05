@@ -100,6 +100,7 @@ describe "SubmissionsPages" do
       
       it "displays information about the submission" do
         expect(page).to have_link(@submission.title, href: @submission.manuscript_file)
+        expect(page).to have_link('', href: edit_manuscript_file_submission_path(@submission))
         expect(page).to have_content(@submission.area.name)
         expect(page).to have_link('Email log', href: submission_sent_emails_path(@submission))
         expect(page).to have_link('Edit', href: edit_submission_path(@submission))
@@ -425,6 +426,58 @@ describe "SubmissionsPages" do
         expect(page.response_headers['Content-Type']).to eq('application/pdf')
       end
     end
+    
+    # edit_manuscript_file
+    describe "edit manuscript file" do
+      before { visit edit_manuscript_file_submission_path(new_submission) }
+
+      it "has a form for uploading a new manuscript file" do
+        expect(page).to have_content('Replace manuscript')
+        expect(page).to have_content('Replace with')
+        expect(page).to have_button('Submit')
+      end
+    end
+    
+    # update_manuscript_file
+    describe "update manuscript file" do
+      context "with a file attached" do
+        before do
+          visit edit_manuscript_file_submission_path(new_submission)
+          attach_file 'submission_manuscript_file', File.join(Rails.root, 'spec', 'support', 'Sample Submission.pdf')
+          click_button 'Submit'
+        end
+
+        it "renders the show page and flashes success" do
+          expect(page).to have_success_message('Manuscript file replaced')
+        end
+      
+        it "copies the old manuscript file to manuscript.ext.bak" do
+          path_to_copy = new_submission.manuscript_file.current_path + '.bak'
+          expect(File.exists?(path_to_copy)).to be_true
+        end
+      
+        it "saves the new file to manuscript.ext" do
+          # how to test this?
+        end
+      end
+      
+      context "without a file attached" do
+        before do
+          visit edit_manuscript_file_submission_path(new_submission)
+          click_button 'Submit'
+        end
+        
+        it "re-renders the page and flashes an error" do
+          expect(page).to have_content('Replace manuscript')
+          expect(page).to have_error_message('Did you forget to choose a new file?')
+        end
+        
+        it "does not copy the original file to manuscript.ext.bak" do
+          path_to_copy = new_submission.manuscript_file.current_path + '.bak'
+          expect(File.exists?(path_to_copy)).to be_false
+        end
+      end
+    end
   end
   
   context "when signed in as an area editor" do
@@ -680,6 +733,30 @@ describe "SubmissionsPages" do
         end
       end
     end
+    
+    # edit_manuscript_file
+    describe "edit manuscript file page" do
+      before do
+        new_submission.update_attributes(area_editor: area_editor)
+        visit edit_manuscript_file_submission_path(new_submission)
+      end
+      
+      it "redirects to security breach" do
+        expect(current_path).to eq(security_breach_path)
+      end
+    end
+    
+    # update_manuscript_file
+    describe "update manuscript file page" do
+      before do
+        new_submission.update_attributes(area_editor: area_editor)
+        put update_manuscript_file_submission_path(new_submission)
+      end
+      
+      it "redirects to security breach" do
+        expect(response).to redirect_to(security_breach_path)
+      end
+    end
   end
   
   shared_examples_for "no standard actions are accessible" do |redirect_path|
@@ -715,6 +792,26 @@ describe "SubmissionsPages" do
     describe "update" do
       before do
         put submission_path(new_submission)
+      end
+      
+      it "redirects to #{redirect_path}" do
+        expect(response).to redirect_to(send(redirect_path))
+      end
+    end
+    
+    # edit_manuscript_file
+    describe "edit manuscript file page" do
+      before { visit edit_manuscript_file_submission_path(new_submission) }
+      
+      it "redirects to #{redirect_path}" do
+        expect(current_path).to eq(send(redirect_path))
+      end
+    end
+    
+    # update_manuscript_file
+    describe "update manuscript file page" do
+      before do
+        put update_manuscript_file_submission_path(new_submission)
       end
       
       it "redirects to #{redirect_path}" do
