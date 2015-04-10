@@ -32,11 +32,12 @@
 						<%= f.file_field :manuscript_file %>
 						<div class="alert" style="margin-top: 1em;">
 							File must be
-							<span style="color: black;">
+							<span style="color: black;" class="anonymization-instructions-popover">
 								<%= link_to 'fully anonymized.',
 														'#',
 													  class: 'popover-link',
-													  placement: 'right', 
+													  placement: 'left',
+														'data-trigger' => 'hover', 
 													  'data-content' => "#{render 'anonymization_instructions'}" %>
 							</span>
 						</div>
