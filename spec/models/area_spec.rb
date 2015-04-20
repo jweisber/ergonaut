@@ -81,8 +81,10 @@ describe Area do
     end
     
     it "returns areas sorted by name" do
-      sorted_names = Area.active_ordered_by_name.pluck(:name).sort
-      expect(Area.active_ordered_by_name.pluck(:name)).to eq(sorted_names)
+      area_names = Array.new
+      Area.active_ordered_by_name.each { |a| area_names.push a.name }
+      area_names_sorted = area_names.sort
+      expect(area_names).to eq(area_names_sorted)
     end
   end
   

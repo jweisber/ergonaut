@@ -62,12 +62,13 @@ RSpec.configure do |config|
   config.filter_run focus: true
   config.run_all_when_everything_filtered = true
   
+  # Causes "Too many open files" errors
   # support/deferred_garbage_collection.rb
-  config.before(:all) do
-    DeferredGarbageCollection.start
-  end
-
-  config.after(:all) do
-    DeferredGarbageCollection.reconsider
-  end
+  # config.before(:all) do
+  #   DeferredGarbageCollection.start
+  # end
+  #
+  # config.after(:all) do
+  #   DeferredGarbageCollection.reconsider
+  # end
 end

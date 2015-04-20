@@ -51,6 +51,13 @@ FactoryGirl.define do
         end
       end
       
+      factory :submission_with_one_pending_referee_assignment_one_completed do
+        before(:create) do |submission|
+          submission.referee_assignments << create(:referee_assignment, submission: submission, referee: create(:user))
+          submission.referee_assignments << create(:completed_referee_assignment, submission: submission, referee: create(:user))
+        end
+      end
+
       factory :submission_with_two_completed_referee_assignments do
         before(:create) do |submission|
           submission.referee_assignments << create(:completed_referee_assignment, submission: submission, referee: create(:user))

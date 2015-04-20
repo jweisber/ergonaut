@@ -31,6 +31,7 @@ require 'spec_helper'
 
 describe RefereeAssignment do
   
+  let!(:managing_editor) { create(:managing_editor) }
   let(:referee_assignment) { build(:referee_assignment) }
   subject { referee_assignment }
   
@@ -688,7 +689,6 @@ describe RefereeAssignment do
     
     context "when two assignments have had response reminders sent over #{JournalSettings.days_to_wait_after_invitation_reminder} days ago, but a notification was already sent about one" do
       before do
-        create(:managing_editor)
         @other_referee_assignment = create(:referee_assignment)
         
         sent_email = NotificationMailer.remind_re_response_overdue(@other_referee_assignment).save_and_deliver
@@ -781,8 +781,6 @@ describe RefereeAssignment do
   # modules
   
   describe RefereeAssignmentReminders do
-    
-    let!(:managing_editor) { create(:managing_editor) }
     
     describe ".send_overdue_response_reminders" do
     

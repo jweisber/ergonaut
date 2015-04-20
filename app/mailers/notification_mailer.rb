@@ -309,7 +309,7 @@ class NotificationMailer < ActionMailer::Base
     recipients = [referee]
     @recipients_list = name_list(recipients)
     
-    add_attachments_for_author(@submission)
+    add_attachments_for_referee(@submission, @referee_assignment)
     
     message = mail(to: mailto_string(recipients), subject: 'Outcome & Thank You')
   end
@@ -408,6 +408,17 @@ class NotificationMailer < ActionMailer::Base
       end
     end
     
+    def add_attachments_for_referee(submission, referee_assignment)
+      completed_assignments = submission.referee_assignments.where(report_completed: true)
+      completed_assignments.each do |report|
+        unless report.attachment_for_author.current_path.blank? || report == referee_assignment
+          attachment = report.attachment_for_author.current_path
+          ext = File.extname(attachment)
+          attachments["Referee #{report.referee_letter}#{ext}"] = File.read(attachment) if File.exists?(attachment)
+        end
+      end
+    end
+
     def add_attachments(assignment)
       unless assignment.attachment_for_editor.current_path.blank?
         attachment = assignment.attachment_for_editor.current_path

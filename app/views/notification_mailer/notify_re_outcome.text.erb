@@ -17,9 +17,10 @@ Referee <%= assignment.referee_letter %>
 
 Recommendation: <%= assignment.recommendation %>
 
-Comments for the author:
+Comments for the author: <% unless assignment.attachment_for_author.current_path.blank? %>see attached file.<% end %>
 
 <%= assignment.comments_for_author %>
 <% end %>
+
 
 <%= render 'email_footer' %>

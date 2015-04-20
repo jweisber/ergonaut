@@ -24,7 +24,7 @@
 require 'spec_helper'
 
 describe Submission do
-
+  let!(:managing_editor) { create(:managing_editor) }
   let(:submission) { build(:submission) }
   subject { submission }  
   
@@ -107,7 +107,6 @@ describe Submission do
   describe "#withdraw" do
     
     let(:submission) { create(:submission) }
-    let!(:managing_editor) { create(:managing_editor) }
     before do
       submission.withdraw
     end
@@ -157,7 +156,6 @@ describe Submission do
   
   describe "#unarchive" do
     
-    let(:managing_editor) { create(:managing_editor) }
     let(:accepted_submission) { create(:accepted_submission) }
     before { accepted_submission.unarchive(managing_editor) }
     
@@ -510,13 +508,13 @@ describe Submission do
   # modules
   
   describe SubmissionFinders do
-    before(:all) do
-      create(:managing_editor)
+    before do
       @submission = create(:submission)
       @submission_assigned_to_area_editor = create(:submission_assigned_to_area_editor)      
       @submission_sent_out_for_review = create(:submission_sent_out_for_review)
       @submission_with_two_agreed_referee_assignments = create(:submission_with_two_agreed_referee_assignments)
       @submission_with_one_completed_referee_assignment = create(:submission_with_one_completed_referee_assignment)
+      @submission_with_one_pending_referee_assignment_one_completed = create(:submission_with_one_pending_referee_assignment_one_completed)
       @submission_with_two_completed_referee_assignments = create(:submission_with_two_completed_referee_assignments)
       @submission_with_reject_decision_not_yet_approved = create(:submission_with_reject_decision_not_yet_approved)
       @submission_with_major_revisions_decision_not_yet_approved = create(:submission_with_major_revisions_decision_not_yet_approved)
@@ -526,10 +524,6 @@ describe Submission do
       @rejected_after_review_submission = create(:rejected_after_review_submission)
       @major_revisions_requested_submission = create(:major_revisions_requested_submission)
       @accepted_submission = create(:accepted_submission)
-    end
-    after(:all) do
-      DatabaseCleaner.strategy = :truncation
-      DatabaseCleaner.clean
     end
 
     describe ".internal_review_reminder_needed" do
@@ -543,7 +537,7 @@ describe Submission do
       context "when one submission is in initial review, is past due" do
         before do
           area_editor_assignment = @submission_assigned_to_area_editor.area_editor_assignment
-          area_editor_assignment.update_attributes(created_at: JournalSettings.days_for_initial_review.days.ago)
+          area_editor_assignment.update_attributes(updated_at: (JournalSettings.days_for_initial_review + 0.1).days.ago)
         end
         
         it "returns that submission" do
@@ -566,7 +560,7 @@ describe Submission do
       context "when one submission is in initial review, is past due, a reminder has been sent, but more than 3 days ago" do
         before do
           area_editor_assignment = @submission_assigned_to_area_editor.area_editor_assignment
-          area_editor_assignment.update_attributes(created_at: JournalSettings.days_for_initial_review.days.ago)
+          area_editor_assignment.update_attributes(updated_at: (JournalSettings.days_for_initial_review + 0.1).days.ago)
           NotificationMailer.remind_ae_internal_review_overdue(@submission_assigned_to_area_editor)
                             .save_and_deliver
                             .update_attributes(created_at: 3.1.days.ago)
@@ -580,6 +574,12 @@ describe Submission do
 
     describe ".complete_reports_notification_needed" do
       
+      context "when there is a submission with a completed report and a pending request" do
+        it "does not return that submission" do
+          expect(Submission.complete_reports_notification_needed).not_to include(@submission_with_one_pending_referee_assignment_one_completed)
+        end
+      end
+
       context "when two submissions have no decision, all their reports are completed (the first has one report, the second has two)" do
         it "returns both submissions" do
           expect(Submission.complete_reports_notification_needed).to match_array([@submission_with_one_completed_referee_assignment, @submission_with_two_completed_referee_assignments])
@@ -701,15 +701,15 @@ describe Submission do
       
       context "when one submission has no area editor, it's been waiting #{JournalSettings.days_to_assign_area_editor}" do
         it "returns just that submission" do
-          @submission.update_attributes(created_at: JournalSettings.days_to_assign_area_editor.days.ago)
+          @submission.update_attributes(created_at: (JournalSettings.days_to_assign_area_editor + 0.1).days.ago)
           expect(Submission.area_editor_assignment_reminder_needed).to match_array([@submission])
         end
       end
       
       context "when one submission has no area editor, another has an area editor, both have been waiting #{JournalSettings.days_to_assign_area_editor}" do
         it "returns just the first submission" do
-          @submission.update_attributes(created_at: JournalSettings.days_to_assign_area_editor.days.ago)
-          @submission_assigned_to_area_editor.update_attributes(created_at: JournalSettings.days_to_assign_area_editor.days.ago)
+          @submission.update_attributes(created_at: (JournalSettings.days_to_assign_area_editor + 0.1).days.ago)
+          @submission_assigned_to_area_editor.update_attributes(created_at: (JournalSettings.days_to_assign_area_editor + 0.1).days.ago)
           expect(Submission.area_editor_assignment_reminder_needed).to match_array([@submission])
         end
       end
@@ -719,7 +719,6 @@ describe Submission do
           @submission.update_attributes(created_at: JournalSettings.days_to_assign_area_editor.days.ago)
           @submission_assigned_to_area_editor.update_attributes(created_at: JournalSettings.days_to_assign_area_editor.days.ago)
           
-          create(:managing_editor)
           NotificationMailer.remind_managing_editors_assignment_overdue(@submission).save_and_deliver
         end
 
@@ -729,11 +728,10 @@ describe Submission do
       end
       
       context "when one submission has no area editor, another has an area editor, both have been waiting #{JournalSettings.days_to_assign_area_editor}, a reminder has been sent for the first but more than 1 day ago" do
-        before(:each) do
-          @submission.update_attributes(created_at: JournalSettings.days_to_assign_area_editor.days.ago)
-          @submission_assigned_to_area_editor.update_attributes(created_at: JournalSettings.days_to_assign_area_editor.days.ago)
+        before do
+          @submission.update_attributes(created_at: (JournalSettings.days_to_assign_area_editor + 0.1).days.ago)
+          @submission_assigned_to_area_editor.update_attributes(created_at: (JournalSettings.days_to_assign_area_editor + 0.1).days.ago)
           
-          create(:managing_editor)
           NotificationMailer.remind_managing_editors_assignment_overdue(@submission)
                             .save_and_deliver
                             .update_attributes(created_at: 1.1.days.ago)
@@ -753,10 +751,10 @@ describe Submission do
         end
       end
       
-      context "when four submissions have decisions not yet approved, two of those awaiting approval JournalSettings.days_to_remind_overdue_decision_approval days" do
-        before(:each) do
-          @submission_with_reject_decision_not_yet_approved.update_attributes(decision_entered_at: JournalSettings.days_to_remind_overdue_decision_approval.days.ago)
-          @submission_with_minor_revisions_decision_not_yet_approved.update_attributes(decision_entered_at: JournalSettings.days_to_remind_overdue_decision_approval.days.ago)
+      context "when four submissions have decisions not yet approved, two of those awaiting approval #{JournalSettings.days_to_remind_overdue_decision_approval} days" do
+        before do
+          @submission_with_reject_decision_not_yet_approved.update_attributes(decision_entered_at: (JournalSettings.days_to_remind_overdue_decision_approval + 0.1).days.ago)
+          @submission_with_minor_revisions_decision_not_yet_approved.update_attributes(decision_entered_at: (JournalSettings.days_to_remind_overdue_decision_approval + 0.1).days.ago)
         end
         
         it "returns those two submissions" do
@@ -764,12 +762,11 @@ describe Submission do
         end
       end
       
-      context "when four submissions have decisions not yet approved, two of those awaiting approval JournalSettings.days_to_remind_overdue_decision_approval days, a reminder has been sent for one of those" do
+      context "when four submissions have decisions not yet approved, two of those awaiting approval #{JournalSettings.days_to_remind_overdue_decision_approval} days, a reminder has been sent for one of those" do
         before do
-          @submission_with_reject_decision_not_yet_approved.update_attributes(decision_entered_at: JournalSettings.days_to_remind_overdue_decision_approval.days.ago)
-          @submission_with_minor_revisions_decision_not_yet_approved.update_attributes(decision_entered_at: JournalSettings.days_to_remind_overdue_decision_approval.days.ago)
+          @submission_with_reject_decision_not_yet_approved.update_attributes(decision_entered_at: (JournalSettings.days_to_remind_overdue_decision_approval + 0.1).days.ago)
+          @submission_with_minor_revisions_decision_not_yet_approved.update_attributes(decision_entered_at: (JournalSettings.days_to_remind_overdue_decision_approval + 0.1).days.ago)
           
-          create(:managing_editor)
           NotificationMailer.remind_managing_editors_decision_approval_overdue(@submission_with_minor_revisions_decision_not_yet_approved).save_and_deliver
         end
         
@@ -778,12 +775,11 @@ describe Submission do
         end
       end
       
-      context "when four submissions have decisions not yet approved, two of those awaiting approval JournalSettings.days_to_remind_overdue_decision_approval days, a reminder has been sent for one of those, but more than 1 day ago" do
+      context "when four submissions have decisions not yet approved, two of those awaiting approval #{JournalSettings.days_to_remind_overdue_decision_approval} days, a reminder has been sent for one of those, but more than 1 day ago" do
         before do
-          @submission_with_reject_decision_not_yet_approved.update_attributes(decision_entered_at: JournalSettings.days_to_remind_overdue_decision_approval.days.ago)
-          @submission_with_minor_revisions_decision_not_yet_approved.update_attributes(decision_entered_at: JournalSettings.days_to_remind_overdue_decision_approval.days.ago)
+          @submission_with_reject_decision_not_yet_approved.update_attributes(decision_entered_at: (JournalSettings.days_to_remind_overdue_decision_approval + 0.1).days.ago)
+          @submission_with_minor_revisions_decision_not_yet_approved.update_attributes(decision_entered_at: (JournalSettings.days_to_remind_overdue_decision_approval + 0.1).days.ago)
           
-          create(:managing_editor)
           NotificationMailer.remind_managing_editors_decision_approval_overdue(@submission_with_minor_revisions_decision_not_yet_approved)
                             .save_and_deliver
                             .update_attributes(created_at: 1.1.days.ago)
@@ -1015,7 +1011,7 @@ describe Submission do
         submission_with_two_agreed_referee_assignments.referee_assignments.reverse.each_with_index do |ra, i|
           ra.update_attributes(report_due_at: i.days.from_now)
         end        
-        third = submission_with_two_agreed_referee_assignments.referee_assignments[3] # first and second are declined/canceled
+        third = submission_with_two_agreed_referee_assignments.referee_assignments[3].reload # first and second are declined/canceled
         
         expect(submission_with_two_agreed_referee_assignments.last_report_due_at).to eq(third.report_due_at)
       end
@@ -1026,7 +1022,7 @@ describe Submission do
         submission_with_two_completed_referee_assignments.referee_assignments.each_with_index do |ra, i|
           ra.update_attributes(report_completed_at: i.days.ago)
         end
-        first_assignment = submission_with_two_completed_referee_assignments.referee_assignments.first
+        first_assignment = submission_with_two_completed_referee_assignments.referee_assignments.first.reload
         
         expect(submission_with_two_completed_referee_assignments.last_report_completed_at).to eq(first_assignment.report_completed_at)
       end
@@ -1231,8 +1227,6 @@ describe Submission do
   
   describe SubmissionReminders do
   
-    let!(:managing_editor) { create(:managing_editor) }
-  
     describe ".send_overdue_internal_review_reminders" do
     
       context "when no internal reviews are overdue" do
@@ -1250,8 +1244,8 @@ describe Submission do
       context "when one internal review is overdue" do
         before do
           @submission = create(:submission_assigned_to_area_editor)
-          created_at = Time.current - JournalSettings.days_for_initial_review.days - JournalSettings.days_to_remind_area_editor.days - 1.second
-          @submission.area_editor_assignment.update_attributes(created_at: created_at)
+          updated_at = Time.current - JournalSettings.days_for_initial_review.days - JournalSettings.days_to_remind_area_editor.days - 1.second
+          @submission.area_editor_assignment.update_attributes(updated_at: updated_at)
           Submission.send_overdue_internal_review_reminders
         end
       
@@ -1268,12 +1262,12 @@ describe Submission do
       context "when two internal reviews are overdue" do
         before do
           @submission1 = create(:submission_assigned_to_area_editor)
-          created_at = Time.current - JournalSettings.days_for_initial_review.days - JournalSettings.days_to_remind_area_editor.days - 1.second
-          @submission1.area_editor_assignment.update_attributes(created_at: created_at)
+          updated_at = Time.current - JournalSettings.days_for_initial_review.days - JournalSettings.days_to_remind_area_editor.days - 1.second
+          @submission1.area_editor_assignment.update_attributes(updated_at: updated_at)
 
           @submission2 = create(:submission_assigned_to_area_editor)
-          created_at = Time.current - JournalSettings.days_for_initial_review.days - JournalSettings.days_to_remind_area_editor.days - 1.second
-          @submission2.area_editor_assignment.update_attributes(created_at: created_at)
+          updated_at = Time.current - JournalSettings.days_for_initial_review.days - JournalSettings.days_to_remind_area_editor.days - 1.second
+          @submission2.area_editor_assignment.update_attributes(updated_at: updated_at)
         
           Submission.send_overdue_internal_review_reminders
         end

@@ -17,7 +17,7 @@ class SubmissionsController < ApplicationController
   def show
     @submission = Submission.find(params[:id])
     redirect_to archive_path(@submission) if @submission.archived?
-    @referee_assignments = @submission.referee_assignments.where("canceled = ? OR canceled IS NULL", false).includes(:referee)
+    @referee_assignments = active_referee_assignments(@submission)
   end
 
   def edit
@@ -47,8 +47,7 @@ class SubmissionsController < ApplicationController
   end
   
   def download
-    submission = Submission.find(params[:id])
-    send_file submission.manuscript_file.current_path, x_sendfile: true
+    send_file @submission.manuscript_file.current_path, x_sendfile: true
   end
   
   def edit_manuscript_file
@@ -60,6 +59,7 @@ class SubmissionsController < ApplicationController
       FileUtils.copy(path, path + '.bak') if File.exist?(path)
       if @submission.update_attributes(manuscript_file: params[:submission][:manuscript_file])
         flash.now[:success] = "Manuscript file replaced."
+        @referee_assignments = active_referee_assignments(@submission)
         render :show
       else
         flash.now[:error] = "Something went wrong replacing the file."
@@ -118,6 +118,9 @@ class SubmissionsController < ApplicationController
       else
         params[:submission].permit()
       end
-    end  
+    end
 
+    def active_referee_assignments(submission)
+      submission.referee_assignments.where("canceled = ? OR canceled IS NULL", false).includes(:referee)
+    end
 end

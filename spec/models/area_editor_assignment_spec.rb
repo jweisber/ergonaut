@@ -2,10 +2,11 @@ require 'spec_helper'
 
 describe AreaEditorAssignment do
   
+  let!(:managing_editor) { create(:managing_editor) }
   let(:area_editor_assignment) { build(:area_editor_assignment) }  
   subject{ area_editor_assignment }
   
-  
+
   # valid factory
   
   it { should be_valid }
@@ -14,7 +15,6 @@ describe AreaEditorAssignment do
   # callback behaviours
   
   describe "after saving" do
-    before { create(:managing_editor) }
     context "when the assignment is new" do
       it "emails the new area editor" do
         expect(NotificationMailer).to receive(:notify_ae_new_assignment).and_call_original

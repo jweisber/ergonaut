@@ -401,7 +401,7 @@ describe "SubmissionsPages" do
             submission.referee_assignments.where(report_completed: true).each do |assignment|
               email = find_email(subject_begins: 'Outcome & Thank You', to: assignment.referee.email, cc: [area_editor.email, managing_editor.email])
               expect(email).not_to be_nil
-              expect(email.attachments.size).to eq(2)
+              expect(email.attachments.size).to eq(1)
               email.attachments.each do |attachment|
                 expect(attachment.content_type).to start_with('application/pdf')
                 expect(attachment.filename).to match(/Referee\s[A-Z]\.pdf/)

@@ -22,7 +22,7 @@ module SubmissionFinders
   Submission.class_eval do
     scope :sent_out_for_review, -> { where('submissions.id IN (SELECT submission_id FROM referee_assignments WHERE canceled != ?)', true) }
     scope :at_least_one_agreed_assignment, -> { where('EXISTS (SELECT 1 FROM referee_assignments AS ra WHERE submissions.id = ra.submission_id AND ra.agreed = ? AND ra.canceled = ?)', true, false) }
-    scope :all_reports_completed, -> { where('NOT EXISTS (SELECT 1 FROM referee_assignments AS ra WHERE submissions.id = ra.submission_id AND ra.agreed != ? AND ra.canceled = ? AND ra.report_completed = ?)', false, false, false) }
+    scope :all_reports_completed, -> { where('NOT EXISTS (SELECT 1 FROM referee_assignments AS ra WHERE submissions.id = ra.submission_id AND (ra.agreed = ? OR ra.agreed IS NULL) AND ra.canceled = ? AND ra.report_completed = ?)', true, false, false) }
   end
   
   def complete_reports_notification_needed
