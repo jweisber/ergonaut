@@ -7,9 +7,9 @@ class ArchivesController < ApplicationController
   
   def index
     if current_user.managing_editor?
-      @submissions = Submission.where(archived: true).includes(:area).page(params[:page])
+      @submissions = Submission.order("updated_at DESC").where(archived: true).includes(:area).page(params[:page])
     else
-      @submissions = current_user.ae_submissions.where(archived: true).includes(:area).page(params[:page])
+      @submissions = current_user.ae_submissions.order("updated_at DESC").where(archived: true).includes(:area).page(params[:page])
     end
   end
 
