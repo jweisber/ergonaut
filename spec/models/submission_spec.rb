@@ -425,7 +425,7 @@ describe Submission do
     end
   end
   
-  describe "submit_revision" do
+  describe "#submit_revision" do
     let(:major_revisions_requested_submission) { create(:major_revisions_requested_submission) }
     let(:revised_submission) { Submission.last}
     let(:params) { ActionController::Parameters.new({ title: 'Revised Version', 

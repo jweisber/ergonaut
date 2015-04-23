@@ -189,9 +189,9 @@ class RefereeAssignment < ActiveRecord::Base
   end
   
   def cancel!
-    self.canceled = true
-    if self.save && !self.declined?
+    if self.update_attributes(canceled: true)
       NotificationMailer.cancel_referee_assignment(self).save_and_deliver unless self.declined?
+      true
     else
       false
     end

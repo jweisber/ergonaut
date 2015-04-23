@@ -21,7 +21,7 @@ describe "SubmissionsPages" do
   let(:minor_revisions_requested_submission) { create(:minor_revisions_requested_submission) }
   let(:first_revision_submission) { create(:first_revision_submission) }
   let(:second_revision_submission) { create(:second_revision_submission) }
-  
+
   let(:active_subumissions) do
     [ new_submission,
       submission_sent_for_review_without_area_editor,
@@ -35,7 +35,7 @@ describe "SubmissionsPages" do
       first_revision_submission,
       second_revision_submission ]
   end
-  
+
   let(:inactive_submissions) do
     [ submission_withdrawn,
       desk_rejected_submission,
@@ -43,7 +43,7 @@ describe "SubmissionsPages" do
       major_revisions_requested_submission,
       minor_revisions_requested_submission ]
   end
-  
+
   context "when signed in as a managing editor" do
     before { valid_sign_in(managing_editor) }
     
@@ -363,6 +363,9 @@ describe "SubmissionsPages" do
         
         context "decision = '#{Decision::MAJOR_REVISIONS}'" do
           before do
+            @open_assignment1 = create(:referee_assignment, submission: submission_with_major_revisions_decision_not_yet_approved)
+            @open_assignment2 = create(:agreed_referee_assignment, submission: submission_with_major_revisions_decision_not_yet_approved)
+            submission_with_major_revisions_decision_not_yet_approved.save
             visit edit_submission_path(submission_with_major_revisions_decision_not_yet_approved)
             check 'submission_decision_approved'
             click_button 'Save'
@@ -410,6 +413,18 @@ describe "SubmissionsPages" do
               expect(SentEmail.all).to include_record(subject_begins: 'Outcome & Thank You', to: assignment.referee.email, cc: area_editor.email)
               expect(SentEmail.all).to include_record(subject_begins: 'Outcome & Thank You', to: assignment.referee.email, cc: managing_editor.email)
             end
+          end
+          
+          it "cancels any open referee assignments (cc editors)" do
+            submission_with_major_revisions_decision_not_yet_approved.reload
+            
+            expect(@open_assignment1.reload.canceled).to eq(true)
+            expect(deliveries).to include_email(subject_begins: 'Cancelled Referee Request', to: @open_assignment1.referee.email, cc: managing_editor.email)
+            expect(SentEmail.all).to include_record(subject_begins: 'Cancelled Referee Request', to: @open_assignment1.referee.email, cc: managing_editor.email)
+
+            expect(@open_assignment2.reload.canceled).to eq(true)
+            expect(deliveries).to include_email(subject_begins: 'Cancelled Referee Request', to: @open_assignment2.referee.email, cc: managing_editor.email)
+            expect(SentEmail.all).to include_record(subject_begins: 'Cancelled Referee Request', to: @open_assignment2.referee.email, cc: managing_editor.email)
           end
         end
       end
@@ -479,7 +494,7 @@ describe "SubmissionsPages" do
       end
     end
   end
-  
+
   context "when signed in as an area editor" do
     before { valid_sign_in(area_editor) }
     
@@ -758,7 +773,7 @@ describe "SubmissionsPages" do
       end
     end
   end
-  
+
   shared_examples_for "no standard actions are accessible" do |redirect_path|
     
     # index
@@ -819,7 +834,7 @@ describe "SubmissionsPages" do
       end
     end
   end
-  
+
   context "when logged in as an author/referee" do
     before { valid_sign_in(new_submission.author) }
     
@@ -847,7 +862,7 @@ describe "SubmissionsPages" do
       end
     end
   end
-  
+
   context "when not logged in" do
     it_behaves_like "no standard actions are accessible", :signin_path
     

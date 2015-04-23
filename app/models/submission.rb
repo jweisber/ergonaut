@@ -244,8 +244,9 @@ class Submission < ActiveRecord::Base
         
         NotificationMailer.notify_ae_decision_approved(self).save_and_deliver if self.area_editor
         
-        self.referee_assignments.each do |assignment|          
+        self.referee_assignments.each do |assignment|
           NotificationMailer.notify_re_outcome(assignment).save_and_deliver if assignment.report_completed?
+          assignment.cancel! if (assignment.awaiting_response? || assignment.awaiting_report?)
         end
       end
     end
