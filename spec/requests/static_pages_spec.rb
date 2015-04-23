@@ -2,9 +2,61 @@ require 'spec_helper'
 
 describe "Static pages" do 
   describe "Root Page" do
-    before { visit root_path }
-    subject { page }
-    it { should have_content('About Ergo') }
+    context "when not logged in" do
+      before { visit root_path }
+      subject { page }
+      it { should have_content('About Ergo') }
+    end
+
+    context "when logged in as a managing editor" do
+      before do
+        valid_sign_in(create(:managing_editor))
+        visit root_path
+      end
+
+      it "goes to the submissions index" do
+        expect(page).to have_link('Archives')
+      end
+    end
+
+    context "when logged in as an area editor" do
+      before do
+        valid_sign_in(create(:area_editor))
+        visit root_path
+      end
+
+      it "goes to the submissions index" do
+        expect(page).to have_content('No active submissions')
+      end
+    end
+
+    context "when logged in as an author/referee" do
+
+      context "with an active referee assignment" do
+        before do
+          create(:managing_editor)
+          referee = create(:referee)
+          create(:submission_sent_out_for_review).referee_assignments.first.update_attributes(referee: referee)
+          valid_sign_in(referee)
+          visit root_path
+        end
+
+        it "goes to the submissions index" do
+          expect(page).to have_content('Invited')
+        end
+      end
+
+      context "with no active referee assignment" do
+        before do
+          valid_sign_in(create(:user))
+          visit root_path
+        end
+
+        it "goes to the submissions index" do
+          expect(page).to have_link('Submit a paper')
+        end
+      end
+    end
   end
 
   describe "Guide Page" do

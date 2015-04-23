@@ -93,6 +93,18 @@ Ergonaut::Application.routes.draw do
     end
   end
 
+  root to: 'submissions#index', constraints: lambda { |req|
+    token = req.cookies['remember_token']
+    User.find_by_remember_token(token).editor? if token
+  }
+  root to: 'referee_center#index', constraints: lambda { |req|
+    token = req.cookies['remember_token']
+    User.find_by_remember_token(token).has_pending_referee_assignments? if token
+  }
+  root to: 'author_center#index', constraints: lambda { |req|
+    token = req.cookies['remember_token']
+    !User.find_by_remember_token(token).has_pending_referee_assignments? if token
+  }
   root to: 'static_pages#about'
 
   match '/',                to: 'static_pages#index'
