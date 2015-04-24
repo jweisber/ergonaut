@@ -127,7 +127,7 @@ module SubmissionStatusCheckers
 
   def display_status_for_editors
     if review_approved?
-      "Decision approved: #{decision}"
+      "#{decision}"
     elsif review_complete?
       'Decision needs approval'
     elsif post_external_review?

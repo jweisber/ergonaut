@@ -113,7 +113,7 @@ describe "SubmissionsPages" do
       
       it "displays information about the referee assignments" do
         @submission.referee_assignments.each do |assignment|
-          expect(page).to have_link('Delete', href: submission_referee_assignment_path(@submission, assignment))
+          expect(page).to have_link('Cancel', href: submission_referee_assignment_path(@submission, assignment))
           expect(page).to have_content(assignment.referee.full_name)
           expect(page).to have_content(assignment.date_assigned_pretty)
           expect(page).to have_content(assignment.date_agreed_pretty)
@@ -126,9 +126,9 @@ describe "SubmissionsPages" do
         end
       end
       
-      it "cancels a referee assignment when 'Delete' is clicked" do
+      it "cancels a referee assignment when 'Cancel' is clicked" do
         assignment = @submission.referee_assignments.sample
-        delete_link = first(:link, 'Delete', href: submission_referee_assignment_path(@submission, assignment))
+        delete_link = first(:link, 'Cancel', href: submission_referee_assignment_path(@submission, assignment))
         delete_link.click
         expect(assignment.reload).to be_canceled
         expect(page).not_to have_content(assignment.referee.full_name)
@@ -567,7 +567,7 @@ describe "SubmissionsPages" do
       
       it "displays information about the referee assignments" do
         @submission.referee_assignments.each do |assignment|
-          expect(page).to have_link('Delete', href: submission_referee_assignment_path(@submission, assignment))
+          expect(page).to have_link('Cancel', href: submission_referee_assignment_path(@submission, assignment))
           expect(page).to have_content(assignment.referee.full_name)
           expect(page).to have_content(assignment.date_assigned_pretty)
           expect(page).to have_content(assignment.date_agreed_pretty)
@@ -580,9 +580,9 @@ describe "SubmissionsPages" do
         end
       end
       
-      it "cancels a referee assignment when 'Delete' is clicked" do
+      it "cancels a referee assignment when 'Cancel' is clicked" do
         assignment = @submission.referee_assignments.sample
-        delete_link = first(:link, 'Delete', href: submission_referee_assignment_path(@submission, assignment))
+        delete_link = first(:link, 'Cancel', href: submission_referee_assignment_path(@submission, assignment))
         delete_link.click
         expect(assignment.reload).to be_canceled
         expect(page).not_to have_content(assignment.referee.full_name)
