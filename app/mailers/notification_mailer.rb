@@ -96,6 +96,8 @@ class NotificationMailer < ActionMailer::Base
     recipients = [@submission.area_editor]
     @recipients_list = name_list(recipients)
         
+    attach_manuscript(@submission)
+
     message = mail(to: mailto_string(recipients), subject: "New Assignment: \"#{@submission.title}\"")
   end
   
@@ -218,7 +220,7 @@ class NotificationMailer < ActionMailer::Base
     reply_to = "\"Ergo Editors\" <#{JournalSettings.journal_email}>"
     reply_to += ", \"#{@area_editor.full_name}\" <#{@area_editor.email}>" if @area_editor
 
-    attach_manuscript(@referee_assignment)
+    attach_manuscript(@referee_assignment.submission)
 
     message = mail(reply_to: reply_to, to: mailto_string(recipients), subject: "Referee Request: \"#{@referee_assignment.submission.title}\"")
   end
@@ -391,8 +393,8 @@ class NotificationMailer < ActionMailer::Base
       submission.area_editor ? [submission.area_editor] : managing_editors
     end
     
-    def attach_manuscript(referee_assignment)
-      path = referee_assignment.submission.manuscript_file.current_path
+    def attach_manuscript(submission)
+      path = submission.manuscript_file.current_path
       ext = File.extname(path)
       attachments["Submission#{ext}"] = File.read(path) if File.exists?(path)
     end

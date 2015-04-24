@@ -257,7 +257,11 @@ describe "SubmissionsPages" do
         end
         
         it "emails a notification to the area editor" do
-          expect(deliveries).to include_email(subject_begins: 'New Assignment', to: area_editor.email, cc: managing_editor.email)
+          email = find_email(subject_begins: 'New Assignment', to: area_editor.email, cc: managing_editor.email)
+          expect(email).not_to be_nil
+          expect(email.attachments.size).to eq(1)
+          expect(email.attachments.first.content_type).to start_with('application/pdf')
+          expect(email.attachments.first.filename).to eq('Submission.pdf')
           expect(SentEmail.all).to include_record(subject_begins: 'New Assignment', to: area_editor.email, cc: managing_editor.email)
         end
         
