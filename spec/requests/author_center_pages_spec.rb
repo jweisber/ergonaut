@@ -47,7 +47,7 @@ describe "Author Center" do
         end
         
         it "has a working link to the manuscript" do
-          page.all(:link, 'Download').last.click
+          click_link 'Valid Test Submission'
           expect(page.response_headers['Content-Type']).to eq 'application/pdf'
         end
         
@@ -160,7 +160,7 @@ describe "Author Center" do
       end
     end
     
-    # index # TODO: add tests of table-row coloring functionality
+    # index
     describe "listing submissions" do
       context "with one fresh submission" do
         before do
@@ -169,9 +169,35 @@ describe "Author Center" do
         end
         
         it "displays only the fresh submission" do
-          expect(page).to have_content(@fresh_submission.title)
-          expect(page).not_to have_content(desk_rejected_submission.title)
-          expect(page).not_to have_content(accepted_submission.title)
+          bordered_tables = all('table.table-bordered')
+          expect(bordered_tables.size).to eq(1)
+          
+          within bordered_tables.first do
+            rows = all('tr')
+            expect(rows.size).to eq(1)
+            
+            within rows.first do
+              cells = all('td')
+              expect(cells.size).to eq(2)
+              
+              within cells.first do
+                expect(page).to have_selector('dd', text: @fresh_submission.title)
+                expect(page).to have_selector('dd', text: @fresh_submission.area.name)
+                expect(page).to have_selector('dd', text: @fresh_submission.date_submitted_pretty)
+                expect(page).to have_link('Withdraw')
+              end
+              
+              within cells.last do
+                expect(page).to have_content(@fresh_submission.display_status_for_authors)
+              end
+            end
+            
+          end
+        end
+        
+        it "has a working download link to the manuscript file" do
+          click_link @fresh_submission.title
+          expect(page.response_headers['Content-Type']).to eq 'application/pdf'
         end
       end
       
@@ -183,23 +209,139 @@ describe "Author Center" do
         end
         
         it "displays only the fresh submission" do
-          expect(page).to have_content(@fresh_submission.title)
           expect(page).not_to have_content(@desk_rejected_submission.title)
+          
+          bordered_tables = all('table.table-bordered')
+          expect(bordered_tables.size).to eq(1)
+          
+          within bordered_tables.first do
+            rows = all('tr')
+            expect(rows.size).to eq(1)
+            
+            within rows.first do
+              cells = all('td')
+              expect(cells.size).to eq(2)
+              
+              within cells.first do
+                expect(page).to have_selector('dd', text: @fresh_submission.title)
+                expect(page).to have_selector('dd', text: @fresh_submission.area.name)
+                expect(page).to have_selector('dd', text: @fresh_submission.date_submitted_pretty)
+                expect(page).to have_link('Withdraw')
+              end
+              
+              within cells.last do
+                expect(page).to have_content(@fresh_submission.display_status_for_authors)
+              end
+            end
+            
+          end
         end
       end
       
       context "with one fresh submission, one under review, and one accepted" do
         before do
           @fresh_submission = create(:submission, author: user)
-          @under_review_submission = create(:submission_sent_out_for_review, author: user)
+          @under_review_submission = create(:submission_with_one_completed_referee_assignment_one_open_request, author: user)
+          @under_review_submission.referee_assignments.first.update_attributes(report_completed_at: 3.days.ago)
           @accepted_submission = create(:desk_rejected_submission, author: user)
           visit author_center_index_path
         end
         
         it "displays only the fresh and under review submissions" do
-          expect(page).to have_content(@fresh_submission.title)
-          expect(page).to have_content(@under_review_submission.title)
           expect(page).not_to have_content(@accepted_submission.title)
+          
+          bordered_tables = all('table.table-bordered')
+          expect(bordered_tables.size).to eq(2)
+          
+          within bordered_tables.first do
+            rows = all('tr')
+            expect(rows.size).to eq(1)
+            
+            within rows.first do
+              cells = all('td')
+              expect(cells.size).to eq(2)
+              
+              within cells.first do
+                expect(page).to have_selector('dd', text: @fresh_submission.title)
+                expect(page).to have_selector('dd', text: @fresh_submission.area.name)
+                expect(page).to have_selector('dd', text: @fresh_submission.date_submitted_pretty)
+                expect(page).to have_link('Withdraw')
+              end
+              
+              within cells.last do
+                expect(page).to have_content(@fresh_submission.display_status_for_authors)
+              end
+            end
+          end
+          
+          within bordered_tables.last do
+            rows = all('tr')
+            expect(rows.size).to eq(4)
+            
+            within rows[0] do
+              cells = all('td')
+              expect(cells.size).to eq(2)
+              
+              within cells.first do
+                expect(page).to have_selector('dd', text: @under_review_submission.title)
+                expect(page).to have_selector('dd', text: @under_review_submission.area.name)
+                expect(page).to have_selector('dd', text: @under_review_submission.date_submitted_pretty)
+                expect(page).to have_link('Withdraw')
+              end
+              
+              within cells.last do
+                expect(page).to have_content(@under_review_submission.display_status_for_authors)
+              end
+            end
+            
+            within rows[1] do
+              cells = all('td')
+              expect(cells[0]).to have_content('Referee')
+              expect(cells[1]).to have_content('Contacted')
+              expect(cells[2]).to have_content('Responded')
+              expect(cells[3]).to have_content('Agreed?')
+              expect(cells[4]).to have_content('Report due')
+              expect(cells[5]).to have_content('Completed')
+            end
+            
+            within rows[2] do
+              assignment = @under_review_submission.referee_assignments.first
+
+              cells = all('td')
+              expect(cells[0]).to have_content(assignment.referee_letter)
+              expect(cells[1]).to have_content(assignment.date_assigned_pretty)
+              expect(cells[2]).to have_content(assignment.date_agreed_pretty)
+              expect(cells[3]).to have_content('Y')
+              expect(cells[4]).to have_content(assignment.date_due_pretty)
+              expect(cells[5]).to have_link(assignment.date_completed_pretty)
+            end
+            
+            within rows[3] do
+              assignment = @under_review_submission.referee_assignments.last
+
+              cells = all('td')
+              expect(cells[0]).to have_content(assignment.referee_letter)
+              expect(cells[1]).to have_content(assignment.date_assigned_pretty)
+              expect(cells[2]).to have_content("\u2014")
+              expect(cells[3]).to have_content("\u2014")
+              expect(cells[4]).to have_content("\u2014")
+              expect(cells[5]).to have_content("\u2014")
+            end
+          end 
+        end
+        
+        it "has a working link to the completed report, suitable anonymized" do
+          completed_assignment = @under_review_submission.referee_assignments.first
+          click_link completed_assignment.date_completed_pretty
+          
+          expect(page).to have_link(@under_review_submission.title)
+          expect(page).to have_content("Referee #{completed_assignment.referee_letter}")
+          expect(page).not_to have_content('To the editors')
+          expect(page).not_to have_content(completed_assignment.comments_for_editor)
+          expect(page).to have_content('To the author')
+          expect(page).to have_content(completed_assignment.comments_for_author)
+          expect(page).to have_content('Recommendation')
+          expect(page).to have_content(completed_assignment.recommendation)
         end
       end
     end
@@ -213,7 +355,7 @@ describe "Author Center" do
         end
         
         it "says there are no archived submissions" do
-          expect(page).to have_content('No archived submissions')
+          expect(page).to have_content('No past submissions')
         end
       end
       
@@ -225,12 +367,34 @@ describe "Author Center" do
         end
         
         it "displays only the desk rejected submission" do
-          expect(page).to have_content(@desk_rejected_submission.title)
           expect(page).not_to have_content(@fresh_submission.title)
+
+          bordered_tables = all('table.table-bordered')
+          expect(bordered_tables.size).to eq(1)
+          
+          within bordered_tables.first do
+            rows = all('tr')
+            expect(rows.size).to eq(1)
+            
+            within rows.first do
+              cells = all('td')
+              expect(cells.size).to eq(2)
+              
+              within cells.first do
+                expect(page).to have_selector('dd', text: @desk_rejected_submission.title)
+                expect(page).to have_selector('dd', text: @desk_rejected_submission.area.name)
+                expect(page).to have_selector('dd', text: @desk_rejected_submission.date_submitted_pretty)
+              end
+              
+              within cells.last do
+                expect(page).to have_content(@desk_rejected_submission.display_status_for_authors)
+              end
+            end
+          end
         end
         
         it "has a working download link to the desk rejected manuscript file" do
-          click_link 'Download'
+          click_link @desk_rejected_submission.title
           expect(page.response_headers['Content-Type']).to eq 'application/pdf'
         end
       end
@@ -239,25 +403,129 @@ describe "Author Center" do
         before do
           @fresh_submission = create(:submission, author: user)
           @accepted_submission = create(:accepted_submission, author: user)
+          @accepted_submission.referee_assignments.first.update_attributes(report_completed_at: 3.days.ago)
+          @accepted_submission.referee_assignments.last.update_attributes(report_completed_at: 3.days.ago)
           @desk_rejected_submission = create(:desk_rejected_submission, author: user)
           visit archives_author_center_index_path
         end
         
-        it "displays only the accepted and desk rejected submissions" do
+        it "does not display the fresh submission" do
           expect(page).not_to have_content(@fresh_submission.title)          
-          expect(page).to have_content(@accepted_submission.title)
-          expect(page).to have_content(@desk_rejected_submission.title)
         end
         
-        it "has working download links to the accepted and rejected manuscript files" do
-          first_link = page.all(:link, 'Download').first
-          second_link = page.all(:link, 'Download').last
-          first_link.click
-          expect(page.response_headers['Content-Type']).to eq 'application/pdf'
-          second_link.click
-          expect(page.response_headers['Content-Type']).to eq 'application/pdf'
+        it "does display the accepted submission" do  
+          bordered_tables = all('table.table-bordered')
+          expect(bordered_tables.size).to eq(2)
+          
+          within bordered_tables.first do
+            rows = all('tr')
+            expect(rows.size).to eq(4)
+            
+            within rows[0] do
+              cells = all('td')
+              expect(cells.size).to eq(2)
+              
+              within cells.first do
+                expect(page).to have_selector('dd', text: @accepted_submission.title)
+                expect(page).to have_selector('dd', text: @accepted_submission.area.name)
+                expect(page).to have_selector('dd', text: @accepted_submission.date_submitted_pretty)
+              end
+              
+              within cells.last do
+                expect(page).to have_content(@accepted_submission.display_status_for_authors)
+              end
+            end
+            
+            within rows[1] do
+              cells = all('td')
+              expect(cells[0]).to have_content('Referee')
+              expect(cells[1]).to have_content('Contacted')
+              expect(cells[2]).to have_content('Responded')
+              expect(cells[3]).to have_content('Agreed?')
+              expect(cells[4]).to have_content('Report due')
+              expect(cells[5]).to have_content('Completed')
+            end
+            
+            within rows[2] do
+              assignment = @accepted_submission.referee_assignments.first
+
+              cells = all('td')
+              expect(cells[0]).to have_content(assignment.referee_letter)
+              expect(cells[1]).to have_content(assignment.date_assigned_pretty)
+              expect(cells[2]).to have_content(assignment.date_agreed_pretty)
+              expect(cells[3]).to have_content('Y')
+              expect(cells[4]).to have_content(assignment.date_due_pretty)
+              expect(cells[5]).to have_link(assignment.date_completed_pretty)
+            end
+            
+            within rows[3] do
+              assignment = @accepted_submission.referee_assignments.last
+
+              cells = all('td')
+              expect(cells[0]).to have_content(assignment.referee_letter)
+              expect(cells[1]).to have_content(assignment.date_assigned_pretty)
+              expect(cells[2]).to have_content(assignment.date_agreed_pretty)
+              expect(cells[3]).to have_content('Y')
+              expect(cells[4]).to have_content(assignment.date_due_pretty)
+              expect(cells[5]).to have_link(assignment.date_completed_pretty)
+            end
+          end
         end
-    
+
+        it "has a working link to the first report on the accepted submission" do
+          assignment = @accepted_submission.referee_assignments.first
+          links = all(:link, text: assignment.date_completed_pretty)
+
+          links[0].click
+          expect(page).to have_link(@accepted_submission.title)
+          expect(page).to have_content("Referee #{assignment.referee_letter}")
+          expect(page).not_to have_content('To the editors')
+          expect(page).not_to have_content(assignment.comments_for_editor)
+          expect(page).to have_content('To the author')
+          expect(page).to have_content(assignment.comments_for_author)
+          expect(page).to have_content('Recommendation')
+          expect(page).to have_content(assignment.recommendation)
+        end
+        
+        it "has a working link to the second report on the accepted submission" do
+          assignment = @accepted_submission.referee_assignments.last
+          links = all(:link, text: assignment.date_completed_pretty)
+          
+          links[1].click
+          expect(page).to have_link(@accepted_submission.title)
+          expect(page).to have_content("Referee #{assignment.referee_letter}")
+          expect(page).not_to have_content('To the editors')
+          expect(page).not_to have_content(assignment.comments_for_editor)
+          expect(page).to have_content('To the author')
+          expect(page).to have_content(assignment.comments_for_author)
+          expect(page).to have_content('Recommendation')
+          expect(page).to have_content(assignment.recommendation)
+        end
+        
+        it "does display the desk rejected submission" do
+          bordered_tables = all('table.table-bordered')
+          expect(bordered_tables.size).to eq(2)
+          
+          within bordered_tables.last do
+            rows = all('tr')
+            expect(rows.size).to eq(1)
+            
+            within rows.first do
+              cells = all('td')
+              expect(cells.size).to eq(2)
+              
+              within cells.first do
+                expect(page).to have_selector('dd', text: @desk_rejected_submission.title)
+                expect(page).to have_selector('dd', text: @desk_rejected_submission.area.name)
+                expect(page).to have_selector('dd', text: @desk_rejected_submission.date_submitted_pretty)
+              end
+              
+              within cells.last do
+                expect(page).to have_content(@desk_rejected_submission.display_status_for_authors)
+              end
+            end
+          end
+        end
       end
     end
     
@@ -293,9 +561,7 @@ describe "Author Center" do
         end
         
         it "no longer lists the submission" do
-          within('table') do
-            expect(page).not_to have_content(@fresh_submission.title)
-          end
+          expect(page).to have_content('No active submissions')
         end
       end
       
@@ -335,9 +601,7 @@ describe "Author Center" do
         end
         
         it "no longer lists the submission" do
-          within('table') do
-            expect(page).not_to have_content(@submission_under_review.title)
-          end
+          expect(page).to have_content 'No active submissions'
         end
       end
     end

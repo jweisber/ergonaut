@@ -1,51 +1,14 @@
-<table class="table table-striped table-hover">
-  <thead>
-    <tr>
-      <th>Subm. #</th>
-      <th>Title</th>
-			<th>Area</th>
-      <th>Submitted</th>
-      <th>Status</th>
-			<th></th>
-			<th></th>
-    </tr>
-  </thead>
-  <tbody>
-	<% @submissions.each do |s| %>
-    <tr>  
-      <td class="ellips15"><%= s.id.to_s %></td>  
-      <td class="ellips15"><%= s.title %></td>
-			<td class="ellips15"><%= s.area.short_name %></td>  
-      <td class="ellips15"><%= s.date_submitted_pretty %></td>
-      <td class="ellips15">
-				<% if s.needs_revision? %>
-					<%= link_to 'Needs revision', new_author_center_revision_path(s) %>
-				<% else %>
-					<%= s.display_status_for_authors %>
-				<% end %>
-			</td> 
-			<td class="ellips15">
-				<%= link_to "Download", s.manuscript_file.to_s, target: "_blank" %>
-			</td>
-			<td class="ellips15"><%= link_to "Withdraw", withdraw_author_center_path(s.id), 
-				confirm: "Are you sure you want to withdraw this submission from consideration?" %></td>
-    </tr>
-	<% end %>
-	<% if @submissions.length < 1 %>
-		<tr>
-			<td colspan="10" style="text-align: center;">
-				<span class="muted"><em>No active submissions</em></span>
-			</td>
-		</tr>
-	<% end %>
-  </tbody>  
-</table>
+<h1>Submissions in Review</h1>
+<br />
+
+<%= render 'submissions_table' %>
+
+<br />
 
 <div style="text-align: center; margin: 0px 0px 10px 0px;">
 	<%= link_to "Submit a paper", new_author_center_path, class: "btn btn-primary" %>
 </div>
 
-
 <div class="center" style="text-align: center">
-	<%= link_to "View previous submissions", archives_author_center_index_path %>
+	<%= link_to "Past submissions", archives_author_center_index_path %>
 </div>

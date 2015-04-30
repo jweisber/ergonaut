@@ -1,7 +1,7 @@
 class RefereeAssignmentsController < ApplicationController
   
   before_filter :assigned_area_editor_or_managing_editor, only: [:new, :select_existing_user, :register_new_user, :create, :agree_on_behalf, :decline_on_behalf, :destroy]
-  before_filter :assigned_referee_or_assigned_area_editor_or_managing_editor, only: [:show, :edit, :update, :download_attachment_for_editor, :download_attachment_for_author]
+  before_filter :author_or_assigned_referee_or_assigned_area_editor_or_managing_editor, only: [:show, :edit, :update, :download_attachment_for_editor, :download_attachment_for_author]
   before_filter :bread_crumbs
   
   def new
@@ -116,11 +116,11 @@ class RefereeAssignmentsController < ApplicationController
       end
     end
     
-    def assigned_referee_or_assigned_area_editor_or_managing_editor
+    def author_or_assigned_referee_or_assigned_area_editor_or_managing_editor
       assignment = RefereeAssignment.find(params[:id])
       submission = assignment.submission
       
-      unless current_user == assignment.referee || current_user == submission.area_editor || current_user.managing_editor?
+      unless current_user == submission.author || current_user == assignment.referee || current_user == submission.area_editor || current_user.managing_editor?
         redirect_to security_breach_path
       end  
     end

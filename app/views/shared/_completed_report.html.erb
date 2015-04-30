@@ -1,13 +1,20 @@
 <div class="well">
   <legend>
-    <%= "#{@referee_assignment.referee.full_name}'s review" %>
+		<% if current_user.editor? %>
+			<%= "#{@referee_assignment.referee.full_name}'s review" %>
+		<% else %>
+			Referee <%= "#{@referee_assignment.referee_letter}" %>
+		<% end %>
 	</legend>
 	<dl class="dl-horizontal">
+			<% if current_user.editor? %>
 	    <dt>
 	      To the editors
 			</dt>
 	    <dd>
-	      <%= simple_format(@referee_assignment.comments_for_editor) %>
+				<% unless @referee_assignment.comments_for_editor.blank? %>
+	      	<%= simple_format(@referee_assignment.comments_for_editor) %>
+				<% end %>
 				<% if @attachment_for_editor.url %>
 					<%= link_to fa_icon('file-text') +
 											' ' + 
@@ -15,11 +22,14 @@
 											@attachment_for_editor.url, target: '_blank' %>
 				<% end %>
 	    </dd>
+			<% end %>
 			<dt>
 				To the author(s)
 			</dt>
 			<dd>
-				<%= simple_format(@referee_assignment.comments_for_author) %>
+				<% unless @referee_assignment.comments_for_author.blank? %>
+	      	<%= simple_format(@referee_assignment.comments_for_author) %>
+				<% end %>
 				<% if @attachment_for_author.url %>
 					<%= link_to fa_icon('file-text') + 
 											' ' + 

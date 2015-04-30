@@ -72,14 +72,21 @@ module ApplicationHelper
         @bread_crumbs.push BreadCrumb.new("Invitation to review submission \##{params[:submission_id]}", submission_referee_assignment_path(params[:id]))
       elsif action_name == "show"
         @submission = Submission.find(params[:submission_id]) if params[:submission_id]
+        @submission = Submission.find(params[:author_center_id]) if params[:author_center_id]
         @submission = Submission.find(params[:archive_id]) if params[:archive_id]
         if @submission.archived?
-          #@bread_crumbs.push BreadCrumb.new("Review", submissions_path)
-          @bread_crumbs.push BreadCrumb.new("Archives", archives_path) unless action_name == 'index'
-          @bread_crumbs.push BreadCrumb.new("Submission \##{params[:archive_id]}", archive_path(params[:archive_id]))
+          if params[:archive_id]
+            #@bread_crumbs.push BreadCrumb.new("Review", submissions_path)
+            @bread_crumbs.push BreadCrumb.new("Archives", archives_path) unless action_name == 'index'
+            @bread_crumbs.push BreadCrumb.new("Submission \##{params[:archive_id]}", archive_path(params[:archive_id]))
+          else
+            @bread_crumbs.push BreadCrumb.new("Past submissions", archives_author_center_index_path)
+            @bread_crumbs.push BreadCrumb.new("\##{@submission.id}", archives_author_center_index_path)            
+          end
         else
           #@bread_crumbs.push BreadCrumb.new("Review", submissions_path) unless action_name == 'index'
-          @bread_crumbs.push BreadCrumb.new("Submission \##{params[:submission_id]}", submission_path(params[:submission_id]))
+          @bread_crumbs.push BreadCrumb.new("Submission \##{@submission.id}", submission_path(@submission)) if params[:submission_id]
+          @bread_crumbs.push BreadCrumb.new("Submission \##{@submission.id}", author_center_index_path) if params[:author_center_id]
         end
         @bread_crumbs.push BreadCrumb.new("Referee #{RefereeAssignment.find(params[:id]).referee_letter}", submission_referee_assignment_path(params[:id]))
       end
@@ -148,7 +155,7 @@ module ApplicationHelper
     if controller_name == 'author_center'
       #@bread_crumbs.push BreadCrumb.new("Author", author_center_index_path) unless action_name == 'index'
       if action_name == 'archives'
-        @bread_crumbs.push BreadCrumb.new("Previous submissions", archives_author_center_index_path)
+        @bread_crumbs.push BreadCrumb.new("Past submissions", archives_author_center_index_path)
       elsif action_name == 'new' || action_name == 'create'
         @bread_crumbs.push BreadCrumb.new("New submission", new_author_center_path)
       end

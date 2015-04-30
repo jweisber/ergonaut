@@ -38,7 +38,7 @@
 			<% elsif current_user && current_user.author? %>
 	      <div>
 	        <ul class="nav">
-						<% if controller_name.in? ['author_center', 'revisions'] %>
+						<% if controller_name.in? ['author_center', 'revisions', 'referee_assignments'] %>
 							<li class="active">
 						<% else %>
 							<li>

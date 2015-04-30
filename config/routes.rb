@@ -8,6 +8,7 @@ Ergonaut::Application.routes.draw do
       get 'archives'
     end
     resources :revisions, only: [:new, :create]
+    resources :referee_assignments, only: [:show]
   end
   
   resources :referee_center, only: [:index, :show, :edit, :update] do

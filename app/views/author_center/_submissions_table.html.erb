@@ -1,0 +1,76 @@
+<style>
+.table td { text-align: center; }
+.table dd { text-align: left; }
+</style>
+
+<% if @submissions.length > 0 %>
+
+	<% @submissions.each do |s| %>
+	<table class="table table-bordered">
+		<% @referee_assignments = s.referee_assignments.not_canceled %>
+	  <tr>
+			<td width="35%" rowspan="<%= s.referee_assignments.size + 2 %>" style="vertical-align: middle">
+				<dl class="dl-horizontal" style="margin-left: -4em;">
+					<dt>No.</dt>
+						<dd><%= s.id.to_s %></dd>
+					<dt>Title</dt>
+						<dd>
+							<%= link_to s.title, s.manuscript_file.to_s, target: "_blank" %>
+						</dd>
+					<dt>Area</dt>
+						<dd><%= s.area.name %></dd>
+					<dt>Submitted</dt>
+						<dd><%= s.date_submitted_pretty %></dd>
+				</dl>
+				<div class="center">
+					<% unless s.archived %>
+					<%= link_to "Withdraw",
+											withdraw_author_center_path(s.id), 
+											class: 'btn btn-danger btn-mini',
+											confirm: confirm_withdraw_message %>
+					<% end %>
+				</div>
+			</td>
+			<td colspan="6" style="vertical-align: middle">
+				<strong>Status</strong>:
+				<% if s.needs_revision? %>
+					<%= link_to 'Needs revision', new_author_center_revision_path(s) %>
+				<% else %>
+					<%= s.display_status_for_authors %>
+				<% end %> 
+			</td>
+	  </tr>
+		<% if @referee_assignments.size > 0 %>
+		<tr>
+			<td><strong>Referee</strong></td>
+			<td><strong>Contacted</strong></td>
+			<td><strong>Responded</strong></td>
+			<td><strong>Agreed?</strong></td>
+			<td><strong>Report due</strong></td>
+			<td><strong>Completed</strong></td>
+		</tr>
+		<% end %>
+		<% @referee_assignments.each do |assignment| %>
+			<tr>
+				<td><%= assignment.referee_letter %></td>
+				<td><%= assignment.date_assigned_pretty %></td>
+				<td><%= date_agreed_or_declined(assignment) %></td>
+				<td><%= agreed_y_or_n(assignment) %></td>
+				<td><%= date_due(assignment) %></td>
+				<td><%= report_completed_date_and_link(assignment) %></td>
+			</tr>
+		<% end %>
+	</table>
+	<% end %>
+
+<% else %>
+
+<div class="muted center"><em>
+	<% if action_name == 'archives' %>
+		No past submissions
+	<% else %>
+		No active submissions
+	<% end %>
+</em></div>
+
+<% end %> 
