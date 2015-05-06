@@ -7,14 +7,14 @@
 						To
 					</dt>
 					<dd>
-						<%= @email.to %>
+						<%= linkify_email_list @email.to %>
 					</dd>
 					<% if !@email.cc.blank? %>
 					<dt>
 						Cc
 					</dt>
 					<dd>
-						<%= @email.cc %>
+						<%= linkify_email_list @email.cc %>
 					</dd>
 					<% end %>
 			    <dt>

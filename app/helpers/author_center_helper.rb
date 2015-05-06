@@ -37,4 +37,41 @@ module AuthorCenterHelper
   		"\u2014"
   	end
   end
+
+  def status_for_author_switch(submission)
+    if submission.review_approved?
+      submission.decision
+    elsif submission.review_complete?
+      'Decision submitted, awaiting approval'
+    elsif submission.post_external_review?
+      'Awaiting decision'
+    elsif submission.in_external_review?
+      'External review'
+    elsif submission.in_initial_review?
+      'Initial review<br />An area editor has been assigned and is reviewing your submission.'
+    elsif submission.pre_initial_review?
+      'Awaiting assignment to an area editor'
+    else
+      '\u2014'
+    end
+  end
+
+  def submission_status_for_author(submission)
+    out = status_for_author_switch(submission)
+
+		if submission.decision_approved
+			out += " \u2014 " + pretty_date(submission.decision_entered_at)
+		end
+
+    if submission.area_editor_comments_for_author && submission.area_editor_comments_for_author.length > 0
+      link_to out, '#',
+                   class: 'popover-link',
+                   placement: 'left',
+                   'data-trigger' => 'click',
+                   'data-content' => "<h4>Editor's comments</h4>#{ simple_format(submission.area_editor_comments_for_author) }"
+     else
+       out
+     end
+  end
+
 end

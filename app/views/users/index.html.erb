@@ -41,7 +41,7 @@
   <tr>
     <td><%= link_to user.last_name, user %></td>
 		<td><%= link_to user.first_name, user %></td>		
-    <td><%= user.email %></td>
+    <td><%= mail_to user.email %></td>
 		<td><%= user.role %></td>
 		<% if current_user.managing_editor? %>
 		<td>

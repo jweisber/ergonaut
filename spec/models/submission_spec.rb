@@ -1177,52 +1177,13 @@ describe Submission do
       end
       
       context "when decision is approved" do
-        it "returns 'Decision approved: \#{decision}'" do
-          expect(desk_rejected_submission.display_status_for_editors).to match("Decision approved: #{Decision::REJECT}")
-          expect(major_revisions_requested_submission.display_status_for_editors).to match("Decision approved: #{Decision::MAJOR_REVISIONS}")
+        it "returns the decision" do
+          expect(desk_rejected_submission.display_status_for_editors).to match(Decision::REJECT)
+          expect(major_revisions_requested_submission.display_status_for_editors).to match(Decision::MAJOR_REVISIONS)
         end
       end
     end
     
-    describe "#display_status_for_authors" do
-      context "when awaiting area editor assignment" do
-        it "returns 'Awaiting assignment'" do
-          expect(submission.display_status_for_authors).to eq('Awaiting assignment')
-        end
-      end
-      
-      context "when area editor assigned, no decision entered, no referees assigned" do
-        it "returns 'Initial review'" do
-          expect(submission_assigned_to_area_editor.display_status_for_authors).to eq('Initial review')
-        end
-      end
-      
-      context "when referees assigned but a pending report is incomplete" do
-        it "returns 'External review'" do
-          expect(submission_sent_out_for_review.display_status_for_authors).to eq('External review')
-          expect(submission_with_two_agreed_referee_assignments.display_status_for_authors).to eq('External review')
-        end
-      end
-      
-      context "when enough reports are complete, no decision entered" do
-        it "returns 'Awaiting decision'" do
-          expect(submission_with_two_completed_referee_assignments.display_status_for_authors).to eq('Awaiting decision')
-        end
-      end
-      
-      context "when decision is awaiting approval" do
-        it "returns 'Decision awaiting approval'" do
-          expect(submission_with_major_revisions_decision_not_yet_approved.display_status_for_authors).to eq('Decision awaiting approval')
-        end
-      end
-      
-      context "when decision is approved" do
-        it "returns 'Decision approved: \#{decision}'" do
-          expect(desk_rejected_submission.display_status_for_authors).to match("Decision approved: #{Decision::REJECT}")
-          expect(major_revisions_requested_submission.display_status_for_authors).to match("Decision approved: #{Decision::MAJOR_REVISIONS}")
-        end
-      end
-    end
   end
   
   describe SubmissionReminders do

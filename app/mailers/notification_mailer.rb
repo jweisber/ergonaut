@@ -13,8 +13,8 @@ class NotificationMailer < ActionMailer::Base
     def save_and_deliver(options = {})
       if options[:same_thread] == true || Rails.env.test?
         #begin
-          SentEmail.create_from_message(self)
           self.deliver
+          SentEmail.create_from_message(self)
         #rescue
           #puts "save_and_deliver threw an exception!"
           #raise

@@ -188,7 +188,7 @@ describe "Author Center" do
               end
               
               within cells.last do
-                expect(page).to have_content(@fresh_submission.display_status_for_authors)
+                expect(page).to have_content('Awaiting assignment to an area editor')
               end
             end
             
@@ -230,7 +230,7 @@ describe "Author Center" do
               end
               
               within cells.last do
-                expect(page).to have_content(@fresh_submission.display_status_for_authors)
+                expect(page).to have_content('Awaiting assignment to an area editor')
               end
             end
             
@@ -269,7 +269,7 @@ describe "Author Center" do
               end
               
               within cells.last do
-                expect(page).to have_content(@fresh_submission.display_status_for_authors)
+                expect(page).to have_content('Awaiting assignment to an area editor')
               end
             end
           end
@@ -290,7 +290,7 @@ describe "Author Center" do
               end
               
               within cells.last do
-                expect(page).to have_content(@under_review_submission.display_status_for_authors)
+                expect(page).to have_content('External review')
               end
             end
             
@@ -330,7 +330,7 @@ describe "Author Center" do
           end 
         end
         
-        it "has a working link to the completed report, suitable anonymized" do
+        it "has a working link to the completed report, suitably anonymized" do
           completed_assignment = @under_review_submission.referee_assignments.first
           click_link completed_assignment.date_completed_pretty
           
@@ -342,6 +342,27 @@ describe "Author Center" do
           expect(page).to have_content(completed_assignment.comments_for_author)
           expect(page).to have_content('Recommendation')
           expect(page).to have_content(completed_assignment.recommendation)
+        end
+      end
+
+      context "with one submission that needs revisions" do
+        before do
+          @submission = create(:major_revisions_requested_submission, author: user)
+          visit author_center_index_path
+        end
+
+        it "displays the editor's comments in a popover", js: true do
+          expect(page).not_to have_content 'Editor\'s comments'
+          expect(page).not_to have_content 'Lorem ipsum dolor sit amet'
+          click_link 'Major Revisions'
+          expect(page).to have_content 'Editor\'s comments'
+          expect(page).to have_content 'Lorem ipsum dolor sit amet'
+        end
+
+        it "has a working link to submit a revision" do
+          click_link 'Submit revision'
+          expect(page).to have_content 'Submit a revision'
+          expect(current_path).to eq new_author_center_revision_path(@submission.id)
         end
       end
     end
@@ -358,7 +379,7 @@ describe "Author Center" do
           expect(page).to have_content('No past submissions')
         end
       end
-      
+
       context "with one fresh submission and one desk rejected submission" do
         before do
           @fresh_submission = create(:submission, author: user)
@@ -387,7 +408,7 @@ describe "Author Center" do
               end
               
               within cells.last do
-                expect(page).to have_content(@desk_rejected_submission.display_status_for_authors)
+                expect(page).to have_content(Decision::REJECT)
               end
             end
           end
@@ -397,25 +418,32 @@ describe "Author Center" do
           click_link @desk_rejected_submission.title
           expect(page.response_headers['Content-Type']).to eq 'application/pdf'
         end
+        
+        it "displays the editor's comments on the desk rejected submission in a popover", js: true do
+          expect(page).not_to have_content 'Editor\'s comments'
+          click_link 'Reject'
+          expect(page).to have_content 'Editor\'s comments'
+        end
       end
-      
-      context "with one fresh submission, one accepted, and one desk rejected" do
+
+      context "with one fresh submission, one accepted, and one needing revision" do
         before do
           @fresh_submission = create(:submission, author: user)
           @accepted_submission = create(:accepted_submission, author: user)
           @accepted_submission.referee_assignments.first.update_attributes(report_completed_at: 3.days.ago)
           @accepted_submission.referee_assignments.last.update_attributes(report_completed_at: 3.days.ago)
-          @desk_rejected_submission = create(:desk_rejected_submission, author: user)
+          @major_revisions_requested_submission = create(:major_revisions_requested_submission, author: user)
           visit archives_author_center_index_path
         end
         
-        it "does not display the fresh submission" do
-          expect(page).not_to have_content(@fresh_submission.title)          
+        it "does not display the fresh submission or the one needing revision" do
+          expect(page).not_to have_content(@fresh_submission.title)
+          expect(page).not_to have_content(@major_revisions_requested_submission.title)
         end
         
         it "does display the accepted submission" do  
           bordered_tables = all('table.table-bordered')
-          expect(bordered_tables.size).to eq(2)
+          expect(bordered_tables.size).to eq(1)
           
           within bordered_tables.first do
             rows = all('tr')
@@ -432,7 +460,7 @@ describe "Author Center" do
               end
               
               within cells.last do
-                expect(page).to have_content(@accepted_submission.display_status_for_authors)
+                expect(page).to have_content(Decision::ACCEPT)
               end
             end
             
@@ -502,29 +530,12 @@ describe "Author Center" do
           expect(page).to have_content(assignment.recommendation)
         end
         
-        it "does display the desk rejected submission" do
-          bordered_tables = all('table.table-bordered')
-          expect(bordered_tables.size).to eq(2)
-          
-          within bordered_tables.last do
-            rows = all('tr')
-            expect(rows.size).to eq(1)
-            
-            within rows.first do
-              cells = all('td')
-              expect(cells.size).to eq(2)
-              
-              within cells.first do
-                expect(page).to have_selector('dd', text: @desk_rejected_submission.title)
-                expect(page).to have_selector('dd', text: @desk_rejected_submission.area.name)
-                expect(page).to have_selector('dd', text: @desk_rejected_submission.date_submitted_pretty)
-              end
-              
-              within cells.last do
-                expect(page).to have_content(@desk_rejected_submission.display_status_for_authors)
-              end
-            end
-          end
+        it "displays the editor's comments on the accepted submission in a popover", js: true do
+          expect(page).not_to have_content 'Editor\'s comments'
+          expect(page).not_to have_content 'Lorem ipsum dolor sit amet'
+          click_link 'Accept'
+          expect(page).to have_content 'Editor\'s comments'
+          expect(page).to have_content 'Lorem ipsum dolor sit amet'
         end
       end
     end

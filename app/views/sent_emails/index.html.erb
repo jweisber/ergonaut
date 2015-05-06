@@ -10,7 +10,7 @@
 	<% @emails.each do |e| %>
     <tr>
 			<td class="ellips25">
-				<%= e.to %>
+				<%= linkify_email_list(e.to) %>
 			</td>
 			<% if @referee_assignment %>
 				<% if @submission.archived? %>

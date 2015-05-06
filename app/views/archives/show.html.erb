@@ -6,7 +6,7 @@
 		</h3>
 		<% if current_user.managing_editor? %>
 			<h4 class="center">
-				by <%= @submission.author.full_name %>
+				by <%= link_to @submission.author.full_name, 											 											 user_path(@submission.author) %>
 			</h4>
 		<% end %>
 		

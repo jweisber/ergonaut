@@ -1,3 +1,7 @@
+<style>
+	.wide-popover .popover-content { max-height: 100em; }
+</style>
+
 <div class="row">
 	<div class="offset3 span6">
 		
@@ -32,10 +36,10 @@
 						<%= f.file_field :manuscript_file %>
 						<div class="alert" style="margin-top: 1em;">
 							File must be
-							<span style="color: black;" class="anonymization-instructions-popover">
+							<span class="wide-popover">
 								<%= link_to 'fully anonymized.',
 														'#',
-													  class: 'popover-link',
+													  class: 'popover-link wide-popover',
 													  placement: 'left',
 														'data-trigger' => 'hover', 
 													  'data-content' => "#{render 'anonymization_instructions'}" %>

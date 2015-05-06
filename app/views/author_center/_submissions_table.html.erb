@@ -9,7 +9,7 @@
 	<table class="table table-bordered">
 		<% @referee_assignments = s.referee_assignments.not_canceled %>
 	  <tr>
-			<td width="35%" rowspan="<%= s.referee_assignments.size + 2 %>" style="vertical-align: middle">
+			<td width="35%" rowspan="<%= s.referee_assignments.size + 3 %>" style="vertical-align: middle">
 				<dl class="dl-horizontal" style="margin-left: -4em;">
 					<dt>No.</dt>
 						<dd><%= s.id.to_s %></dd>
@@ -33,11 +33,9 @@
 			</td>
 			<td colspan="6" style="vertical-align: middle">
 				<strong>Status</strong>:
-				<% if s.needs_revision? %>
-					<%= link_to 'Needs revision', new_author_center_revision_path(s) %>
-				<% else %>
-					<%= s.display_status_for_authors %>
-				<% end %> 
+				<span class="wide-popover">
+					<%= submission_status_for_author(s).html_safe %>
+				</span>
 			</td>
 	  </tr>
 		<% if @referee_assignments.size > 0 %>
@@ -58,6 +56,13 @@
 				<td><%= agreed_y_or_n(assignment) %></td>
 				<td><%= date_due(assignment) %></td>
 				<td><%= report_completed_date_and_link(assignment) %></td>
+			</tr>
+		<% end %>
+		<% if s.needs_revision? %>
+			<tr>
+				<td colspan="6">
+					<%= link_to 'Submit revision', new_author_center_revision_path(s) %>
+				</td>
 			</tr>
 		<% end %>
 	</table>

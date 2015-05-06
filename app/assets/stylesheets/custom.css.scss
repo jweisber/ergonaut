@@ -176,6 +176,16 @@ th.text-center {
 	}
 }
 
+.ellips8 {
+	max-width: 8em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	.tooltip-inner {
+	  white-space: normal;
+	}
+}
+
 .ellips10 {
 	max-width: 10em;
 	white-space: nowrap; 

@@ -223,7 +223,7 @@ describe "RefereeCenter pages" do
         @attachment_for_author = assignment.attachment_for_author
         visit referee_center_path(assignment)
       end
-      
+
       it "displays the report" do
         expect(page).to have_content('To the editors')
         expect(page).to have_content('Lorem ipsum dolor sit amet')
@@ -233,12 +233,12 @@ describe "RefereeCenter pages" do
         expect(page).to have_link('', href: @attachment_for_author.url)
         expect(page).to have_content(Decision::MAJOR_REVISIONS)
       end
-      
+
       it "has working link to attachment for editor" do
         find(:xpath, "//a[@href='#{@attachment_for_editor.url}']").click
         expect(page.response_headers['Content-Type']).to eq('application/pdf')
       end
-      
+
       it "has working link to attachment for author" do
         find(:xpath, "//a[@href='#{@attachment_for_author.url}']").click
         expect(page.response_headers['Content-Type']).to eq('application/pdf')

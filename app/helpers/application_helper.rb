@@ -1,5 +1,17 @@
 module ApplicationHelper
   
+  def area_editor_or_emdash(submission)
+		if submission.area_editor
+			link_to(submission.area_editor.full_name, user_path(submission.area_editor)).html_safe
+		else
+			'&mdash;'.html_safe
+		end
+  end
+
+  def pretty_date(datetime)
+    datetime ? datetime.strftime("%b. %-d, %Y") : "\u2014"
+  end
+
   def bread_crumbs
     
     @bread_crumbs = Array.new

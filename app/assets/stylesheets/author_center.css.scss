@@ -1,3 +1,10 @@
-.anonymization-instructions-popover .popover {
+.wide-popover .popover {
   max-width: 500px;
+  z-index: 100000;
+}
+
+.wide-popover .popover-content {
+	color: black;
+  max-height: 270px;
+  overflow-y: scroll;
 }

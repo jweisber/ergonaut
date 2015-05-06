@@ -28,7 +28,7 @@ class AuthorCenterController < ApplicationController
   end
   
   def archives
-    @submissions = current_user.archived_submissions
+    @submissions = current_user.inactive_submissions
   end
   
   def withdraw

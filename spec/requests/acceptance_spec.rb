@@ -105,7 +105,7 @@ describe "Application" do
     referee_two.update_attributes(password: 'secret', password_confirmation: 'secret')
     expect(deliveries).to include_email(subject_begins: 'Referee Request', to: referee_two.email)
     expect(SentEmail.all).to include_record(subject_begins: 'Referee Request', to: referee_two.email)
-    click_link area_editor.full_name
+    within('.navbar') { click_link area_editor.full_name }
     click_link 'Sign out'                                    
     
     
@@ -130,7 +130,7 @@ describe "Application" do
     click_button 'Send'
     referee_three = User.find_by_email('referee.three@example.com')
     referee_three.update_attributes(password: 'secret', password_confirmation: 'secret')
-    click_link area_editor.full_name
+    within('.navbar') { click_link area_editor.full_name }
     click_link 'Sign out'
     
     valid_sign_in(referee_two)
@@ -202,7 +202,7 @@ describe "Application" do
 
     # author submits a revised version
     valid_sign_in(author)
-    click_link 'Needs revision'
+    click_link 'Submit revision'
     fill_in 'Title', with: 'My Clever Title'
     attach_file 'File', File.join(Rails.root, 'spec', 'support', 'Sample Submission.pdf'), visible: false
     click_button 'Submit'
@@ -237,7 +237,7 @@ describe "Application" do
     click_link referee_three.full_name_affiliation_email
     find_button('existing_user_submit_button').trigger('click')
     click_button 'Send'
-    click_link area_editor.full_name
+    within('.navbar') { click_link area_editor.full_name }
     click_link 'Sign out'
     
     valid_sign_in(referee_two)
@@ -283,7 +283,7 @@ describe "Application" do
     fill_in 'submission_area_editor_comments_for_author', with: 'consectetur adipiscing elit'
     select Decision::ACCEPT
     click_button 'Save'
-    click_link area_editor.full_name
+    within('.navbar') { click_link area_editor.full_name }
     click_link 'Sign out'
 
 

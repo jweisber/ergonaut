@@ -96,11 +96,11 @@ class User < ActiveRecord::Base
   def self.area_editors_ordered_by_last_name
     return User.order(:last_name).where(area_editor: true)
   end
- 
+
   def self.referees_ordered_by_last_name
     User.order(:last_name).where(referee: true)
   end
-  
+
   def self.map_area_editor_ids_to_completed_assignment_counts
     User.joins('LEFT OUTER JOIN area_editor_assignments ON users.id = area_editor_assignments.user_id')
     		.joins('LEFT OUTER JOIN submissions ON submissions.id = area_editor_assignments.submission_id')
@@ -109,7 +109,7 @@ class User < ActiveRecord::Base
     		.group('users.id')
     		.count('submissions.id')
   end
-  
+
   def self.map_area_editor_ids_to_active_assignments_counts
     User.joins('LEFT OUTER JOIN area_editor_assignments ON users.id = area_editor_assignments.user_id')
     		.joins('LEFT OUTER JOIN submissions ON submissions.id = area_editor_assignments.submission_id')
@@ -118,24 +118,24 @@ class User < ActiveRecord::Base
     		.group('users.id')
     		.count('submissions.title')
   end
-  
+
   def active_referee_assignments
     referee_assignments.where("(agreed = ? OR agreed IS NULL) AND (report_completed = ? OR report_completed IS NULL) "\
                               "AND (canceled = ? OR canceled IS NULL)", true, false, false)
   end
-  
+
   def inactive_referee_assignments
     referee_assignments.where("agreed = ? OR report_completed = ? OR canceled = ?", false, true, true)
   end
-  
+
   def active_submissions
     self.submissions.all.delete_if { |s| s.archived && !s.needs_revision? }
   end
-  
-  def archived_submissions
-    self.submissions.where(archived: true)
+
+  def inactive_submissions
+    self.submissions.where(archived: true).delete_if { |s| s.needs_revision? }
   end
-  
+
   def has_pending_referee_assignments?
     return false if self.editor?
     self.referee_assignments.each do |assignment|

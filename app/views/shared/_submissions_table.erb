@@ -17,18 +17,15 @@
   
   	<tr class="<%= current_user.managing_editor? ? submission_tr_class_for_managing_editor(s) : submission_tr_class_for_area_editor(s) %>"> 
       <td class="ellips15"><%= s.id.to_s %></td>
-      <td class="ellips15"><%= link_to(s.title, s) %></td>
+      <td class="ellips15"><%= link_to s.title, s %></td>
 			<% if current_user.managing_editor? %>
-				<% if params[:controller] == 'archives' %>
-	      <td class="ellips7">
-				<% else %>
-				<td class="ellips10">
-				<% end %>
-				<%= s.author.full_name %></td>
+				<td class="ellips8">
+					<%= link_to s.author.full_name, user_path(s.author) %>
+				</td>
 			<% end %>
       <td class="ellips15"><%= s.date_submitted_pretty %></td>
 			<td class="ellips15"><%= s.area.short_name %></td>  			
-			<td class="ellips15"><%= s.area_editor ? s.area_editor.full_name : "\u2014" %></td>
+			<td class="ellips15"><%= area_editor_or_emdash(s) %></td>
       <td class="ellips15"><%= s.display_status_for_editors %></td> 
     </tr>
 	<% end %>

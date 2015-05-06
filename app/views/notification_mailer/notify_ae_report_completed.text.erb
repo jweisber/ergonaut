@@ -2,7 +2,7 @@ Dear <%= @recipients_list %>,
 
 <%= @referee_assignment.referee.full_name %> has submitted a report for "<%= @submission.title %>".
 
-Please log in and take any necessary action at your earliest convenience.
+*Important change*: referee reports now become visible to the author automatically after 48 hours. Please review this report before then to make sure it is fit to be shared with the author.
 
 <% if @submission.area_editor %>
 You can access the submission here: <%= one_click_edit_url(@submission.auth_token) %>

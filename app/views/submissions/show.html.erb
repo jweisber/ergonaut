@@ -11,7 +11,7 @@
 		</h3>
 		<% if current_user.managing_editor? %>
 			<h4 class="center">
-				by <%= @submission.author.full_name %>
+				by <%= link_to @submission.author.full_name, 											 											 user_path(@submission.author) %>
 			</h4>
 		<% end %>
 		
@@ -51,19 +51,27 @@
 			      Area editor
 					</dt>
 			    <dd>
-			      <%= @submission.area_editor.nil? ? "\u2014" : @submission.area_editor.full_name %>
+						<%= area_editor_or_emdash(@submission) %>
 			    </dd>
 					<dt>
 						To the editors
 					</dt>
 					<dd>
-						<%= simple_format(@submission.area_editor_comments_for_managing_editors || "\u2014") %>
+						<% if @submission.area_editor_comments_for_managing_editors %>
+							<%= simple_format(@submission.area_editor_comments_for_managing_editors) %>
+						<% else %>
+							&mdash;
+						<% end %>
 					</dd>
 					<dt>
 						To the author(s)
 					</dt>
 					<dd>
-						<%= simple_format(@submission.area_editor_comments_for_author || "\u2014") %>
+						<% if @submission.area_editor_comments_for_author %>
+							<%= simple_format(@submission.area_editor_comments_for_author) %>
+						<% else %>
+							&mdash;
+						<% end %>
 					</dd>
 			    <dt>
 			      Status
@@ -116,7 +124,7 @@
 											style: 'width: 3em;' %>
 				</td>
         <td class="ellips15">
-					<%= r.referee.full_name %>
+					<%= link_to r.referee.full_name, user_path(r.referee) %>
 				</td>
         <td class="ellips15">
 					<%= r.assigned_at ? r.date_assigned_pretty : "\u2014" %>

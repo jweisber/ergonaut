@@ -47,7 +47,7 @@ class SubmissionsController < ApplicationController
   end
   
   def download
-    send_file @submission.manuscript_file.current_path, x_sendfile: true
+    send_file @submission.reload.manuscript_file.current_path, x_sendfile: true
   end
   
   def edit_manuscript_file

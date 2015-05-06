@@ -143,22 +143,4 @@ module SubmissionStatusCheckers
     end
   end
   
-  def display_status_for_authors
-    if review_approved?
-      decision
-    elsif review_complete?
-      'Decision awaiting approval'
-    elsif post_external_review?
-      'Awaiting decision'
-    elsif in_external_review?
-      'External review'
-    elsif in_initial_review?
-      'Initial review'
-    elsif pre_initial_review?
-      'Awaiting assignment'
-    else
-      '\u2014'
-    end
-  end  
-  
 end
