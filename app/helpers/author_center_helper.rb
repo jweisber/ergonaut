@@ -63,7 +63,7 @@ module AuthorCenterHelper
 			out += " \u2014 " + pretty_date(submission.decision_entered_at)
 		end
 
-    if submission.area_editor_comments_for_author && submission.area_editor_comments_for_author.length > 0
+    if submission.review_approved? && !submission.area_editor_comments_for_author.blank?
       link_to out, '#',
                    class: 'popover-link',
                    placement: 'left',
