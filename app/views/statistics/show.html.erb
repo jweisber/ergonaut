@@ -1,0 +1,42 @@
+<%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+
+<h1>Statistics</h1>
+
+<ul class="nav nav-pills">
+	<% for y in (2013..Time.now.year).reverse_each %>
+	  <li class="<%= 'active' if @year == y %>">
+			<%= link_to "#{y}", statistic_path(y) %>
+		</li>
+	<% end %>
+</ul>
+
+<%= pie_chart({
+			"Desk reject" => @desk_reject,
+			"Reject after external review" => @reject_after_review,
+			"Major revisions" => @major_revisions,
+			"Minor revisions" => @minor_revisions,
+			"Accept" => @accept,
+			"Withdrawn" => @withdrawn
+		},
+		library: { title: first_round_decisions_chart_title,
+							 colors: ['Red', 'Purple', 'DarkOrange', 'Blue', 'Green', 'LightGray' ],
+							 is3D: true }) %>
+<br/>
+
+<% if @resubmissions > 0%>
+<%= pie_chart({
+			"Accept" => @resubmissions_accepted,
+			"Reject" => @resubmissions_rejected
+		},
+		library: { title: "Second round decisions: #{@resubmissions}",
+							 colors: ['Green', 'Red'],
+							 is3D: true }) %>
+<br/>
+<% end %>
+
+<%= bar_chart @ttd_hash,
+							library: { title: 'Average days to decision' } %>
+<br/>
+
+<%= column_chart @areas_hash,
+								 library: { title: 'Submissions by area' } %>

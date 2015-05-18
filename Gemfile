@@ -13,6 +13,8 @@ gem 'whenever', require: false
 gem 'turbolinks'
 gem 'jquery-turbolinks'
 
+gem 'chartkick'
+
 group :development do
   gem 'hirb'
   gem 'annotate', '2.5.0'

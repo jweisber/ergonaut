@@ -1,5 +1,8 @@
 Ergonaut::Application.routes.draw do
 
+  resources :statistics, only: [:index, :show] do
+  end
+
   resources :author_center, only: [:index, :new, :create] do
     member do
       get 'withdraw'
@@ -23,13 +26,13 @@ Ergonaut::Application.routes.draw do
 
   resources :one_click_edits, only: [:show]
   
-  resources :one_click_reviews do 
-      member do
-        get 'agree'
-        get 'decline'
-        put 'record_decline_comments'
-      end
+  resources :one_click_reviews do
+    member do
+      get 'agree'
+      get 'decline'
+      put 'record_decline_comments'
     end
+  end
   
   resources :submissions, except: [:new] do 
     member do
@@ -49,7 +52,7 @@ Ergonaut::Application.routes.draw do
     end
     resources :sent_emails, only: [:index, :show]
   end
-  # Reroute download links (Carrierwave is configured store in private dir)
+  # Reroute download links (Carrierwave is configured to store in private dir)
   match "/uploads/submission/manuscript_file/:id/manuscript*ext", controller: "submissions", action: "download", conditions: { method: :get }
   match "/uploads/referee_assignment/attachment_for_editor/:id/attachment*ext", controller: "referee_assignments", action: "download_attachment_for_editor", conditions: { method: :get }
   match "/uploads/referee_assignment/attachment_for_author/:id/attachment*ext", controller: "referee_assignments", action: "download_attachment_for_author", conditions: { method: :get }
