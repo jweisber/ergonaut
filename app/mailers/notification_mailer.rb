@@ -158,7 +158,7 @@ class NotificationMailer < ActionMailer::Base
     recipients = area_editor_or_else_managing_editors(@submission)
     @recipients_list = name_list(recipients)
     
-    message = mail(to: mailto_string(recipients), subject: "Referee Request Still Unanswered: \"#{@referee_assignment.referee.full_name}\"")
+    message = mail(to: mailto_string(recipients), subject: "Referee Request Still Unanswered: #{@referee_assignment.referee.full_name}")
   end
   
   def notify_ae_report_completed(referee_assignment)
