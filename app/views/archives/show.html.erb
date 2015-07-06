@@ -43,7 +43,7 @@
 			      Area editor
 					</dt>
 			    <dd>
-			      <%= @submission.area_editor.nil? ? "\u2014" : @submission.area_editor.full_name %>
+			      <%= area_editor_or_emdash(@submission) %>
 			    </dd>
 					<dt>
 						To the editors
