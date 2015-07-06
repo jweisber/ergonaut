@@ -10,7 +10,7 @@
 #  to                    :string(255)
 #  cc                    :string(255)
 #  body                  :text(65535)
-#  attacahments          :string(255)
+#  attachments           :string(255)
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 

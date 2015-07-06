@@ -12,6 +12,9 @@ class SentEmailsController < ApplicationController
       @emails = SentEmail.where(submission_id: @submission.id, referee_assignment_id: @referee_assignment.id).order('created_at DESC')
     else
       @emails = SentEmail.where(submission_id: @submission.id).order('created_at DESC')
+      unless current_user.managing_editor?
+        @emails.delete_if { |email| email.action == "notify_au_decision_reached" }
+      end
     end
   end
   
