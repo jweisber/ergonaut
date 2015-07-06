@@ -35,7 +35,7 @@
 <% end %>
 
 <%= bar_chart @ttd_hash,
-							library: { title: 'Average days to decision' } %>
+							library: { title: 'Average days to decision', hAxis: { title: 'Days' } } %>
 <br/>
 
 <%= column_chart @areas_hash,
