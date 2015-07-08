@@ -110,6 +110,9 @@ class StatisticsController < ApplicationController
                   "Desk rejections" => average_ttd_desk_rejections,
                   "Externally reviewed" => average_ttd_external_review,
                   "Resubmissions" => average_ttd_resubmissions }
+
+    @genders_hash = { 'Male' => @corrections[@year][:male_authors],
+                      'Female' => @corrections[@year][:female_authors] }
   end
 
 
@@ -168,6 +171,8 @@ class StatisticsController < ApplicationController
           :accept => 0,
           :resubmissions_rejected => 0,
           :resubmissions_accepted => 9,
+          :male_authors => 130,
+          :female_authors => 15,
           'Continental Philosophy' => 7,
           'Epistemology' => 21,
           'Ethics' => 18,
@@ -209,6 +214,8 @@ class StatisticsController < ApplicationController
           :accept => 4,
           :resubmissions_rejected => 4,
           :resubmissions_accepted => 14,
+          :male_authors => 184,
+          :female_authors => 36,
           'Continental Philosophy' => 11,
           'Epistemology' => 31,
           'Ethics' => 34,

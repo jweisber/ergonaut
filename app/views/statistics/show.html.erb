@@ -38,5 +38,11 @@
 							library: { title: 'Average days to decision', hAxis: { title: 'Days' } } %>
 <br/>
 
+<% if @year < Time.now.year %>
+<%= pie_chart @genders_hash,
+								 library: { title: 'Author genders' } %>
+<% end %>
+
+
 <%= column_chart @areas_hash,
 								 library: { title: 'Submissions by area' } %>
