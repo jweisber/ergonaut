@@ -472,8 +472,7 @@ class NotificationMailer < ActionMailer::Base
         'cancel_referee_assignment',
         're_thank_you',
         'notify_re_submission_withdrawn',
-        'notify_re_outcome',
-        'confirm_au_submission_withdrawn'
+        'notify_re_outcome'
       ]
     
       message.cc = Mail::AddressContainer.new('cc') # TODO: is this right? Unnecessary?
