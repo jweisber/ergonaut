@@ -70,7 +70,7 @@ describe "One-click review pages" do
     end
 
     # record_decline_comment
-    describe "record decline comment" do
+    describe "recording a decline comment" do
       before do
         visit decline_one_click_review_path(assignment.auth_token)
         fill_in 'Suggestions:', with: 'Nulla vitae elit libero, a pharetra augue.'
@@ -91,6 +91,19 @@ describe "One-click review pages" do
       it "emails the area editor" do
         expect(deliveries).to include_email(subject_begins: 'Comments from', to: assignment.submission.area_editor.email)
         expect(SentEmail.all).to include_record(subject_begins: 'Comments from', to: assignment.submission.area_editor.email)
+      end
+    end
+
+    describe "recording a blank decline comment" do
+      before do
+        visit decline_one_click_review_path(assignment.auth_token)
+        fill_in 'Suggestions:', with: '  '
+        click_button 'Submit'
+      end
+
+      it "doesn't email the area editor" do
+        expect(deliveries).not_to include_email(subject_begins: 'Comments from')
+        expect(SentEmail.all).not_to include_record(subject_begins: 'Comments from')
       end
     end
   end

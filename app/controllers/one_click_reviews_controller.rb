@@ -29,7 +29,7 @@ class OneClickReviewsController < ApplicationController
   def record_decline_comments
     decline_comment = params[:referee_assignment][:decline_comment]
     if @referee_assignment.update_attributes(decline_comment: decline_comment)
-      NotificationMailer.notify_ae_or_me_decline_comment_entered(@referee_assignment).save_and_deliver
+      NotificationMailer.notify_ae_or_me_decline_comment_entered(@referee_assignment).save_and_deliver unless decline_comment.blank?
       flash[:success] = "Thank you for your response."
       redirect_to referee_center_index_path
     else
