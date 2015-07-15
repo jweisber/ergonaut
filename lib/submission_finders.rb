@@ -24,15 +24,6 @@ module SubmissionFinders
     scope :at_least_one_agreed_assignment, -> { where('EXISTS (SELECT 1 FROM referee_assignments AS ra WHERE submissions.id = ra.submission_id AND ra.agreed = ? AND ra.canceled = ?)', true, false) }
     scope :all_reports_completed, -> { where('NOT EXISTS (SELECT 1 FROM referee_assignments AS ra WHERE submissions.id = ra.submission_id AND (ra.agreed = ? OR ra.agreed IS NULL) AND ra.canceled = ? AND ra.report_completed = ?)', true, false, false) }
   end
-  
-  def complete_reports_notification_needed
-    self.active
-        .undecided
-        .sent_out_for_review
-        .at_least_one_agreed_assignment
-        .all_reports_completed
-        .no_email_with_action(:notify_ae_all_reports_complete)
-  end
 
   def area_editor_decision_based_on_external_reviews_overdue
     candidates = self.active

@@ -45,6 +45,7 @@ class RefereeCenterController < ApplicationController
                                                                                :recommendation))
       @referee_assignment.report_completed = true
       if @referee_assignment.save
+        NotificationMailer.notify_ae_all_reports_complete(@referee_assignment.submission).save_and_deliver if @referee_assignment.submission.referee_reports_complete?
         flash[:success] = "Your report has been submitted, thanks!"
         redirect_to referee_center_index_path
       else

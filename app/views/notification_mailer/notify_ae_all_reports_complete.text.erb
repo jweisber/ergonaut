@@ -1,6 +1,6 @@
 Dear <%= @recipients_list %>,
 
-All the reports commissioned for "<%= @submission.title %>" have been completed. Please log in and take appropriate action at your earliest convenience.
+All the reports commissioned for "<%= @submission.title %>" are now complete. Please enter a decision within <%= JournalSettings.days_after_reports_completed_to_submit_decision %> days.
 
 <% if @submission.area_editor %>
 You can access the submission here: <%= one_click_edit_url(@submission.auth_token) %>

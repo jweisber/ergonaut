@@ -571,42 +571,6 @@ describe Submission do
         end
       end  
     end
-
-    describe ".complete_reports_notification_needed" do
-      
-      context "when there is a submission with a completed report and a pending request" do
-        it "does not return that submission" do
-          expect(Submission.complete_reports_notification_needed).not_to include(@submission_with_one_pending_referee_assignment_one_completed)
-        end
-      end
-
-      context "when two submissions have no decision, all their reports are completed (the first has one report, the second has two)" do
-        it "returns both submissions" do
-          expect(Submission.complete_reports_notification_needed).to match_array([@submission_with_one_completed_referee_assignment, @submission_with_two_completed_referee_assignments])
-        end
-      end
-      
-      context "when two submissions have no decision, all their reports are completed (the first has one report, the second has two), a reminder has been sent for the first" do 
-        before do
-          NotificationMailer.notify_ae_all_reports_complete(@submission_with_one_completed_referee_assignment).save_and_deliver
-        end
-        
-        it "returns only the second submission" do
-          expect(Submission.complete_reports_notification_needed).to match_array([@submission_with_two_completed_referee_assignments])
-        end
-      end
-      
-      context "when two submissions have no decision, all their reports are completed (the first has one report, the second has two), reminders have been sent for both" do 
-        before do
-          NotificationMailer.notify_ae_all_reports_complete(@submission_with_one_completed_referee_assignment).save_and_deliver
-          NotificationMailer.notify_ae_all_reports_complete(@submission_with_two_completed_referee_assignments).save_and_deliver
-        end
-        
-        it "returns no submissions" do
-          expect(Submission.complete_reports_notification_needed).to be_empty
-        end
-      end
-    end
     
     describe ".area_editor_decision_based_on_external_reviews_overdue" do
       

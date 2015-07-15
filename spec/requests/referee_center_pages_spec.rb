@@ -155,6 +155,8 @@ describe "RefereeCenter pages" do
     describe "complete report" do
       
       before do
+        @other_assignment = create(:referee_assignment, referee: referee, submission: submission)
+        @other_assignment.agree!
         assignment.agree!
         visit edit_referee_center_path(assignment)
         fill_in 'To the editor', with: 'Lorem ipsum dolor sit amet'
@@ -188,11 +190,11 @@ describe "RefereeCenter pages" do
         expect(local_path).not_to be_nil
         expect(File.exist?(local_path)).to be_true
       end
-      
+
       it "redirects to the index page" do
         expect(current_path).to eq(referee_center_index_path)
       end
-      
+
       it "sends a thank you email (cc editors)" do
         area_editor = assignment.submission.area_editor
         expect(deliveries).to include_email(subject_begins: 'Thank you', to: referee.email, cc: area_editor.email)
@@ -200,8 +202,8 @@ describe "RefereeCenter pages" do
         expect(deliveries).to include_email(subject_begins: 'Thank you', to: referee.email, cc: managing_editor.email)
         expect(SentEmail.all).to include_record(subject_begins: 'Thank you', to: referee.email, cc: managing_editor.email)
       end
-      
-      it "notifies the area editor (cc managing editors)" do        
+
+      it "notifies the area editor (cc managing editors)" do
         email = find_email(subject_begins: 'Referee Report Completed', to: area_editor.email, cc: managing_editor.email)
         
         expect(email).not_to be_nil
@@ -213,6 +215,34 @@ describe "RefereeCenter pages" do
         
         expect(SentEmail.all).to include_record(subject_begins: 'Referee Report Completed', to: area_editor.email, cc: managing_editor.email)
       end
+
+      context "when another report is still outstanding" do
+        it "doesn't notify send an 'All Reports Complete' notification" do
+          email = find_email(subject_begins: 'All Reports Complete')
+          expect(email).to be_nil
+          expect(SentEmail.all).not_to include_record(subject_begins: 'All Reports Complete')
+        end
+      end
+
+      context "when the last outstanding assignment is completed" do
+        before do
+          visit edit_referee_center_path(@other_assignment)
+          fill_in 'To the editor', with: 'Lorem ipsum dolor sit amet'
+          attach_file 'referee_assignment_attachment_for_editor', File.join(Rails.root, 'spec', 'support', 'Sample Submission.pdf'), visible: false
+          fill_in 'To the author', with: 'consectetur adipisicing elit'
+          attach_file 'referee_assignment_attachment_for_author', File.join(Rails.root, 'spec', 'support', 'Sample Submission.pdf'), visible: false
+          select Decision::MAJOR_REVISIONS, from: 'Recommendation'
+          click_button 'Submit'
+        end
+
+        it "sends an 'All Reports Complete' notification to the area editor (cc managing editors)" do
+          email = find_email(subject_begins: 'All Reports Complete', to: area_editor.email, cc: managing_editor.email)
+          expect(email).not_to be_nil
+
+          expect(SentEmail.all).to include_record(subject_begins: 'All Reports Complete', to: area_editor.email, cc: managing_editor.email)
+        end
+      end
+
     end
     
     # show
