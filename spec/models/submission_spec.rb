@@ -1019,12 +1019,14 @@ describe Submission do
     
     describe "#last_report_completed_at" do
       it "returns the report_completed_at of the most recently completed report" do
-        submission_with_two_completed_referee_assignments.referee_assignments.each_with_index do |ra, i|
-          ra.update_attributes(report_completed_at: i.days.ago)
-        end
-        first_assignment = submission_with_two_completed_referee_assignments.referee_assignments.first.reload
+        submission = submission_with_two_completed_referee_assignments
+        first_assignment = submission.referee_assignments.first
+        second_assignment = submission.referee_assignments.last
         
-        expect(submission_with_two_completed_referee_assignments.last_report_completed_at).to eq(first_assignment.report_completed_at)
+        first_assignment.update_attributes(report_completed_at: 1.days.ago)
+        second_assignment.update_attributes(report_completed_at: 2.days.ago)
+
+        expect(submission.last_report_completed_at.to_s).to eq(first_assignment.report_completed_at.to_s)
       end
     end
     

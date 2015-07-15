@@ -74,8 +74,8 @@ module SubmissionStatusCheckers
   def last_report_completed_at
     assignments = non_canceled_non_declined_referee_assignments
     assignments.delete_if { |ra| !ra.report_completed }
-    assignments.sort { |a,b| a.report_completed_at <=> b.report_completed_at }
-    assignments.reverse.last.report_completed_at
+    assignments.sort! { |a,b| a.report_completed_at <=> b.report_completed_at }
+    assignments.last.report_completed_at
   end
   
   def has_enough_referee_assignments?
