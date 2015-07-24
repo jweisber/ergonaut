@@ -12,6 +12,14 @@ module ApplicationHelper
     datetime ? datetime.strftime("%b. %-d, %Y") : "\u2014"
   end
 
+  def header_logo
+    if Rails.env.development?
+      link_to "ErgoDev", "/about", id: "logo"
+    else
+      link_to "Ergo", "/about", id: "logo"
+    end
+  end
+
   def bread_crumbs
     
     @bread_crumbs = Array.new
