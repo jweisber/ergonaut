@@ -126,7 +126,9 @@ module SubmissionStatusCheckers
   # display
 
   def display_status_for_editors
-    if review_approved?
+    if withdrawn?
+      'withdrawn'
+    elsif review_approved?
       "#{decision}"
     elsif review_complete?
       'Decision needs approval'

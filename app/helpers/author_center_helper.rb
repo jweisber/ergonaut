@@ -39,7 +39,9 @@ module AuthorCenterHelper
   end
 
   def status_for_author_switch(submission)
-    if submission.review_approved?
+    if submission.withdrawn?
+      'Withdrawn'
+    elsif submission.review_approved?
       submission.decision
     elsif submission.review_complete?
       'Decision submitted, awaiting approval'
