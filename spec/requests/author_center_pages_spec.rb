@@ -595,8 +595,6 @@ describe "Author Center" do
           expect(deliveries).to include_email(subject_begins: 'Submission Withdrawn', to: area_editor.email, cc: managing_editor.email)
           expect(SentEmail.all).to include_record(subject_begins: 'Submission Withdrawn', to: area_editor.email, cc: managing_editor.email)
           
-          expect(deliveries).to include_email(subject_begins: 'Confirmation: Submission Withdrawn', to: user.email, cc: area_editor.email)
-          expect(SentEmail.all).to include_record(subject_begins: 'Confirmation: Submission Withdrawn', to: user.email, cc: area_editor.email)
           expect(deliveries).to include_email(subject_begins: 'Confirmation: Submission Withdrawn', to: user.email, cc: managing_editor.email)
           expect(SentEmail.all).to include_record(subject_begins: 'Confirmation: Submission Withdrawn', to: user.email, cc: managing_editor.email)
 

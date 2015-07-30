@@ -28,5 +28,6 @@ Please prepare a final version of your paper and send it to our copyeditor, Robe
 
 On behalf of the editorial team, we thank you for submitting your work to Ergo.
 <% end %>
-<%= @submission.all_comments_to_s %>
+<%= all_comments_for_author(@submission) %>
+
 <%= render 'email_footer' %>

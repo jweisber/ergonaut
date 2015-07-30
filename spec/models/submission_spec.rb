@@ -219,7 +219,7 @@ describe Submission do
       expect(submission_with_two_completed_referee_assignments.non_canceled_non_declined_referee_assignments.size).to eq(2)
     end
   end
-  
+
   describe "#date_submitted_pretty" do
     let (:submission) { create(:submission) }
     
@@ -228,28 +228,7 @@ describe Submission do
       expect(submission.date_submitted_pretty).to eq("Jan. 17, 2014")
     end
   end 
-  
-  describe "#all_comments_to_s" do
-    
-    context "when there are no completed referee reports" do 
-      let(:desk_rejected_submission) { create(:desk_rejected_submission) }
-      
-      it "returns the area editor's comments for the author, with a header" do
-        expect(desk_rejected_submission.all_comments_to_s).to match(/Comments from the Area Editor\n-----------------------------\nLorem ipsum/)
-        expect(desk_rejected_submission.all_comments_to_s).not_to match(/Referee \w\n---------\n/)
-      end
-    end
-    
-    context "when there are two completed referee reports" do 
-      let(:rejected_after_review_submission) { create(:rejected_after_review_submission) }
-      
-      it "returns the area editor's comments and the referee's comments, each under their own header" do
-        expect(rejected_after_review_submission.all_comments_to_s).to match(/Comments from the Area Editor\n-----------------------------\nLorem ipsum/)
-        expect(rejected_after_review_submission.all_comments_to_s).to match(/Referee \w\n---------\n/)
-      end
-    end
-  end
-  
+
   describe "#latest_version_number" do
     
     context "when submission is original" do
@@ -1211,73 +1190,6 @@ describe Submission do
                                               to: @submission2.area_editor.email,
                                               cc: managing_editor.email)
           expect(SentEmail.all).to include_record(subject_begins: 'Overdue Internal Review',
-                                                    to: @submission2.area_editor.email,
-                                                    cc: managing_editor.email)
-        end
-      end
-    end
-  
-    describe ".send_complete_reports_notifications" do
-    
-      context "when no submissions have all reports complete" do
-        before do
-          @submission = create(:submission_assigned_to_area_editor)
-          Submission.send_complete_reports_notifications
-        end
-      
-        it "sends no reminder emails" do
-          expect(deliveries).not_to include_email(subject_begins: 'All Reports Complete',
-                                                  to: @submission.area_editor.email,
-                                                  cc: managing_editor.email)
-          expect(SentEmail.all).not_to include_record(subject_begins: 'All Reports Complete',
-                                                        to: @submission.area_editor.email,
-                                                        cc: managing_editor.email)
-        end
-      end
-    
-      context "when one submission has all reports complete" do
-        before do
-          @submission = create(:submission_with_two_completed_referee_assignments)
-          @other_submission = create(:submission_assigned_to_area_editor)
-          Submission.send_complete_reports_notifications
-        end
-      
-        it "sends a reminder email to that area editor" do
-          expect(deliveries).to include_email(subject_begins: 'All Reports Complete',
-                                              to: @submission.area_editor.email,
-                                              cc: managing_editor.email)
-          expect(SentEmail.all).to include_record(subject_begins: 'All Reports Complete',
-                                                    to: @submission.area_editor.email,
-                                                    cc: managing_editor.email)
-        end
-      
-        it "doesn't send a reminder to other area editors" do
-          expect(deliveries).not_to include_email(subject_begins: 'All Reports Complete',
-                                                  to: @other_submission.area_editor.email)
-          expect(SentEmail.all).not_to include_record(subject_begins: 'All Reports Complete',
-                                                        to: @other_submission.area_editor.email)
-        end
-      end
-    
-      context "when two submissions have all reports complete" do
-        before do
-          @submission1 = create(:submission_with_two_completed_referee_assignments)
-          @submission2 = create(:submission_with_two_completed_referee_assignments)
-          Submission.send_complete_reports_notifications
-        end
-      
-        it "sends a reminder email to both area editors" do
-          expect(deliveries).to include_email(subject_begins: 'All Reports Complete',
-                                              to: @submission1.area_editor.email,
-                                              cc: managing_editor.email)
-          expect(SentEmail.all).to include_record(subject_begins: 'All Reports Complete',
-                                                    to: @submission1.area_editor.email,
-                                                    cc: managing_editor.email)
-
-          expect(deliveries).to include_email(subject_begins: 'All Reports Complete',
-                                              to: @submission2.area_editor.email,
-                                              cc: managing_editor.email)
-          expect(SentEmail.all).to include_record(subject_begins: 'All Reports Complete',
                                                     to: @submission2.area_editor.email,
                                                     cc: managing_editor.email)
         end

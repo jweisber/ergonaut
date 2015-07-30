@@ -108,31 +108,6 @@ class Submission < ActiveRecord::Base
     self.created_at ? self.created_at.strftime("%b. %-d, %Y") : "\u2014"
   end
   
-  def all_comments_to_s
-    comments = String.new
-    
-    if self.area_editor_comments_for_author && !self.area_editor_comments_for_author.to_s.empty?
-      comments += "\nComments from the Area Editor\n-----------------------------\n"
-      comments += self.area_editor_comments_for_author.to_s
-    end
-    
-    completed_assignments = self.referee_assignments.where(report_completed: true)
-    completed_assignments.each do |report|
-      unless report.comments_for_author.blank? && report.attachment_for_author.current_path.blank?
-        comments += "\n\nReferee #{report.referee_letter}\n---------\n"
-        comments += report.comments_for_author.to_s
-        
-        attachment = report.attachment_for_author.current_path
-        unless attachment.blank?
-          ext = File.extname(attachment)
-          comments += "\n See attached file: Referee #{report.referee_letter}#{ext}\n"
-        end
-      end
-    end
-    
-    comments
-  end
-  
   
   # revisions & versions
   

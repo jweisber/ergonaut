@@ -435,15 +435,19 @@ describe User do
 
   end
   
-  describe "#archived_submissions" do
+  describe "#inactive_submissions" do
     before { create(:managing_editor) }    
-    let(:user) { create(:user) }
-    let(:fresh_submission) { create(:submission, author: user) }
-    let(:desk_rejected_submission) { create(:desk_rejected_submission, author: user) }
+    let!(:user) { create(:user) }
+    let!(:fresh_submission) { create(:submission, author: user) }
+    let!(:desk_rejected_submission) { create(:desk_rejected_submission, author: user) }
+    let!(:major_revisions_requested_submission) { create(:major_revisions_requested_submission, author: user) }
+    let!(:accepted_submission) { create(:accepted_submission, author: user) }
     
-    it "returns submissions where archived is true" do
-      expect(user.archived_submissions).to include(desk_rejected_submission)
-      expect(user.archived_submissions).not_to include(fresh_submission)
+    it "returns submissions that were withdrawn or decided, unless awaiting R&R." do
+      expect(user.inactive_submissions).to include(desk_rejected_submission)
+      expect(user.inactive_submissions).to include(accepted_submission)
+      expect(user.inactive_submissions).not_to include(fresh_submission)
+      expect(user.inactive_submissions).not_to include(major_revisions_requested_submission)
     end
   end
   

@@ -1,6 +1,7 @@
 class NotificationMailer < ActionMailer::Base
   include ActionView::Helpers::TextHelper # for pluralize
   include AbstractController::Callbacks
+  helper NotificationMailerHelper
   before_filter :set_action
   after_filter :set_submission, :set_referee_assignment
   after_filter :cc_editors

@@ -10,10 +10,6 @@ You can access the submission here: <%= one_click_edit_url(@submission.auth_toke
 <% end %>
 ----
 
-Recommendation: <%= @referee_assignment.recommendation %>
-
-Comments for the editor: <%= @referee_assignment.comments_for_editor %>
-
-Comments for the author: <%= @referee_assignment.comments_for_author %>
+<%= report_for_area_editor(@referee_assignment) %>
 
 <%= render 'email_footer' %>
