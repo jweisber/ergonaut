@@ -987,6 +987,20 @@ describe Submission do
       end
     end
     
+    describe "#number_of_complete_reports" do
+      it "returns the number of completed, non-canceled reports" do
+        expect(submission_assigned_to_area_editor.number_of_complete_reports).to eq(0)
+        expect(submission_sent_out_for_review.number_of_complete_reports).to eq(0)
+        expect(submission_with_two_agreed_referee_assignments.number_of_complete_reports).to eq(1)
+        expect(submission_with_one_completed_referee_assignment.number_of_complete_reports).to eq(1)
+        expect(submission_with_two_completed_referee_assignments.number_of_complete_reports).to eq(2)
+        expect(submission_with_reject_decision_not_yet_approved.number_of_complete_reports).to eq(2)
+        expect(submission_with_major_revisions_decision_not_yet_approved.number_of_complete_reports).to eq(2)
+        expect(desk_rejected_submission.number_of_complete_reports).to eq(0)
+        expect(rejected_after_review_submission.number_of_complete_reports).to eq(2)
+      end
+    end
+    
     describe "#has_enough_reports?" do
       it "returns true if the number of completed, non-canceled reports is or exceeds JournalSettings.number_of_reports_expected" do
         expect(submission_with_two_completed_referee_assignments.has_enough_reports?).to be_true

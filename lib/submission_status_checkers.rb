@@ -82,10 +82,14 @@ module SubmissionStatusCheckers
     return true unless in_external_review?
     non_canceled_non_declined_referee_assignments.size >= JournalSettings.number_of_reports_expected
   end
-  
-  def has_enough_reports?
+
+  def number_of_complete_reports
     completed_assignments = non_canceled_non_declined_referee_assignments.delete_if { |ra| !ra.report_completed }
-    completed_assignments.size >= JournalSettings.number_of_reports_expected
+    completed_assignments.size
+  end
+
+  def has_enough_reports?
+    number_of_complete_reports >= JournalSettings.number_of_reports_expected
   end
   
   def needs_more_reports?
@@ -110,7 +114,6 @@ module SubmissionStatusCheckers
       return true
     end
   end
-  
   
   # post-external review
   

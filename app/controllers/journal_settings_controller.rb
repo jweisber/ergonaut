@@ -209,6 +209,14 @@ class JournalSettingsController < ApplicationController
             attachments:     'Comments for Editor'
           },
 
+          notify_ae_enough_reports_complete: {
+            description:     'Enough Referee Reports Complete',
+            to:              'Area Editor',
+            cc:              'Managing Editors',
+            subject:         'Enough Reports Complete for "#{@submission.title}"',
+            attachments:     nil
+          },
+
           notify_ae_all_reports_complete: {
             description:     'All Referee Reports Complete',
             to:              'Area Editor',

@@ -1,5 +1,16 @@
 module NotificationMailerHelper
 
+  def humanize(n, options = { capitalize: false } )
+    return n.to_s unless n.between?(0,10)
+      
+    english = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten']
+    if options[:capitalize]
+      return english[n].capitalize
+    else
+      return english[n]
+    end
+  end
+
   def report_for_area_editor(r)
     output = "Recommendation: #{ r.recommendation }\n\n"
 

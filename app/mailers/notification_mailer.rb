@@ -173,6 +173,14 @@ class NotificationMailer < ActionMailer::Base
     message = mail(to: mailto_string(recipients), subject: "Referee Report Completed: \"#{@submission.title}\"")
   end
   
+  def notify_ae_enough_reports_complete(submission)
+    @submission = submission
+    recipients = area_editor_or_else_managing_editors(@submission)
+    @recipients_list = name_list(recipients)
+    
+    message = mail(to: mailto_string(recipients), subject: "Enough Reports Complete for \"#{@submission.title}\"")
+  end
+  
   def notify_ae_all_reports_complete(submission)
     @submission = submission
     recipients = area_editor_or_else_managing_editors(@submission)
@@ -448,6 +456,7 @@ class NotificationMailer < ActionMailer::Base
         'remind_ae_decision_based_on_external_reviews_overdue',
         'remind_ae_internal_review_overdue',
         'notify_ae_and_me_submission_withdrawn',
+        'notify_ae_enough_reports_complete',
         'notify_ae_all_reports_complete',
         'request_referee_report',
         'remind_re_response_overdue',

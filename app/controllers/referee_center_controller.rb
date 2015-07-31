@@ -45,7 +45,12 @@ class RefereeCenterController < ApplicationController
                                                                                :recommendation))
       @referee_assignment.report_completed = true
       if @referee_assignment.save
-        NotificationMailer.notify_ae_all_reports_complete(@referee_assignment.submission).save_and_deliver if @referee_assignment.submission.referee_reports_complete?
+        if @referee_assignment.submission.referee_reports_complete?
+          NotificationMailer.notify_ae_all_reports_complete(@referee_assignment.submission).save_and_deliver
+        elsif @referee_assignment.submission.has_enough_reports?
+          NotificationMailer.notify_ae_enough_reports_complete(@referee_assignment.submission).save_and_deliver
+        end
+        
         flash[:success] = "Your report has been submitted, thanks!"
         redirect_to referee_center_index_path
       else

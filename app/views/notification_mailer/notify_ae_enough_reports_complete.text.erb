@@ -1,0 +1,9 @@
+Dear <%= @recipients_list %>,
+
+<%= humanize(@submission.number_of_complete_reports, capitalize: true) %> of the reports commissioned for "<%= @submission.title %>" are now complete. Please consider rendering a decision on the basis of these reports, unless additional reports are necessary.
+
+<% if @submission.area_editor %>
+You can access the submission here: <%= one_click_edit_url(@submission.auth_token) %>
+
+<% end %>
+<%= render 'email_footer' %>
