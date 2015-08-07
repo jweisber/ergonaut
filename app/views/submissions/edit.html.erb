@@ -5,10 +5,15 @@
 			<%= link_to "\"#{@submission.title}\"", 
 									@submission.manuscript_file.to_s, 
 									target: "_blank" %>
+			<% if current_user.managing_editor? %>
+				<%= link_to fa_icon('upload'),
+										edit_manuscript_file_submission_path(@submission),
+										class: "btn btn-mini"%>
+			<% end %>
 		</h3>
 		<% if current_user.managing_editor? %>
 			<h4 class="center">
-				by <%= @submission.author.full_name %>
+				by <%= link_to @submission.author.full_name, @submission.author %>
 			</h4>
 		<% end %>
 		
@@ -36,7 +41,7 @@
 		</div>
 		<% end %>
 		
-    <legend>Edit</legend>
+    <legend>Internal review</legend>
 		
     <%= form_for @submission do |f| %>
 		
