@@ -12,7 +12,7 @@
   <tbody>
 	<% @referee_assignments.each do |r| %>
 		<% s = r.submission %>
-		<tr class="<%= referee_assignment_tr_class(r) %>">
+		<tr>
 			<td class="ellips15">
 				 <%= s.id.to_s %>
 			</td>  
