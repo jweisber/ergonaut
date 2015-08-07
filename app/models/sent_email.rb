@@ -34,10 +34,10 @@ class SentEmail < ActiveRecord::Base
   end
   
   def date_sent_pretty
-    self.created_at.strftime("%b. %-d, %Y")
+    self.created_at.in_time_zone("Eastern Time (US & Canada)").strftime("%b. %-d, %Y")
   end
 
   def datetime_sent_pretty
-    self.created_at.strftime("%b. %-d, %Y @ %l:%M %p")
+    self.created_at.in_time_zone("Eastern Time (US & Canada)").strftime("%b. %-d, %Y @ %l:%M %p") + " (Eastern Time)"
   end
 end
