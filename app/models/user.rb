@@ -180,7 +180,7 @@ class User < ActiveRecord::Base
   
   def self.area_editor_histories_table
     string = <<-eos
-      <table class='table table-striped table-hover table-condensed'>
+      <table class='table table-striped table-condensed'>
         <thead>  
           <tr>  
             <th>Editor</th>  
