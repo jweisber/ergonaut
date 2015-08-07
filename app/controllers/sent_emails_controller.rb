@@ -12,7 +12,7 @@ class SentEmailsController < ApplicationController
       @emails = SentEmail.where(submission_id: @submission.id, referee_assignment_id: @referee_assignment.id).order('created_at DESC')
     else
       @emails = SentEmail.where(submission_id: @submission.id).order('created_at DESC')
-      @emails = anonymize_decision_emails(@emails) unless current_user.managing_editor?
+      @emails = anonymize_emails_to_author(@emails) unless current_user.managing_editor?
     end
   end
 
@@ -20,7 +20,7 @@ class SentEmailsController < ApplicationController
     @submission = Submission.find(params[:submission_id]) if params[:submission_id]
     @submission = Submission.find(params[:archive_id]) if params[:archive_id]
     @email = SentEmail.find(params[:id])
-    @email = anonymize_email(@email) if !current_user.managing_editor? && @email.action == "notify_au_decision_reached"
+    @email = anonymize_email(@email) if !current_user.managing_editor? && to_author?(@email)
   end
 
   private
@@ -42,10 +42,15 @@ class SentEmailsController < ApplicationController
       end
     end
 
-    def anonymize_decision_emails(emails)
+    def to_author?(email)
+      ['notify_au_decision_reached', 'confirm_au_submission_withdrawn'].include?(email.action)
+    end
+
+    def anonymize_emails_to_author(emails)
       emails.each do |email|
-        email.to.replace('[Address hidden]') if email.action == "notify_au_decision_reached"
+          email.to.replace('[Address hidden]') if to_author?(email)
       end
+      emails
     end
 
     def anonymize_email(email)
