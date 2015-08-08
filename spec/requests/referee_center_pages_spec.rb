@@ -243,6 +243,34 @@ describe "RefereeCenter pages" do
         end
       end
 
+      context "when all reports are complete, but more are needed" do
+        before do
+          JournalSettings.current.update_attributes(number_of_reports_expected: 3)
+          @second_other_assignment.cancel!
+          visit edit_referee_center_path(@other_assignment)
+          fill_in 'To the editor', with: 'Lorem ipsum dolor sit amet'
+          attach_file 'referee_assignment_attachment_for_editor', File.join(Rails.root, 'spec', 'support', 'Sample Submission.pdf'), visible: false
+          fill_in 'To the author', with: 'consectetur adipisicing elit'
+          attach_file 'referee_assignment_attachment_for_author', File.join(Rails.root, 'spec', 'support', 'Sample Submission.pdf'), visible: false
+          select Decision::MAJOR_REVISIONS, from: 'Recommendation'
+          click_button 'Submit'
+        end
+
+        it "doesn't send an 'Enough Reports Complete' notification" do
+          email = find_email(subject_begins: 'Enough Reports Complete', to: area_editor.email, cc: managing_editor.email)
+          expect(email).to be_nil
+
+          expect(SentEmail.all).not_to include_record(subject_begins: 'Enough Reports Complete', to: area_editor.email, cc: managing_editor.email)
+        end
+
+        it "sends an 'All Reports Complete' notification, with instructions to secure more reports" do
+          email = find_email(subject_begins: 'All Reports Complete')
+          expect(email).not_to be_nil
+          expect(email.body).to match(/Unless you choose to reject this submission, please secure at least/)
+          expect(SentEmail.all).to include_record(subject_begins: 'All Reports Complete')
+        end
+      end
+
       context "when the last outstanding assignment is completed" do
         before do
           visit edit_referee_center_path(@other_assignment)
@@ -262,10 +290,10 @@ describe "RefereeCenter pages" do
           click_button 'Submit'
         end
 
-        it "sends an 'All Reports Complete' notification to the area editor (cc managing editors)" do
+        it "sends an 'All Reports Complete' notification, with instructions to enter a decision" do
           email = find_email(subject_begins: 'All Reports Complete', to: area_editor.email, cc: managing_editor.email)
           expect(email).not_to be_nil
-
+          expect(email.body).to match(/Please enter a decision within/)
           expect(SentEmail.all).to include_record(subject_begins: 'All Reports Complete', to: area_editor.email, cc: managing_editor.email)
         end
       end

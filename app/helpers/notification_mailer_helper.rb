@@ -70,4 +70,12 @@ module NotificationMailerHelper
     return output
   end
 
+  def is_are(n)
+    if n == 1
+      return 'is'
+    else
+      return 'are'
+    end
+  end
+
 end

@@ -1,6 +1,12 @@
 Dear <%= @recipients_list %>,
 
-All the reports commissioned for "<%= @submission.title %>" are now complete. Please enter a decision within <%= JournalSettings.days_after_reports_completed_to_submit_decision %> days.
+<% if @submission.has_enough_reports? %>
+All reports commissioned for "<%= @submission.title %>" are now complete. Please enter a decision within <%= JournalSettings.days_after_reports_completed_to_submit_decision %> days.
+<% else %>
+The <%= 'report'.pluralize @submission.number_of_complete_reports %> commissioned for "<%= @submission.title %>" <%= is_are @submission.number_of_complete_reports %> now complete. Unless you choose to reject this submission, please secure at least <%= humanize @submission.number_of_reports_still_needed %> more <%= 'report'.pluralize @submission.number_of_reports_still_needed %>.
+
+(From the editorial guide: "should one negative report be received before a second can be successfully commissioned, the area editor may decide to reject the submission on the basis of the one report. Otherwise, at least two reports are required for a decision." <%= guide_url %>)
+<% end %>
 
 <% if @submission.area_editor %>
 You can access the submission here: <%= one_click_edit_url(@submission.auth_token) %>

@@ -88,6 +88,10 @@ module SubmissionStatusCheckers
     completed_assignments.size
   end
 
+  def number_of_reports_still_needed
+    JournalSettings.number_of_reports_expected - number_of_complete_reports
+  end
+
   def has_enough_reports?
     number_of_complete_reports >= JournalSettings.number_of_reports_expected
   end
@@ -109,7 +113,7 @@ module SubmissionStatusCheckers
       return false
     else
       self.referee_assignments.each do |a|
-        return false if !(!a.agreed || a.report_completed?)
+        return false if (a.agreed && !a.canceled && !a.report_completed?)
       end
       return true
     end

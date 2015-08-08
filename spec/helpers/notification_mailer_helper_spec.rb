@@ -70,4 +70,12 @@ describe NotificationMailerHelper do
 
     end
   end
+
+  describe "#is_are" do
+    it "returns 'is' for 1, 'are' otherwise" do
+      expect(is_are(0)).to eq('are')
+      expect(is_are(1)).to eq('is')
+      expect(is_are(2)).to eq('are')
+    end
+  end
 end
