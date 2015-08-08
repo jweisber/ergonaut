@@ -60,7 +60,7 @@ class Submission < ActiveRecord::Base
   
   
   # updaters
-  
+
   def withdraw
     self.withdrawn = self.archived = true
     if self.save
@@ -69,12 +69,15 @@ class Submission < ActiveRecord::Base
       self.pending_referee_assignments.each do |assignment|
         NotificationMailer.notify_re_submission_withdrawn(assignment).save_and_deliver(same_thread: true)
       end
+      self.referee_assignments.where(report_completed: true).each do |assignment|
+        NotificationMailer.notify_re_submission_withdrawn(assignment).save_and_deliver(same_thread: true)
+      end
       self
     else
       nil
     end
   end
-  
+
   def unarchive(actor)
     self.archived = self.withdrawn = false
     self.decision_approved = false

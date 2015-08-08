@@ -578,7 +578,8 @@ describe "Author Center" do
       
       context "when the submission has been sent out for review" do
         before do
-          @submission_under_review = create(:submission_sent_out_for_review, author: user)
+          @submission_under_review = create(:submission_with_one_completed_referee_assignment, author: user)
+          create(:agreed_referee_assignment, submission: @submission_under_review)
           visit author_center_index_path
           find_withdraw_link(@submission_under_review).click
         end
@@ -599,7 +600,16 @@ describe "Author Center" do
           expect(SentEmail.all).to include_record(subject_begins: 'Confirmation: Submission Withdrawn', to: user.email, cc: managing_editor.email)
 
           @submission_under_review.pending_referee_assignments.each do |assignment|
-            expect(deliveries).to include_email(subject_begins: 'Withdrawn Submission', to: assignment.referee.email, cc: area_editor.email)
+            email = find_email(subject_begins: 'Withdrawn Submission', to: assignment.referee.email, cc: area_editor.email)
+            expect(email.body).to match(/A submission you were asked to review/)
+            expect(email.body).not_to match(/The author .* has decided to withdraw/)
+            expect(SentEmail.all).to include_record(subject_begins: 'Withdrawn Submission', to: assignment.referee.email, cc: area_editor.email)
+          end
+
+          @submission_under_review.referee_assignments.where(report_completed: true).each do |assignment|
+            email = find_email(subject_begins: 'Withdrawn Submission', to: assignment.referee.email, cc: area_editor.email)
+            expect(email.body).to match(/The author .* has decided to withdraw/)
+            expect(email.body).not_to match(/A submission you were asked to review/)
             expect(SentEmail.all).to include_record(subject_begins: 'Withdrawn Submission', to: assignment.referee.email, cc: area_editor.email)
           end
         end

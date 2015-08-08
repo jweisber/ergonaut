@@ -1,7 +1,13 @@
 Dear <%= @recipients_list %>,
 
+<% unless @referee_assignment.report_completed %>
 A submission you were asked to review for Ergo, "<%= @submission.title %>", has been withdrawn by the author. Consequently, a review is no longer needed.
 
 We apologize for any wasted labour this may have caused you.
+<% else %>
+The author of a manuscript you kindly reviewed for Ergo, "<%= @submission.title %>", has decided to withdraw it from consideration. Consequently, no final decision will be rendered by the editors.
+
+Thank you for your contribution to the journal. We hope the author appreciates your hard work as much as we <% if @submission.area_editor %>and <%= @submission.area_editor.first_name %> <% end %>do.
+<% end %>
 
 <%= render 'email_footer' %>
