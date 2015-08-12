@@ -73,7 +73,7 @@ describe SentEmail do
   describe "#datetime_sent_pretty" do
     it "returns created_at in Mon. D, YYYY @ H:MM PM format" do
       email.created_at = DateTime.new(2013, 12, 9, 13, 30)
-      expect(email.datetime_sent_pretty).to eq("Dec. 9, 2013 @  1:30 PM")
+      expect(email.datetime_sent_pretty).to eq("Dec. 9, 2013 @  8:30 AM (Eastern Time)")
     end
   end
   

@@ -763,7 +763,7 @@ describe RefereeAssignment do
       end
     end
     
-    context "when four referee assignment have passed report_due_at but one is pending, one canceled, one declined, one completed" do
+    context "when four referee assignments have passed report_due_at but one is pending, one canceled, one declined, one completed" do
       before do
         referee_assignment.update_attributes(report_due_at: just_long_enough_ago)
         canceled_referee_assignment.update_attributes(report_due_at: just_long_enough_ago)
@@ -771,8 +771,19 @@ describe RefereeAssignment do
         agreed_referee_assignment.update_attributes(report_due_at: just_long_enough_ago)
         completed_referee_assignment.update_attributes(report_due_at: just_long_enough_ago)
       end
+      
       it "returns the one remaining referee assignment" do
         expect(RefereeAssignment.overdue_report).to match_array([agreed_referee_assignment])
+      end
+      
+      context "when the submission for the pending assignment is withdrawn" do
+        before do
+          agreed_referee_assignment.submission.withdraw
+        end
+        
+        it "returns empty" do
+          expect(RefereeAssignment.overdue_report).to be_empty
+        end
       end
     end
   end
