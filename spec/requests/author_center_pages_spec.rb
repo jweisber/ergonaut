@@ -242,7 +242,7 @@ describe "Author Center" do
         before do
           @fresh_submission = create(:submission, author: user)
           @under_review_submission = create(:submission_with_one_completed_referee_assignment_one_open_request, author: user)
-          @under_review_submission.referee_assignments.first.update_attributes(report_completed_at: 3.days.ago)
+          @under_review_submission.referee_assignments.first.update_attributes(report_completed_at: 8.days.ago)
           @accepted_submission = create(:desk_rejected_submission, author: user)
           visit author_center_index_path
         end

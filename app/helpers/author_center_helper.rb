@@ -30,7 +30,7 @@ module AuthorCenterHelper
   end
 
   def assignment_visible_to_author(assignment)
-    Time.now > assignment.report_completed_at + 2.days
+    Time.now > assignment.report_completed_at + 7.days
   end
 
   def report_completed_date_and_link(assignment)
