@@ -155,9 +155,13 @@ class Submission < ActiveRecord::Base
     revised_submission.archived = false
     self.archived = true
     
-    self.transaction do
-      revised_submission.save!
-      self.save!
+    begin
+      self.transaction do
+        revised_submission.save!
+        self.save!
+      end
+    ensure
+      return revised_submission
     end
   end
   
