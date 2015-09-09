@@ -173,12 +173,6 @@ describe User do
     end
   end
   
-  describe ".area_editor_histories_table" do
-    it "returns HTML summary of area editors' assignments" do
-      expect(User.area_editor_histories_table).not_to be_blank
-    end
-  end
-  
   describe ".area_editors_ordered_by_last_name" do
     let!(:managing_editor1) { create(:managing_editor) }
     let!(:area_editor1) { create(:area_editor, last_name: 'Albatross') }
