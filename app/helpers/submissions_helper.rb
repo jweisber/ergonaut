@@ -85,7 +85,7 @@ module SubmissionsHelper
     active_hash = User.map_area_editor_ids_to_active_assignments_counts
     id_date_hashes = ActiveRecord::Base.connection.select_all('SELECT u.id, a.created_at FROM users u LEFT OUTER JOIN area_editor_assignments a ON u.id = a.user_id WHERE a.id IN (SELECT MAX(area_editor_assignments.id) FROM area_editor_assignments WHERE area_editor_assignments.user_id IS NOT NULL GROUP BY area_editor_assignments.user_id)')
 
-    User.where(area_editor: true).each do |ae|
+    User.where(area_editor: true).order(:last_name).each do |ae|
       index = id_date_hashes.find_index {|i| i['id'] == ae.id}
       date = index ? (Date.parse id_date_hashes[index]['created_at'].to_s).strftime("%b. %-d, %Y") : "\u2014"
 
