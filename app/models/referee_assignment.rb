@@ -114,6 +114,9 @@ class RefereeAssignment < ActiveRecord::Base
     Time.current > self.report_due_at
   end
   
+  def visible_to_author?
+    self.report_completed_at < 7.days.ago || self.submission.decision_approved?
+  end
   
   # finders
 
