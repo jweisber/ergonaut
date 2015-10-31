@@ -120,7 +120,7 @@ class RefereeAssignment < ActiveRecord::Base
   
   # finders
 
-  scope :not_archived, -> { joins(:submission).where('submissions.archived = ?', false) }
+  scope :not_archived, -> { joins(:submission).where('submissions.archived = ?', false).select('referee_assignments.*') }
   scope :no_response, -> { where(agreed: nil) }
   scope :agreed, -> { where(agreed: true) }
   scope :not_canceled, -> { where(self.arel_table[:canceled].not_eq(true)) }
@@ -160,7 +160,8 @@ class RefereeAssignment < ActiveRecord::Base
   end
   
   def self.overdue_report
-    self.agreed
+    self.not_archived
+        .agreed
         .not_canceled
         .not_completed
         .overdue_reminder_date_passed

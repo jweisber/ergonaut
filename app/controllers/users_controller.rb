@@ -117,10 +117,10 @@ class UsersController < ApplicationController
     def permitted_params(params)
       if current_user.managing_editor?
         params.permit!
-      elsif current_user.area_editor?
-        params.permit(:first_name, :middle_name, :last_name, :affiliation, :email)
       elsif current_user == @user
         params.permit(:first_name, :middle_name, :last_name, :affiliation, :email, :password, :password_confirmation)
+      elsif current_user.area_editor?
+        params.permit(:first_name, :middle_name, :last_name, :affiliation, :email)
       else
         params.permit()
       end
