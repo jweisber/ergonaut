@@ -1,6 +1,6 @@
 Dear <%= @recipients_list %>,
 
-<% if @submission.has_enough_reports? %>
+<% if @submission.has_enough_reports? || @submission.revision_number > 0 %>
 All reports commissioned for "<%= @submission.title %>" are now complete. Please enter a decision within <%= JournalSettings.days_after_reports_completed_to_submit_decision %> days.
 <% else %>
 The <%= 'report'.pluralize @submission.number_of_complete_reports %> commissioned for "<%= @submission.title %>" <%= is_are @submission.number_of_complete_reports %> now complete. Unless you choose to reject this submission, please secure at least <%= humanize @submission.number_of_reports_still_needed %> more <%= 'report'.pluralize @submission.number_of_reports_still_needed %>.

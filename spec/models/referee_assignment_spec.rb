@@ -422,6 +422,28 @@ describe RefereeAssignment do
     end    
   end
   
+  describe "#visible_to_author?" do
+    context "when the report was completed more than 7 days ago" do
+      let(:completed_referee_assignment) { create(:completed_referee_assignment) }
+      before do
+        completed_referee_assignment.update_attributes(report_completed_at: 8.days.ago)
+      end
+      it "returns true" do
+        expect(completed_referee_assignment.visible_to_author?).to be_true
+      end
+    end
+    
+    context "when the report was not completed more than 7 days ago" do
+      let(:completed_referee_assignment) { create(:completed_referee_assignment) }
+      before do
+        completed_referee_assignment.update_attributes(report_completed_at: 6.days.ago)
+      end
+      it "returns false" do
+        expect(completed_referee_assignment.visible_to_author?).to eq(false)
+      end
+    end
+  end
+  
   describe "#agree!" do
     before { referee_assignment.agree! }
     

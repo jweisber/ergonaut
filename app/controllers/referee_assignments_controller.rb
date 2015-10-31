@@ -120,7 +120,8 @@ class RefereeAssignmentsController < ApplicationController
       assignment = RefereeAssignment.find(params[:id])
       submission = assignment.submission
       
-      unless current_user == submission.author || current_user == assignment.referee || current_user == submission.area_editor || current_user.managing_editor?
+      unless (current_user == submission.author && assignment.visible_to_author?) || 
+              current_user == assignment.referee || current_user == submission.area_editor || current_user.managing_editor?
         redirect_to security_breach_path
       end  
     end

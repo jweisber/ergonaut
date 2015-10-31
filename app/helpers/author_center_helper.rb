@@ -29,12 +29,8 @@ module AuthorCenterHelper
 		end
   end
 
-  def assignment_visible_to_author(assignment)
-    Time.now > assignment.report_completed_at + 7.days
-  end
-
   def report_completed_date_and_link(assignment)
-    if assignment.report_completed && (assignment.submission.decision_approved? || assignment_visible_to_author(assignment))
+    if assignment.report_completed && (assignment.submission.decision_approved? || assignment.visible_to_author?)
   		link_to assignment.date_completed_pretty,
               author_center_referee_assignment_path(assignment.submission, assignment)
   	else

@@ -219,6 +219,11 @@ describe "SubmissionsPages" do
         expect(page).to have_button('Save')
       end
       
+      it "has a popover that displays a table of area editors' histories", js: true do
+        find(:xpath, "//a[contains(@class, 'popover-link')]").click
+        expect(page).to have_content('Latest')
+      end
+      
       context "when the submission is a revision" do
         before do
           @submission = create(:first_revision_submission)

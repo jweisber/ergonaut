@@ -11,10 +11,12 @@ class RevisionsController < ApplicationController
   def create
     @current_user = current_user
     @original_submission = Submission.find(params[:author_center_id])
+    @revised_submission = @original_submission.submit_revision(params[:submission])
 
-    if @original_submission.submit_revision(params[:submission])
+    if @revised_submission.persisted?
       redirect_to author_center_index_path
     else
+      @submission = @original_submission
       render :new
     end   
   end

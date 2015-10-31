@@ -343,6 +343,22 @@ describe "Author Center" do
           expect(page).to have_content('Recommendation')
           expect(page).to have_content(completed_assignment.recommendation)
         end
+        
+        context "when the report was only recently completed" do
+          before do
+            @under_review_submission.referee_assignments.first.update_attributes(report_completed_at: 6.days.ago)
+          end
+          
+          it "doesn't link to the completed report" do
+            completed_assignment = @under_review_submission.referee_assignments.first
+            expect(page).not_to have_link(completed_assignment.date_completed_pretty)
+          end
+          
+          it "redirects to security_breach_path when trying to go to the report directly" do
+            visit author_center_referee_assignment_path(@under_review_submission, @under_review_submission.referee_assignments.first)
+            expect(current_path).to eq(security_breach_path)
+          end
+        end
       end
 
       context "with one submission that needs revisions" do
