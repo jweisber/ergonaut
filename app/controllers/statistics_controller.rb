@@ -213,7 +213,7 @@ class StatisticsController < ApplicationController
           :minor_revisions => 6,
           :accept => 4,
           :resubmissions_rejected => 4,
-          :resubmissions_accepted => 14,
+          :resubmissions_accepted => 16,
           :male_authors => 184,
           :female_authors => 36,
           'Continental Philosophy' => 11,
@@ -238,14 +238,14 @@ class StatisticsController < ApplicationController
           'Philosophy of Religion' => 5,
           'Philosophy of Science (General)' => 9,
           'Political Philosophy' => 12,
-          :overall_numerator => 6073,
-          :overall_denominator => 234,
+          :overall_numerator => 6129,
+          :overall_denominator => 236,
           :desk_rejections_numerator => 1368,
           :desk_rejections_denominator => 131,
           :external_review_numerator => 4215,
           :external_review_denominator => 86,
-          :resubmissions_numerator => 490,
-          :resubmissions_denominator => 18
+          :resubmissions_numerator => 546,
+          :resubmissions_denominator => 20
         },
         2015 => {
           :decided => 18,
@@ -255,6 +255,10 @@ class StatisticsController < ApplicationController
           :major_revisions => 2,
           :minor_revisions => 0,
           :accept => 0,
+          :resubmissions_rejected => 1,
+          :resubmissions_accepted => 1,
+          :male_authors => 18,
+          :female_authors => 1,
           'Continental Philosophy' => 0,
           'Epistemology' => 4,
           'Ethics' => 2,
@@ -277,14 +281,14 @@ class StatisticsController < ApplicationController
           'Philosophy of Religion' => 0,
           'Philosophy of Science (General)' => 1,
           'Political Philosophy' => 2,
-          :overall_numerator => 470,
-          :overall_denominator => 18,
+          :overall_numerator => 566,
+          :overall_denominator => 20,
           :desk_rejections_numerator => 127,
           :desk_rejections_denominator => 13,
           :external_review_numerator => 343,
           :external_review_denominator => 6,
-          :resubmissions_numerator => 0,
-          :resubmissions_denominator => 0
+          :resubmissions_numerator => 96,
+          :resubmissions_denominator => 2
         }
       }
       @corrections[2015] = {} if Rails.env.test?

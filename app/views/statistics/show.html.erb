@@ -38,7 +38,7 @@
 
 <% if @year < Time.now.year %>
 <%= pie_chart @genders_hash,
-								 library: { title: 'Author genders' } %>
+								 library: { title: 'Author genders', is3D: true } %>
 <% end %>
 
 
