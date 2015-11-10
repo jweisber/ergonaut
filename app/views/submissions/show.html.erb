@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="offset2 span8">
-		
+
 		<h3 class="center">
 			<%= link_to "\"#{@submission.title}\"", @submission.manuscript_file.to_s, target: "_blank" %>
 			<% if current_user.managing_editor? %>
@@ -14,7 +14,7 @@
 				by <%= link_to @submission.author.full_name, 											 											 user_path(@submission.author) %>
 			</h4>
 		<% end %>
-		
+
 		<h5 class="center">
 		<% if @submission.original != @submission %>
 			Previously <%= link_to "Submission \##{@submission.previous_revision.id}", @submission.previous_revision %>
@@ -25,26 +25,26 @@
 		<% else %>
 			Submitted <%= @submission.date_submitted_pretty %>
 		<% end %>
-		</h5>		
-	
+		</h5>
+
 		<h6 class="center">
 			<%= "Area: #{@submission.area.name}" %>
 		</h6>
-		
+
 		<% if area_editor? %>
 		<div class="center">
 			<%= link_to fa_icon('compass', style: 'font-size: 1.2em;'), guide_path %>
 			<%= link_to 'Editor\'s guide', guide_path %>
 		</div>
 		<% end %>
-		
+
 		<div class="legend-sans-rule">
 			Internal review
 			<span class="pull-right">
 				<%= link_to 'Edit', edit_submission_path(@submission), class: "btn btn-primary btn-small" %>
 			</span>
 		</div>
-		
+
 		<div class="well">
 			<dl class="dl-horizontal">
 			    <dt style="text-align: right;">
@@ -97,18 +97,18 @@
 	External review
 </div>
 <table class="table table-hover">
-  <thead>  
+  <thead>
     <tr>
-			<th></th>  
-      <th>Referee</th>  
+			<th></th>
+      <th>Referee</th>
       <th>Assigned</th>
 			<th>Agreed</th>
 			<th>Due</th>
 			<th>Completed</th>
 			<th>Recomm.</th>
-      <th>Comments</th>  
-			<th class="text-center">Emails</th>  
-    </tr>  
+      <th>Comments</th>
+			<th class="text-center">Emails</th>
+    </tr>
   </thead>
   <% if @referee_assignments %>
 		<tbody>
@@ -116,10 +116,10 @@
       <tr class="<%= referee_assignment_tr_class(r) %>">
 				<td class="ellips15" style="text-align: right;">
 					<% confirm_message = r.declined? ? nil :  "A cancellation notice will be emailed to the reviewer. Do you want to proceed?" %>
-					<%= link_to "Cancel", 
-											submission_referee_assignment_path(r.submission, r), 
+					<%= link_to "Cancel",
+											submission_referee_assignment_path(r.submission, r),
 											confirm: confirm_message,
-											method: :delete, 
+											method: :delete,
 											class: "btn btn-mini btn-danger",
 											style: 'width: 3em;' %>
 				</td>
@@ -135,38 +135,38 @@
 					<% elsif r.agreed != nil %>
 						Declined
 					<% else %>
-						<%= link_to "Yes", 
-												agree_on_behalf_submission_referee_assignment_path(@submission, r), 
-												"data-toggle" => "tooltip", 
+						<%= link_to "Yes",
+												agree_on_behalf_submission_referee_assignment_path(@submission, r),
+												"data-toggle" => "tooltip",
 												title: "#{r.referee.first_name} agreed in personal communication? Click to make it official." %>
 						/
-						<%= link_to "No", 
-												decline_on_behalf_submission_referee_assignment_path(@submission, r), 
-												"data-toggle" => "tooltip", 
+						<%= link_to "No",
+												decline_on_behalf_submission_referee_assignment_path(@submission, r),
+												"data-toggle" => "tooltip",
 												title: "#{r.referee.first_name} declined in personal communication? Click to make it official." %>
 					<% end %>
-				</td> 
+				</td>
         <td class="ellips15">
-					<%= r.agreed ? r.date_due_pretty : "\u2014" %>
+					<%= due_date_text_or_link(@submission, r) %>
 				</td>
         <td class="ellips15">
 					<%= r.report_completed_at ? r.date_completed_pretty : "\u2014" %>
-				</td>   
+				</td>
         <td class="ellips15">
           <% if r.report_completed? %>
             <%= r.recommendation %>
           <% else %>
             <%= "\u2014" %>
           <% end %>
-				</td>  
+				</td>
         <td class="ellips15 text-center">
           <% if r.report_completed? %>
             <%= link_to "Click to read", submission_referee_assignment_path(r.submission, r) %>
 					<% elsif r.agreed == false %>
-						<%= link_to(fa_icon('comment', style: 'font-size: 1.2em;'), 
-												'#', 
+						<%= link_to(fa_icon('comment', style: 'font-size: 1.2em;'),
+												'#',
 												class: "popover-link",
-												placement: "left", 
+												placement: "left",
 												"data-content" => ( r.decline_comment && r.decline_comment.length > 0 ? r.decline_comment : "N/A")) %>
           <% else %>
             <%= "\u2014" %>
@@ -174,7 +174,7 @@
 				</td>
         <td class="ellips15 text-center">
 					<%= link_to fa_icon('envelope', style: 'font-size: 1.2em;'), submission_referee_assignment_sent_emails_path(@submission, r) %>
-				</td>  
+				</td>
       </tr>
 		<% end %>
 			<tr>
@@ -192,7 +192,7 @@
 	<% end %>
 </table>
 
-		
+
 <div class="center">
 	<%= link_to fa_icon('envelope', style: 'font-size: 1.2em;'), submission_sent_emails_path(@submission) %>
 	<%= link_to 'Email log', submission_sent_emails_path(@submission) %>

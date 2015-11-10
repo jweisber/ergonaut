@@ -13,7 +13,7 @@ Ergonaut::Application.routes.draw do
     resources :revisions, only: [:new, :create]
     resources :referee_assignments, only: [:show]
   end
-  
+
   resources :referee_center, only: [:index, :show, :edit, :update] do
     member do
       get 'preview'
@@ -25,7 +25,7 @@ Ergonaut::Application.routes.draw do
   end
 
   resources :one_click_edits, only: [:show]
-  
+
   resources :one_click_reviews do
     member do
       get 'agree'
@@ -33,8 +33,8 @@ Ergonaut::Application.routes.draw do
       put 'record_decline_comments'
     end
   end
-  
-  resources :submissions, except: [:new] do 
+
+  resources :submissions, except: [:new] do
     member do
       get 'edit_manuscript_file'
       put 'update_manuscript_file'
@@ -48,6 +48,8 @@ Ergonaut::Application.routes.draw do
       member do
         get 'agree_on_behalf'
         get 'decline_on_behalf'
+        get 'edit_due_date'
+        put 'update_due_date'
       end
     end
     resources :sent_emails, only: [:index, :show]
@@ -60,14 +62,14 @@ Ergonaut::Application.routes.draw do
   match "/spec/support/uploads/submission/manuscript_file/:id/manuscript*ext", controller: "submissions", action: "download", conditions: { method: :get }
   match "/spec/support/uploads/referee_assignment/attachment_for_editor/:id/attachment*ext", controller: "referee_assignments", action: "download_attachment_for_editor", conditions: { method: :get }
   match "/spec/support/uploads/referee_assignment/attachment_for_author/:id/attachment*ext", controller: "referee_assignments", action: "download_attachment_for_author", conditions: { method: :get }
-  
+
   resources :archives, only: [:index, :show, :update] do
     resources :sent_emails, only: [:index, :show]
     resources :referee_assignments, only: [:show] do
       resources :sent_emails, only: [:index, :show]
     end
-  end    
-  
+  end
+
   resources :journal_settings, only: [:index, :edit, :update] do
     member do
       get 'show_email_template'
@@ -75,7 +77,7 @@ Ergonaut::Application.routes.draw do
       delete 'remove_area'
     end
   end
-  
+
   resources :areas, only: [:create, :destroy]
   resources :users, only: [:index, :new, :show, :create, :edit, :update] do
     collection do

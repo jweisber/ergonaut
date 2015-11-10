@@ -12,14 +12,14 @@ jQuery ->
 
 
 # tooltips
-jQuery ->			
+jQuery ->
 	$("a[data-toggle]").tooltip({ placement: 'top'})
 
 
 # popovers
 jQuery ->
   $('.popover-link').popover(
-    html : true, 
+    html : true,
     placement : $('.popover-link').attr('placement')
   )
   $('.popover-link').on( 'click', (e) ->
