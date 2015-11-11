@@ -12,7 +12,7 @@ class JournalSettingsController < ApplicationController
     @new_area = Area.new
     @settings = JournalSettings.current
     @templates = email_templates
-    
+
     unless @settings
       @settings = JournalSettings.new
       unless @settings.save
@@ -20,7 +20,7 @@ class JournalSettingsController < ApplicationController
       end
     end
   end
-  
+
   def show_email_template
     @action_name = params[:id]
     @template = email_templates[@action_name.to_sym]
@@ -34,16 +34,16 @@ class JournalSettingsController < ApplicationController
     else
       flash.now[:error] = "Failed to save settings."
     end
-    
+
     @new_area = Area.new
     @templates = email_templates
     render :edit
   end
-  
+
   def create_area
     @new_area = Area.new(params[:area].permit(:name, :short_name))
     old_area = Area.where(name: @new_area.name).first
-    
+
     if old_area
       if old_area.update_attributes(removed: false)
         flash.now[:success] = "Area restored: #{old_area.name}."
@@ -57,42 +57,42 @@ class JournalSettingsController < ApplicationController
         flash.now[:error] = "Couldn't create area: \"#{params[:area][:name]}\"."
       end
     end
-    
+
     @settings = JournalSettings.current
     @templates = email_templates
     render :edit
   end
-  
+
   def remove_area
     @area = Area.find(params[:remove_area][:area_id])
     @area.removed = true
-    
+
     if @area.save
       flash[:success] = "Area removed."
     else
       flash.now[:error] = "Failed to remove the area: #{Area.find(params[:id])}."
     end
-    
+
     @new_area = Area.new
     @settings = JournalSettings.current
     @templates = email_templates
     render :edit
   end
-  
+
   private
-  
+
     def managing_editor
       unless current_user.managing_editor?
         redirect_to security_breach_path
       end
     end
-    
+
     def email_templates
       {
         #
         # MANAGING EDITORS
         #
-        
+
           notify_me_new_submission: {
             description:     'New Submission',
             to:              'Managing Editors',
@@ -100,7 +100,7 @@ class JournalSettingsController < ApplicationController
             subject:         'New Submission',
             attachments:     nil
           },
-          
+
           remind_managing_editors_assignment_overdue: {
             description:     'Area Editor Assignment Overdue',
             to:              'Managing Editors',
@@ -108,7 +108,7 @@ class JournalSettingsController < ApplicationController
             subject:         'Reminder: Assignment Needed',
             attachments:     nil
           },
-          
+
           notify_me_decision_needs_approval: {
             description:     'Decision Needs Approval',
             to:              'Managing Editors',
@@ -124,7 +124,7 @@ class JournalSettingsController < ApplicationController
             subject:         'Reminder: Decision Needs Approval',
             attachments:     nil
           },
-          
+
           notify_me_and_ae_submission_unarchived: {
             description:     'Submission Unarchived',
             to:              'Managing Editors, Area Editor',
@@ -144,7 +144,7 @@ class JournalSettingsController < ApplicationController
             subject:         'New Assignment: "#{@submission.title}"',
             attachments:     nil
           },
-          
+
           notify_ae_and_me_submission_withdrawn: {
             description:     'Submission Withdrawn',
             to:              'Area Editor',
@@ -152,7 +152,7 @@ class JournalSettingsController < ApplicationController
             subject:         'Submission Withdrawn: \"#{@submission.title}\"',
             attachments:     nil
           },
-          
+
           notify_ae_assignment_canceled: {
             description:     'Area Editor Assignment Cancelled',
             to:              'Area Editor',
@@ -160,7 +160,7 @@ class JournalSettingsController < ApplicationController
             subject:         'Assignment Canceled: "#{@submission.title}"',
             attachments:     nil
           },
-          
+
           remind_ae_internal_review_overdue: {
             description:     'Internal Review Overdue',
             to:              'Area Editor',
@@ -169,14 +169,6 @@ class JournalSettingsController < ApplicationController
             attachments:     nil
           },
 
-          notify_ae_referee_assignment_agreed: {
-            description:     'Referee Agreed',
-            to:              'Area Editor',
-            cc:              'Managing Editors',
-            subject:         'Referee Agreed: #{@referee_assignment.referee.full_name}',
-            attachments:     nil
-          },
-          
           notify_ae_or_me_referee_request_declined: {
             description:     'Referee Assignment Declined',
             to:              'Area Editor',
@@ -184,7 +176,7 @@ class JournalSettingsController < ApplicationController
             subject:         'Referee Assignment Declined: #{@referee_assignment.referee.full_name}',
             attachments:     nil
           },
-          
+
           notify_ae_or_me_decline_comment_entered: {
             description:     'Decline Comment Entered',
             to:              'Area Editor',
@@ -200,7 +192,7 @@ class JournalSettingsController < ApplicationController
             subject:         'Referee Request Still Unanswered: "#{@referee_assignment.referee.full_name}"',
             attachments:     nil
           },
-          
+
           notify_ae_report_completed: {
             description:     'Referee Assignment Completed',
             to:              'Area Editor',
@@ -232,7 +224,7 @@ class JournalSettingsController < ApplicationController
             subject:         'Overdue Decision: "#{@submission.title}"',
             attachments:     nil
           },
-          
+
           notify_ae_decision_approved: {
             description:     'Decision Approved',
             to:              'Area Editor',
@@ -240,11 +232,11 @@ class JournalSettingsController < ApplicationController
             subject:         'Decision Approved: "#{@submission.title}"',
             attachments:     nil
           },
-          
+
           #
           # REFEREES
           #
-          
+
           notify_creator_registration: {
             description:     'Notification of Registration',
             to:              'User',
@@ -252,14 +244,14 @@ class JournalSettingsController < ApplicationController
             subject:         "You've been registered with Ergo",
             attachments:     nil
           },
-          
+
           request_referee_report: {
             description:     'Referee Request',
             to:              'Referee',
             cc:              'Area Editor, Managing Editors',
             subject:         'Referee Request: #{@referee_assignment.submission.title}',
             attachments:     'Manuscript'
-          }, 
+          },
 
           remind_re_response_overdue: {
             description:     'Remind: Response to Referee Request Overdue',
@@ -276,7 +268,7 @@ class JournalSettingsController < ApplicationController
             subject:         'Assignment Confirmation: #{@submission.title}',
             attachments:     nil
           },
-          
+
           remind_re_report_due_soon: {
             description:     'Remind: Report Due Soon',
             to:              'Referee',
@@ -308,7 +300,7 @@ class JournalSettingsController < ApplicationController
             subject:         'Cancelled Referee Request: #{@submission.title}',
             attachments:     nil
           },
-          
+
           re_thank_you: {
             description:     'Thank Referee',
             to:              'Referee',
@@ -324,11 +316,11 @@ class JournalSettingsController < ApplicationController
             subject:         'Outcome & Thank You',
             attachments:     'Referee Comments for Author'
           },
-          
+
           #
           # AUTHORS
           #
-          
+
           confirm_au_submission_withdrawn: {
             description:     'Submission Withdrawn',
             to:              'Author',
@@ -344,11 +336,11 @@ class JournalSettingsController < ApplicationController
             subject:         'Decision Regarding Submission: "#{@submission.title}"',
             attachments:     'Comments for Author'
           },
-          
+
           #
           # ANYONE
           #
-          
+
           notify_password_reset: {
             description:     'Password Reset',
             to:              'User',
@@ -357,6 +349,6 @@ class JournalSettingsController < ApplicationController
             attachments:     nil
           }
         }
-          
+
     end
 end

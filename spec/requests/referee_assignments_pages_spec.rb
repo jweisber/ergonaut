@@ -211,12 +211,13 @@ describe "Referee assignment pages" do
         expect(current_path).to eq(submission_path(submission))
       end
 
-      it "notifies the area editor (cc managing editors) and sends a confirmation to the author (cc area editor)" do
-        expect(deliveries).to include_email(subject_begins: 'Referee Agreed', to: assigned_area_editor.email, cc: managing_editor.email)
-        expect(SentEmail.all).to include_record(subject_begins: 'Referee Agreed', to: assigned_area_editor.email, cc: managing_editor.email)
-
-        expect(deliveries).to include_email(subject_begins: 'Assignment Confirmation', to: @assignment.referee.email, cc: assigned_area_editor.email)
-        expect(SentEmail.all).to include_record(subject_begins: 'Assignment Confirmation', to: @assignment.referee.email, cc: assigned_area_editor.email)
+      it "sends a confirmation to the author (cc area editor)" do
+        expect(deliveries).to include_email(subject_begins: 'Assignment Confirmation',
+                                            to: @assignment.referee.email,
+                                            cc: assigned_area_editor.email)
+        expect(SentEmail.all).to include_record(subject_begins: 'Assignment Confirmation',
+                                                to: @assignment.referee.email,
+                                                cc: assigned_area_editor.email)
       end
     end
 
