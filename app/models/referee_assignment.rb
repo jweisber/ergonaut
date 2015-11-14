@@ -42,7 +42,6 @@ class RefereeAssignment < ActiveRecord::Base
 
   validates :referee, :submission, presence: true
   validate :recommendation_present, if: :report_completed
-  validate :report_unchanged, if: :report_completed_previously?
   validate :agreed_unchanged, if: :agreed_or_declined_previously?
   validate :attachment_for_editor_size, :attachment_for_author_size
 
@@ -264,15 +263,6 @@ class RefereeAssignment < ActiveRecord::Base
 
     def report_completed_previously?
       persisted? && RefereeAssignment.find(id).report_completed
-    end
-
-    def report_unchanged
-      persisted_recommendation = RefereeAssignment.find(self.id).recommendation
-      errors.add(:recommendation, "cannot be changed once report is completed") unless self.recommendation == persisted_recommendation
-      errors.add(:comments_for_editor, "cannot be changed once report is complete.") if self.comments_for_editor_changed?
-      errors.add(:comments_for_editor, "cannot be changed once report is complete.") if self.comments_for_author_changed?
-      errors.add(:attachment_for_editor, "cannot be changed once report is complete.") if self.attachment_for_editor_changed?
-      errors.add(:attachment_for_author, "cannot be changed once report is complete.") if self.attachment_for_author_changed?
     end
 
     def set_defaults

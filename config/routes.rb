@@ -50,6 +50,8 @@ Ergonaut::Application.routes.draw do
         get 'decline_on_behalf'
         get 'edit_due_date'
         put 'update_due_date'
+        get 'edit_report'
+        put 'update_report'
       end
     end
     resources :sent_emails, only: [:index, :show]

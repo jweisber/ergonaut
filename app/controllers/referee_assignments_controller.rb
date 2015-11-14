@@ -2,7 +2,7 @@ class RefereeAssignmentsController < ApplicationController
 
   before_filter :assigned_area_editor_or_managing_editor, only: [:new, :select_existing_user, :register_new_user, :create, :agree_on_behalf, :decline_on_behalf, :destroy]
   before_filter :author_or_assigned_referee_or_assigned_area_editor_or_managing_editor, only: [:show, :edit, :update, :download_attachment_for_editor, :download_attachment_for_author]
-  before_filter :managing_editor, only: [:edit_due_date, :update_due_date]
+  before_filter :managing_editor, only: [:edit_due_date, :update_due_date, :edit_report, :update_report]
   before_filter :bread_crumbs
 
   def new
@@ -123,6 +123,33 @@ class RefereeAssignmentsController < ApplicationController
     end
   end
 
+  def edit_report
+    @assignment = RefereeAssignment.find(params[:id])
+  end
+
+  def update_report
+    @assignment = RefereeAssignment.find(params[:id])
+
+    if params[:referee_assignment][:attachment_for_editor]
+      backup_file(@assignment.attachment_for_editor)
+    end
+    if params[:referee_assignment][:attachment_for_author]
+      backup_file(@assignment.attachment_for_author)
+    end
+
+    permitted_params = params[:referee_assignment].permit(:comments_for_editor,
+                                                          :attachment_for_editor,
+                                                          :comments_for_author,
+                                                          :attachment_for_author,
+                                                          :recommendation)
+    if @assignment.update_attributes(permitted_params)
+      flash[:success] = "Report updated."
+      redirect_to submission_referee_assignment_path(@assignment.submission, @assignment)
+    else
+      render :edit_report
+    end
+  end
+
   private
 
     def managing_editor
@@ -146,4 +173,10 @@ class RefereeAssignmentsController < ApplicationController
       end
     end
 
+    def backup_file(attachment)
+      path = attachment.current_path
+      if path && File.exist?(path)
+        FileUtils.copy(path, path + '.bak') unless File.exist?(path + '.bak')
+      end
+    end
 end

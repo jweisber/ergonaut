@@ -295,6 +295,55 @@ describe "Referee assignment pages" do
         expect(current_path).to eq(submission_path(submission))
       end
     end
+
+    # edit_report
+    describe "edit the referee's report" do
+      before do
+        @assignment = submission.referee_assignments.first
+        visit submission_referee_assignment_path(submission, @assignment)
+        click_link 'Edit'
+      end
+
+      it "displays a form for editing the referee's report" do
+        expect(page).to have_field('To the editors')
+        expect(page).to have_field('referee_assignment_attachment_for_editor')
+        expect(page).to have_field('To the author')
+        expect(page).to have_field('referee_assignment_attachment_for_author')
+        expect(page).to have_field('Recommendation')
+        expect(page).to have_button('Submit')
+        expect(page).to have_link('Cancel')
+      end
+    end
+
+    # update_report
+    describe "update the referee's report" do
+      before do
+        @assignment = submission.referee_assignments.first
+        visit edit_report_submission_referee_assignment_path(submission, @assignment)
+        fill_in 'To the editors', with: "Integer posuere erat a ante venenatis."
+        attach_file 'referee_assignment_attachment_for_author', File.join(Rails.root, 'spec', 'support', 'Sample Submission.pdf'), visible: false
+        select 'Reject', from: 'Recommendation'
+        click_button 'Submit'
+      end
+
+      it "updates the report and redirects to show page" do
+        old_comments_for_author = @assignment.comments_for_author
+        @assignment.reload
+
+        expect(current_path).to eq submission_referee_assignment_path(submission, @assignment)
+        expect(page).to have_success_message 'Report updated'
+
+        expect(@assignment.comments_for_editor).to eq 'Integer posuere erat a ante venenatis.'
+        backup_path = @assignment.attachment_for_editor.path + '.bak'
+        expect(File.exist?(backup_path)).to be_false
+
+        expect(@assignment.comments_for_author).to eq old_comments_for_author
+        backup_path = @assignment.attachment_for_author.path + '.bak'
+        expect(File.exist?(backup_path)).to be_true
+
+        expect(@assignment.recommendation).to eq Decision::REJECT
+      end
+    end
   end
 
   shared_examples "managing editor actions are not accessible" do
@@ -322,6 +371,32 @@ describe "Referee assignment pages" do
       it "doesn't change the due date and redirects to security breach" do
         @referee_assignment.reload
         expect(@referee_assignment.report_due_at.to_s).to eq(@original_due_date.to_s)
+        expect(response).to redirect_to(security_breach_path)
+      end
+    end
+
+    # edit_report
+    describe "edit the referee's report" do
+      before do
+        @assignment = submission.referee_assignments.first
+        visit edit_report_submission_referee_assignment_path(submission, @assignment)
+      end
+
+      it "redirects to security breach" do
+        expect(current_path).to eq(security_breach_path)
+      end
+    end
+
+    # update_report
+    describe "update the referee's report" do
+      before do
+        @assignment = submission.referee_assignments.first
+        put update_report_submission_referee_assignment_path(submission, @assignment), referee_assignment: { comments_for_editor: 'Foo bar' }
+      end
+
+      it "doesn't update the report and redirects to security breach" do
+        @assignment.reload
+        expect(@assignment.comments_for_editor).not_to eq('Foo bar')
         expect(response).to redirect_to(security_breach_path)
       end
     end
@@ -497,6 +572,32 @@ describe "Referee assignment pages" do
 
       it "redirects to #{redirect_path}" do
         expect(request).to redirect_to(send(redirect_path))
+      end
+    end
+
+    # edit_report
+    describe "edit the referee's report" do
+      before do
+        @assignment = submission.referee_assignments.first
+        visit edit_report_submission_referee_assignment_path(submission, @assignment)
+      end
+
+      it "redirects to security breach" do
+        expect(current_path).to eq(send(redirect_path))
+      end
+    end
+
+    # update_report
+    describe "update the referee's report" do
+      before do
+        @assignment = submission.referee_assignments.first
+        put update_report_submission_referee_assignment_path(submission, @assignment), referee_assignment: { comments_for_editor: 'Foo bar' }
+      end
+
+      it "doesn't update the report and redirects to security breach" do
+        @assignment.reload
+        expect(@assignment.comments_for_editor).not_to eq('Foo bar')
+        expect(response).to redirect_to(send(redirect_path))
       end
     end
   end

@@ -5,9 +5,14 @@
 		<% else %>
 			Referee <%= "#{@referee_assignment.referee_letter}" %>
 		<% end %>
+    <% if current_user.managing_editor? %>
+      <span class="pull-right">
+        <%= link_to 'Edit', edit_report_submission_referee_assignment_path(@referee_assignment.submission, @referee_assignment), class: "btn btn-small" %>
+      </span>
+    <% end %>
 	</legend>
 	<dl class="dl-horizontal">
-			<% if current_user.editor? || 
+			<% if current_user.editor? ||
 						current_user == @referee_assignment.referee %>
 	    <dt>
 	      To the editors
@@ -18,7 +23,7 @@
 				<% end %>
 				<% if @attachment_for_editor.url %>
 					<%= link_to fa_icon('file-text') +
-											' ' + 
+											' ' +
 											File.basename(@attachment_for_editor.url),
 											@attachment_for_editor.url, target: '_blank' %>
 				<% end %>
@@ -32,8 +37,8 @@
 	      	<%= simple_format(@referee_assignment.comments_for_author) %>
 				<% end %>
 				<% if @attachment_for_author.url %>
-					<%= link_to fa_icon('file-text') + 
-											' ' + 
+					<%= link_to fa_icon('file-text') +
+											' ' +
 											File.basename(@attachment_for_author.url),
 											@attachment_for_author.url, target: '_blank' %>
 				<% end %>
