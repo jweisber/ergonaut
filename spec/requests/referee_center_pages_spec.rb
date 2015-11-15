@@ -133,28 +133,7 @@ describe "RefereeCenter pages" do
       end
     end
 
-    # preview
-    describe "preview report" do
-      before do
-        assignment.comments_for_editor = 'Lorem ipsum dolor sit amet'
-        assignment.comments_for_author = 'consectetur adipisicing elit'
-        assignment.recommendation = Decision::MAJOR_REVISIONS
-        assignment.save
-        visit preview_referee_center_path(assignment)
-      end
-
-      it "displays the referee's comments and recommendation" do
-        expect(page).to have_content('Comments for the editors:')
-        expect(page).to have_content('Lorem ipsum dolor sit amet')
-        expect(page).to have_content('Comments for the author:')
-        expect(page).to have_content('consectetur adipisicing elit')
-        expect(page).to have_content(Decision::MAJOR_REVISIONS)
-      end
-    end
-
-    # complete
-    describe "complete report" do
-
+    describe "submit the report" do
       before do
         @other_assignment = create(:referee_assignment, referee: referee, submission: submission)
         @other_assignment.agree!
@@ -190,11 +169,6 @@ describe "RefereeCenter pages" do
         expect(File.exist?(local_path)).to be_true
 
         local_path = assignment.attachment_for_author.current_path
-        expect(local_path).not_to be_nil
-        expect(File.exist?(local_path)).to be_true
-      end
-
-      it "redirects to the index page" do
         expect(current_path).to eq(referee_center_index_path)
       end
 
@@ -298,7 +272,6 @@ describe "RefereeCenter pages" do
           expect(SentEmail.all).to include_record(subject_begins: 'All Reports Complete', to: area_editor.email, cc: managing_editor.email)
         end
       end
-
     end
 
     # show
@@ -375,24 +348,6 @@ describe "RefereeCenter pages" do
       it "leaves agreed nil" do
         assignment.reload
         expect(assignment.agreed).to be_nil
-      end
-
-      it { should bounce_to(send(redirect_path)) }
-    end
-
-    # preview
-    describe "preview report" do
-      before { get preview_referee_center_path(assignment) }
-      it { should bounce_to(send(redirect_path)) }
-    end
-
-    # complete
-    describe "complete report" do
-      before { get complete_referee_center_path(assignment) }
-
-      it "leaves report_completed false" do
-        assignment.reload
-        expect(assignment.report_completed).to eq(false)
       end
 
       it { should bounce_to(send(redirect_path)) }
