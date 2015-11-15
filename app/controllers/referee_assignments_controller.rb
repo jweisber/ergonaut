@@ -109,7 +109,7 @@ class RefereeAssignmentsController < ApplicationController
   end
 
   def edit_due_date
-    @referee_assignment = RefereeAssignment.find(params[:id])
+    @assignment = RefereeAssignment.find(params[:id])
   end
 
   def update_due_date

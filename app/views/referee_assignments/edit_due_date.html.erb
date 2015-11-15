@@ -1,30 +1,36 @@
 <div class="row">
   <div class="span8 offset2">
 
-		<h2 class="center">
-			<%= @referee_assignment.referee.full_name %>'s Report
-		</h2>
+    <h3 class="center">
+			<%= link_to "\"#{@assignment.submission.title}\"",
+									@assignment.submission.manuscript_file.url %>
+		</h3>
+		<% if current_user.managing_editor? %>
+			<h4 class="center">
+				by <%= link_to @assignment.submission.author.full_name, @assignment.submission.author %>
+			</h4>
+		<% end %>
 
-		<br>
+		<br/>
 
 		<legend>
-			Edit due date
+			Edit <%= @assignment.referee.full_name %>'s due date
 		</legend>
 
-		<%= form_for @referee_assignment,
+		<%= form_for @assignment,
 								 url: { action: :update_due_date },
 								 html: { class: 'form-horizontal' } do |f| %>
 			<%= render 'shared/error_messages', object: f.object %>
 
       <div class="control-group">
-	      <%= f.label 'New due date', class: "control-label" %>
+	      <%= f.label 'Due date', class: "control-label" %>
 				<div class="controls">
           <div class="input-append">
             <%= f.text_field :report_due_at,
                               class: "date input-small" ,
                               data: { provide: "datepicker", "date-format" => "M. d, yyyy" },
                               id: "due-date-picker",
-                              value: pretty_date(@referee_assignment.report_due_at) %>
+                              value: pretty_date(@assignment.report_due_at) %>
             <span class="add-on"><%= fa_icon("calendar") %></span>
           </div>
 		    </div>
@@ -32,7 +38,7 @@
 
       <div class="control-group">
         <div class="controls">
-          <%= link_to 'Cancel', submission_path(@referee_assignment.submission), class: "btn" %>
+          <%= link_to 'Cancel', submission_path(@assignment.submission), class: "btn" %>
           <%= f.submit "Submit", class: "btn btn-primary" %>
         </div>
       </div>
