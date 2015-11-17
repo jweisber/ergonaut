@@ -1,28 +1,28 @@
-<table class="table table-striped">  
-  <thead>  
-    <tr>  
-      <th>Subm. #</th>  
-      <th>Title</th>  
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Subm. #</th>
+      <th>Title</th>
       <th>Invited</th>
 			<th>Agreed</th>
 			<th>Due</th>
 			<th>Completed</th>
-    </tr>  
-  </thead>  
+    </tr>
+  </thead>
   <tbody>
 	<% @referee_assignments.each do |r| %>
 		<% s = r.submission %>
 		<tr>
 			<td>
 				 <%= s.id.to_s %>
-			</td>  
-			<td>
+			</td>
+			<td class="ellips15">
 				<% if r.report_completed %>
 					<%= link_to(s.title, referee_center_path(r)) %>
 				<% else %>
 					<%= s.title %>
 				<% end %>
-			</td>			
+			</td>
       <td>
 				<%= r.assigned_at ? r.date_assigned_pretty : "\u2014" %>
 			</td>
@@ -34,7 +34,7 @@
 				<% else %>
 					<%= "\u2014" %>
 				<% end %>
-			</td> 
+			</td>
       <td>
 				<%= r.report_due_at ? r.date_due_pretty : "\u2014" %>
 			</td>

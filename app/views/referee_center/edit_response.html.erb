@@ -1,0 +1,39 @@
+<div class="row">
+  <div class="offset2 span8">
+
+		<%= render 'shared/submission_description' %>
+
+		<%= form_for @assignment,
+								 url: { controller: :referee_center, action: :update_response },
+								 html: { class: "form-horizontal" } do |f| %>
+			<%= render 'shared/error_messages', object: f.object %>
+
+			<div class="control-group">
+				<div class="controls">
+		      <%= f.radio_button :agreed, true %>
+					<%= f.label :agreed,
+											"I agree to complete the requested review within #{JournalSettings.days_for_external_review} days.",
+											class: "radio inline" %>
+				</div>
+
+				<div class="controls">
+					<%= f.radio_button :agreed, false %>
+					<%= f.label :agreed,
+											'I decline and recommend the following people instead:',
+											class: "radio inline" %>
+		      <%= f.text_area :decline_comment,
+													placeholder: 'Alternate recommendations here...',
+													size: "10x10",
+													style: "margin-top: 10px;"%>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<div class="controls">
+					<%= f.submit "Submit", class: "btn btn-primary" %>
+				</div>
+			</div>
+		<% end %>
+
+	</div>
+</div>

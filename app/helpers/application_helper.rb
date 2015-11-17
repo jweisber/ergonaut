@@ -196,10 +196,12 @@ module ApplicationHelper
 
       #@bread_crumbs.push BreadCrumb.new("Referee", referee_center_index_path) unless action_name == 'index'
 
-      if action_name == "edit" || action_name == "update"
-        @bread_crumbs.push BreadCrumb.new("Review submission", edit_referee_center_path(params[:id]))
-      elsif action_name == "preview"
-        @bread_crumbs.push BreadCrumb.new("Preview report", edit_referee_center_path(params[:id]))
+      if action_name == 'edit_response' || action_name == 'update_response'
+        @bread_crumbs.push BreadCrumb.new("Referee request", referee_center_index_path)
+        @bread_crumbs.push BreadCrumb.new("Accept/decline", edit_response_referee_center_path(params[:id]))
+      elsif action_name == 'edit_report' || action_name == 'update_report'
+        @bread_crumbs.push BreadCrumb.new("Referee request", referee_center_index_path)
+        @bread_crumbs.push BreadCrumb.new("Submit report", edit_report_referee_center_path(params[:id]))
       elsif action_name == "archives"
           @bread_crumbs.push BreadCrumb.new("Previous assignments", archives_referee_center_index_path)
       elsif action_name == "show"
@@ -208,6 +210,13 @@ module ApplicationHelper
       end
     end
 
+    if controller_name == 'one_click_reviews'
+      if action_name == 'decline'
+        @referee_assignment = RefereeAssignment.find_by_auth_token(params[:id])
+        @bread_crumbs.push BreadCrumb.new("Referee request", referee_center_index_path)
+        @bread_crumbs.push BreadCrumb.new("Suggest alternates", decline_one_click_review_path(params[:id]))
+      end
+    end
   end
 
 end

@@ -2,9 +2,9 @@
 		<div class="navbar">
 			<div class="navbar-inner navbar-fixed-top">
 				<div class="container">
-			
+
 	    <%= header_logo %>
-			
+
 			<% if current_user && current_user.editor? %>
 	      <div>
 	        <ul class="nav">
@@ -46,7 +46,7 @@
 							<%= link_to fa_icon("pencil", text: "&nbsp;<b>Author</b>".html_safe), author_center_index_path %>
 						</li>
 	          <li>
-							<% if controller_name == "referee_center" %>
+							<% if controller_name.in? ['referee_center', 'one_click_reviews'] %>
 								<li class="active">
 							<% else %>
 								<li>
@@ -56,8 +56,8 @@
 	        </ul>
 				</div>
 			<% end %>
-			
-			
+
+
       <nav>
         <ul class="nav pull-right">
           <% if signed_in? %>
@@ -93,7 +93,7 @@
           <% end %>
         </ul>
       </nav>
-			
+
 		</div>
     </div>
   </div>

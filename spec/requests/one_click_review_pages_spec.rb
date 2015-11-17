@@ -11,8 +11,8 @@ describe "One-click review pages" do
     describe "show referee assignment" do
       before { visit one_click_review_path(assignment.auth_token) }
 
-      it "redirects to the edit page for that assignment in the referee center" do
-        expect(current_path).to eq(edit_referee_center_path(assignment))
+      it "redirects to the edit response page for that assignment" do
+        expect(current_path).to eq(edit_response_referee_center_path(assignment))
       end
 
       it "logs us in as the assigned referee" do
@@ -33,8 +33,8 @@ describe "One-click review pages" do
         expect(page).to have_content(assignment.referee.full_name)
       end
 
-      it "redirects to the edit page in the referee center and flashes success" do
-        expect(current_path).to eq(edit_referee_center_path(assignment))
+      it "redirects to the edit report page and flashes success" do
+        expect(current_path).to eq(edit_report_referee_center_path(assignment))
         expect(page).to have_success_message('Thanks')
       end
 
@@ -61,7 +61,7 @@ describe "One-click review pages" do
         expect(page).to have_content(assignment.referee.full_name)
       end
 
-      it "prompts for suggestions of alternate referees" do
+      it "prompts for alternate referee suggestions" do
         expect(page).to have_content('Suggestions')
       end
 
@@ -85,8 +85,7 @@ describe "One-click review pages" do
       end
 
       it "redirects to the referee center and flashes success" do
-        expect(page).to have_selector('th', text: 'Invited')
-        expect(page).to have_selector('th', text: 'Accepted')
+        expect(current_path).to eq referee_center_index_path
         expect(page).to have_success_message('Thank you')
       end
 
@@ -120,9 +119,96 @@ describe "One-click review pages" do
 
       it "flashes an error and redirects to the referee center" do
         expect(current_path).to eq(referee_center_index_path)
-        expect(page).to have_error_message('already declined')
+        expect(page).to have_error_message('That request has already been declined.')
       end
     end
+
+    # agree
+    describe "agree to assignment" do
+      before do
+        assignment.update_attributes(agreed: false)
+        visit agree_one_click_review_path(assignment.auth_token)
+      end
+
+      it "flashes an error and redirects to the referee center" do
+        expect(current_path).to eq(referee_center_index_path)
+        expect(page).to have_error_message('That request has already been declined.')
+      end
+    end
+
+    # decline
+    describe "decline the assignment" do
+      before do
+        assignment.update_attributes(agreed: false)
+        visit decline_one_click_review_path(assignment.auth_token)
+      end
+
+      it "flashes an error and redirects to the referee center" do
+        expect(current_path).to eq(referee_center_index_path)
+        expect(page).to have_error_message('That request has already been declined.')
+      end
+    end
+  end
+
+  context "when the assignment has already been agreed to" do
+    # show
+    describe "show referee assignment" do
+      before do
+        assignment.update_attributes(agreed: true)
+        visit one_click_review_path(assignment.auth_token)
+      end
+
+      it "flashes an error and redirects to the edit report page" do
+        expect(current_path).to eq(edit_report_referee_center_path(assignment))
+        expect(page).to have_error_message('This request has already been accepted.')
+      end
+    end
+
+    # agree
+    describe "agree to assignment" do
+      before do
+        assignment.update_attributes(agreed: true)
+        visit agree_one_click_review_path(assignment.auth_token)
+      end
+
+      it "flashes an error and redirects to the edit report page" do
+        expect(current_path).to eq(edit_report_referee_center_path(assignment))
+        expect(page).to have_error_message('This request has already been accepted.')
+      end
+    end
+
+    # decline
+    describe "decline the assignment" do
+      before do
+        assignment.update_attributes(agreed: true)
+        visit decline_one_click_review_path(assignment.auth_token)
+      end
+
+      it "flashes an error and redirects to the edit report page" do
+        expect(current_path).to eq(edit_report_referee_center_path(assignment))
+        expect(page).to have_error_message('This request has already been accepted.')
+      end
+    end
+
+    # record_decline_comments
+    describe "record decline comments" do
+      before do
+        assignment.update_attributes(agreed: true)
+        put record_decline_comments_one_click_review_path(assignment.auth_token),
+            referee_assignment: { decline_comment: 'Ask someone else' }
+      end
+
+      it "doesn't record the comment" do
+        expect(assignment.reload.decline_comment).to be_nil
+      end
+
+      it "flashes an error and redirects to the edit report page" do
+        expect(response).to bounce_to(edit_report_referee_center_path(assignment))
+        follow_redirect!
+        expect(response.body).to match /This request has already been accepted/
+      end
+    end
+
   end
 
   context "when the assignment has been canceled" do
@@ -135,22 +221,52 @@ describe "One-click review pages" do
 
       it "flashes an error and redirects to the referee center" do
         expect(current_path).to eq(referee_center_index_path)
-        expect(page).to have_error_message('was canceled')
+        expect(page).to have_error_message('That request was canceled.')
       end
     end
-  end
 
-  context "when the assignment has already been completed" do
-    # show
+    # agree
     describe "show referee assignment" do
       before do
-        assignment = create(:completed_referee_assignment)
-        visit one_click_review_path(assignment.auth_token)
+        assignment.update_attributes(canceled: true)
+        visit agree_one_click_review_path(assignment.auth_token)
       end
 
       it "flashes an error and redirects to the referee center" do
         expect(current_path).to eq(referee_center_index_path)
-        expect(page).to have_error_message('already been completed')
+        expect(page).to have_error_message('That request was canceled.')
+      end
+    end
+
+    # decline
+    describe "show referee assignment" do
+      before do
+        assignment.update_attributes(canceled: true)
+        visit decline_one_click_review_path(assignment.auth_token)
+      end
+
+      it "flashes an error and redirects to the referee center" do
+        expect(current_path).to eq(referee_center_index_path)
+        expect(page).to have_error_message('That request was canceled.')
+      end
+    end
+
+    #decline_comment
+    describe "show referee assignment" do
+      before do
+        assignment.update_attributes(canceled: true)
+        put record_decline_comments_one_click_review_path(assignment.auth_token),
+            referee_assignment: { decline_comment: 'Try someone else.' }
+      end
+
+      it "doesn't record the comment" do
+        expect(assignment.reload.decline_comment).to be_nil
+      end
+
+      it "flashes an error and redirects to the referee center" do
+        expect(response).to bounce_to(referee_center_index_path)
+        follow_redirect!
+        expect(response.body).to match /That request was canceled/
       end
     end
   end

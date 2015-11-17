@@ -14,10 +14,12 @@ Ergonaut::Application.routes.draw do
     resources :referee_assignments, only: [:show]
   end
 
-  resources :referee_center, only: [:index, :show, :edit, :update] do
+  resources :referee_center, only: [:index, :show] do
     member do
-      get 'preview'
-      get 'complete'
+      get 'edit_response'
+      put 'update_response'
+      get 'edit_report'
+      put 'update_report'
     end
     collection do
       get 'archives'
