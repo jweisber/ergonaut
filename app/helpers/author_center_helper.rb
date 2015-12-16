@@ -1,6 +1,6 @@
 module AuthorCenterHelper
   def confirm_withdraw_message
-    "Are you sure you want to withdraw this submission from consideration?"
+    "This is permanent, are you sure you want to withdraw your submission?\n\nIf you just want to correct or alter your submission, email the editors instead: #{JournalSettings.current.journal_email}"
   end
 
   def date_agreed_or_declined(assignment)
