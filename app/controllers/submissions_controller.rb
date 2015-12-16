@@ -81,7 +81,8 @@ class SubmissionsController < ApplicationController
         return
       elsif current_user == @submission.area_editor
         return
-      elsif @submission.referees.include?(current_user)
+      elsif (@submission.referees.include?(current_user) || 
+             @submission.latest_version.referees.include?(current_user))
         return
       else
         redirect_to security_breach_path

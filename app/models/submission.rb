@@ -117,6 +117,10 @@ class Submission < ActiveRecord::Base
   def latest_version_number
     self.original.revisions.maximum(:revision_number) || 0
   end
+
+  def latest_version
+    Submission.where(original_id: self.original.id).order(:id).last
+  end
   
   def is_latest_version?
     self.revision_number == self.latest_version_number
