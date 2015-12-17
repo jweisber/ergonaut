@@ -101,7 +101,7 @@
         <% @referee_assignments.each do |r| %>
 		      <tr>  
 		        <td>
-							<%= r.referee.full_name %>
+							<%= link_to r.referee.full_name, user_path(r.referee) %>
 						</td>
 		        <td>
 							<%= r.assigned_at ? r.date_assigned_pretty : "\u2014" %>
