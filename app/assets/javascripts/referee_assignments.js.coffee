@@ -31,3 +31,6 @@ jQuery ->
 		setTimeout( ->
 			alert(text)
 		, 500)
+
+jQuery ->
+	$('#due-date-picker').datepicker({ autoclose: true })

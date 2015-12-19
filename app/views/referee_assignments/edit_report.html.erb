@@ -1,0 +1,93 @@
+<div class="row">
+  <div class="span8 offset2">
+
+    <h3 class="center">
+			<%= link_to "\"#{@assignment.submission.title}\"",
+									@assignment.submission.manuscript_file.url %>
+		</h3>
+		<% if current_user.managing_editor? %>
+			<h4 class="center">
+				by <%= link_to @assignment.submission.author.full_name, @assignment.submission.author %>
+			</h4>
+		<% end %>
+
+		<br/>
+
+		<legend>
+			Edit <%= @assignment.referee.full_name %>'s report
+		</legend>
+
+		<%= form_for @assignment,
+								 url: { action: :update_report },
+								 html: { class: 'form-horizontal' } do |f| %>
+			<%= render 'shared/error_messages', object: f.object %>
+
+      <div class="control-group">
+    	  <%= f.label :comments_for_editor,
+    								"To the editors", class: "control-label" %>
+    		<div class="controls">
+    			<%= f.text_area :comments_for_editor,
+    											size: "60x10",
+    											value: @assignment.comments_for_editor %>
+    		</div>
+    	</div>
+
+      <div class="control-group">
+    		<div class="controls well well-small" style="background-color: rgb(249,249,249) ;">
+          <div>
+            <%= attachment_link_or_none(@assignment.attachment_for_editor) %>
+          </div>
+          <div style="margin-top: 5px;">
+            <%= @assignment.attachment_for_editor.url ? 'Replace:' : 'Attach:' %>
+            <%= f.file_field :attachment_for_editor %>
+          </div>
+        </div>
+    	</div>
+
+    	<div class="control-group">
+    	  <%= f.label :comments_for_author, "To the author", class: "control-label" %>
+    		<div class="controls">
+    			<%= f.text_area :comments_for_author,
+    											size: "60x10",
+    											placeholder: "Required unless recommending '#{ Decision::REJECT }'. Will be shared with other reviewers.",
+    											value: @assignment.comments_for_author %>
+    		</div>
+    	</div>
+
+      <div class="control-group">
+    		<div class="controls well well-small" style="background-color: rgb(249,249,249) ;">
+          <div>
+            <%= attachment_link_or_none(@assignment.attachment_for_author) %>
+          </div>
+          <div style="margin-top: 5px;">
+            <%= @assignment.attachment_for_author.url ? 'Replace:' : 'Attach:' %>
+            <%= f.file_field :attachment_for_author %>
+          </div>
+    		</div>
+    	</div>
+
+    	<div class="control-group">
+    	  <%= f.label :recommendation,
+    								"Recommendation",
+    								class: "control-label" %>
+    		<div class="controls">
+    			<%= select_tag "referee_assignment[recommendation]",
+    										  options_for_select(Decision.all_recommendations,
+    											selected: @assignment.recommendation,
+                          disabled: Decision.disabled(@assignment.submission)) %>
+    		</div>
+    	</div>
+
+    	<div class="control-group">
+    		<div class="controls">
+          <%= link_to 'Cancel',
+              submission_referee_assignment_path(@assignment.submission, @assignment),
+              class: 'btn' %>
+    			<%= f.submit "Submit", class: "btn btn-primary btn-danger" %>
+    		</div>
+    	</div>
+
+		<% end %>
+
+  </div>
+</div>

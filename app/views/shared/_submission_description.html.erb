@@ -12,13 +12,13 @@
 	<h5 class="center">
 		Resubmitted <%= @submission.date_submitted_pretty %>
 	</h5>
-	<h5 class="center">
-		<%= link_to "Previous version", 
+	<div class="center">
+		<%= link_to fa_icon('file-text-o') + ' Previous version', 
 								@submission.previous_revision.manuscript_file.url %>
 		<% previous_report = @submission.previous_assignment(current_user) %>
 		<% if previous_report %>
-			<%= tag 'br' %>
-			<%= link_to "Previous report", referee_center_path(previous_report) %>
+			&nbsp;&nbsp;<%= link_to fa_icon('comments-o') + ' Previous report', referee_center_path(previous_report) %>
 		<% end %>
-	</h5>
+	</div>
+	<br/>
 <% end %>

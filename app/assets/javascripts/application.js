@@ -10,12 +10,13 @@
 // WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
 // GO AFTER THE REQUIRES BELOW.
 //
-// GONE FOR NOW: 
+// GONE FOR NOW:
 
 //= require jquery
 //= require jquery.turbolinks
 //= require jquery_ujs
-//= require bootstrap.file-input.js 
+//= require bootstrap.file-input.js
 //= require bootstrap
 //= require turbolinks
+//= require bootstrap-datepicker.min.js
 //= require_tree .
