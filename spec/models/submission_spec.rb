@@ -293,6 +293,38 @@ describe Submission do
     end
   end
   
+  describe "#previous_versions" do
+    
+    context "when this submission is the original" do
+      let(:submission) { create(:submission) }
+        
+      it "returns empty" do
+        expect(submission.previous_versions).to be_empty
+      end
+    end
+    
+    context "when this submission is the first revision" do
+      let(:first_revision_submission) { create(:first_revision_submission) }
+      
+      it "contains just the original submission" do
+        expect(first_revision_submission.previous_versions.size).to eq(1)
+        expect(first_revision_submission.previous_versions).to include(first_revision_submission.original)
+      end
+    end
+    
+    context "when this submission is the second revision" do
+      let(:second_revision_submission) { create(:second_revision_submission) }
+      
+      it "returns the first revision" do
+        original = second_revision_submission.original
+        previous = Submission.where(original_id: original.id, revision_number: 1).first
+        expect(second_revision_submission.previous_versions.size).to eq(2)
+        expect(second_revision_submission.previous_versions).to include(original)
+        expect(second_revision_submission.previous_versions).to include(previous)
+      end
+    end
+  end
+
   describe "#previous_revision" do
     
     context "when this submission is the original" do

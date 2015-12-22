@@ -441,6 +441,40 @@ describe "SubmissionsPages" do
             expect(SentEmail.all).to include_record(subject_begins: 'Cancelled Referee Request', to: @open_assignment2.referee.email, cc: managing_editor.email)
           end
         end
+
+        context "decision = '#{Decision::ACCEPT}' after R&R" do
+          before do
+            first_revision_submission.update_attributes(area_editor: area_editor)
+            create(:completed_referee_assignment, submission: first_revision_submission)
+            reset_email
+            visit edit_submission_path(first_revision_submission)
+            check 'submission_decision_approved'
+            click_button 'Save'
+          end
+
+          it "notifies ALL referees, from BOTH rounds" do
+            current_version = first_revision_submission
+            previous_version = current_version.original
+            area_editor = current_version.area_editor
+
+            current_version.referee_assignments.where(report_completed: true).each do |assignment|
+              email = find_email(subject_begins: 'Outcome & Thank You', to: assignment.referee.email, cc: [area_editor.email, managing_editor.email])
+              expect(email).not_to be_nil
+              expect(SentEmail.all).to include_record(subject_begins: 'Outcome & Thank You', to: assignment.referee.email, cc: area_editor.email)
+            end
+
+            previous_version.referee_assignments.where(report_completed: true).each do |assignment|
+              email = find_email(subject_begins: 'Outcome & Thank You', to: assignment.referee.email, cc: [area_editor.email, managing_editor.email])
+              expect(email).not_to be_nil
+              expect(SentEmail.all).to include_record(subject_begins: 'Outcome & Thank You', to: assignment.referee.email, cc: area_editor.email)
+            end
+          end
+
+          it "doesn't notify any other referees" do
+            thank_you_emails = deliveries.select { |email| email.subject =~ /Outcome & Thank You/ }
+            expect(thank_you_emails.size).to eq(3)
+          end
+        end
       end
     end
 

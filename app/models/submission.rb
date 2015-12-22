@@ -126,6 +126,10 @@ class Submission < ActiveRecord::Base
     self.revision_number == self.latest_version_number
   end
   
+  def previous_versions
+    Submission.where(original_id: self.original_id).where("revision_number < ?", self.revision_number)
+  end
+
   def previous_revision
     Submission.where(original_id: self.original_id, revision_number: self.revision_number - 1).first
   end
@@ -230,10 +234,24 @@ class Submission < ActiveRecord::Base
         
         NotificationMailer.notify_ae_decision_approved(self).save_and_deliver if self.area_editor
         
+        referees_already_thanked = Array.new
         self.referee_assignments.each do |assignment|
-          NotificationMailer.notify_re_outcome(assignment).save_and_deliver if assignment.report_completed?
+          if assignment.report_completed?
+            referees_already_thanked.push assignment.referee.id
+            NotificationMailer.notify_re_outcome(assignment).save_and_deliver 
+          end
           assignment.cancel! if (assignment.awaiting_response? || assignment.awaiting_report?)
         end
+
+        self.previous_versions.each do |version|
+          version.referee_assignments.where(report_completed: true).each do |assignment|
+            if referees_already_thanked.exclude? assignment.referee.id
+              referees_already_thanked.push assignment.referee.id
+              NotificationMailer.notify_re_outcome(assignment).save_and_deliver
+            end
+          end
+        end
+
       end
     end
 end
