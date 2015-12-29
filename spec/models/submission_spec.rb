@@ -1191,19 +1191,19 @@ describe Submission do
   describe SubmissionReminders do
   
     describe ".send_overdue_internal_review_reminders" do
-    
+
       context "when no internal reviews are overdue" do
         before do
           @submission = create(:submission_assigned_to_area_editor)
           Submission.send_overdue_internal_review_reminders
         end
-      
+
         it "sends no reminder emails" do
           expect(deliveries).not_to include_email(to: @submission.area_editor.email, subject_begins: 'Overdue Internal Review')
           expect(SentEmail.all).not_to include_record(to: @submission.area_editor.email, subject_begins: 'Overdue Internal Review')
         end
       end
-    
+
       context "when one internal review is overdue" do
         before do
           @submission = create(:submission_assigned_to_area_editor)
@@ -1211,7 +1211,7 @@ describe Submission do
           @submission.area_editor_assignment.update_attributes(updated_at: updated_at)
           Submission.send_overdue_internal_review_reminders
         end
-      
+
         it "sends one reminder email" do
           expect(deliveries).to include_email(subject_begins: 'Overdue Internal Review',
                                               to: @submission.area_editor.email,
@@ -1221,31 +1221,33 @@ describe Submission do
                                                     cc: managing_editor.email)
         end
       end
-    
+
       context "when two internal reviews are overdue" do
         before do
           @submission1 = create(:submission_assigned_to_area_editor)
           updated_at = Time.current - JournalSettings.days_for_initial_review.days - JournalSettings.days_to_remind_area_editor.days - 1.second
           @submission1.area_editor_assignment.update_attributes(updated_at: updated_at)
 
-          @submission2 = create(:submission_assigned_to_area_editor)
+          @submission2 = create(:first_revision_submission, area_editor: create(:area_editor))
           updated_at = Time.current - JournalSettings.days_for_initial_review.days - JournalSettings.days_to_remind_area_editor.days - 1.second
           @submission2.area_editor_assignment.update_attributes(updated_at: updated_at)
         
           Submission.send_overdue_internal_review_reminders
         end
-      
+
         it "sends two reminder emails" do
-          expect(deliveries).to include_email(subject_begins: 'Overdue Internal Review',
-                                              to: @submission1.area_editor.email,
-                                              cc: managing_editor.email)
+          first_email = find_email(subject_begins: 'Overdue Internal Review',
+                                   to: @submission1.area_editor.email,
+                                   cc: managing_editor.email)
+          expect(first_email.body).to match(/This is a reminder that an initial decision/)
           expect(SentEmail.all).to include_record(subject_begins: 'Overdue Internal Review',
                                                     to: @submission1.area_editor.email,
                                                     cc: managing_editor.email)
-                                                  
-          expect(deliveries).to include_email(subject_begins: 'Overdue Internal Review',
-                                              to: @submission2.area_editor.email,
-                                              cc: managing_editor.email)
+
+          second_email = find_email(subject_begins: 'Overdue Internal Review',
+                                    to: @submission2.area_editor.email,
+                                    cc: managing_editor.email)
+          expect(second_email.body).to match(/This is a reminder to secure referees for the revised/)
           expect(SentEmail.all).to include_record(subject_begins: 'Overdue Internal Review',
                                                     to: @submission2.area_editor.email,
                                                     cc: managing_editor.email)
@@ -1338,7 +1340,7 @@ describe Submission do
           @submission = create(:submission)
           Submission.send_overdue_area_editor_assignment_reminders
         end
-      
+
         it "sends no reminder emails" do
           User.where(managing_editor: true).each do |managing_editor|
             expect(deliveries).not_to include_email(subject_begins: 'Reminder: Assignment Needed')
@@ -1346,7 +1348,7 @@ describe Submission do
           end
         end
       end
-    
+
       context "when one submission is overdue for assignment to an area editor" do
         before do
           @submission = create(:submission)
@@ -1355,7 +1357,7 @@ describe Submission do
           @other_submission = create(:submission)
           Submission.send_overdue_area_editor_assignment_reminders
         end
-      
+
         it "sends a reminder email to each managing editor" do
           User.where(managing_editor: true).each do |managing_editor|
             expect(deliveries).to include_email(to: managing_editor.email, 
@@ -1366,7 +1368,7 @@ describe Submission do
                                                       body_includes: @submission.title)
           end
         end
-      
+
         it "doesn't send any reminders about submissions not yet overdue" do
           User.where(managing_editor: true).each do |managing_editor|
             expect(deliveries).not_to include_email(to: managing_editor.email, 
