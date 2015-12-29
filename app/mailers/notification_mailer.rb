@@ -296,7 +296,8 @@ class NotificationMailer < ActionMailer::Base
 
   def notify_re_outcome(referee_assignment)
     @referee_assignment = referee_assignment
-    @submission = referee_assignment.submission
+    @submission = referee_assignment.submission.latest_version
+    @reported_on_this_version = (@referee_assignment.submission.id == @submission.id)
     @area_editor = @submission.area_editor
     referee = referee_assignment.referee
 

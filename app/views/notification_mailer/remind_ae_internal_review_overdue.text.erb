@@ -1,6 +1,12 @@
 Dear <%= @recipients_list %>
 
+<% if @submission.revision_number == 0 %>
 This is a reminder that an initial decision regarding "<%= @submission.title %>" is now overdue. Please decide whether it should be sent out for external review or, if not, enter your decision.
+<% else %>
+This is a reminder to secure referees for the revised and resubmitted manuscript "<%= @submission.title %>". Policy requires at least one report from an external referee. Ideally, all and only referees who recommended revisions of the previous version would be consulted about this revised version.
+
+From the Editor's Guide: "The area editor must secure at least one external review, preferably from the same external reviewer(s) who recommended revisions (though not from reviewers who recommended acceptance or rejection). The area editor must also read the resubmission, and can only decide to accept or reject."
+<% end %>
 
 <% if @submission.area_editor %>
 You can access the submission here: <%= one_click_edit_url(@submission.auth_token) %>

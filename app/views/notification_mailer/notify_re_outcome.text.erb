@@ -1,6 +1,10 @@
 Dear <%= @recipients_list %>,
 
-We thought you might like to know the outcome of the review process for "<%= @submission.title %>". In light of your suggestion<% if @other_completed_assignments.size > 0 %> and that of <%= @humanize[@other_completed_assignments.size] %> other <%= 'referee'.pluralize(@other_completed_assignments.size) %>, whose <%= 'report'.pluralize(@other_completed_assignments.size) %> we include below,<% end %> the decision reached was: <%= @submission.decision %>.
+<% if @reported_on_this_version %>
+We thought you might like to know the outcome of the review process for "<%= @submission.title %>". In light of your input<% if @other_completed_assignments.size > 0 %> and that of <%= @humanize[@other_completed_assignments.size] %> other <%= 'referee'.pluralize(@other_completed_assignments.size) %>, whose comments for the author are included below,<% end %> the decision reached was: <%= @submission.decision %>.
+<% else %>
+We thought you might like to know the final outcome of the review process for "<%= @submission.title %>". In light of your input on a previous version<% if @other_completed_assignments.size > 0 %> and that of <%= @humanize[@other_completed_assignments.size] %> other <%= 'referee'.pluralize(@other_completed_assignments.size) %> on a revised version,<% end %> the decision reached was: <%= @submission.decision %>.
+<% end %>
 
 We hope the author(s) appreciate your hard work and generous feedback as much as we <% if @submission.area_editor %>and <%= @submission.area_editor.first_name %> <% end %>do.
 
