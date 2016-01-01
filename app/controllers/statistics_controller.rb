@@ -10,6 +10,8 @@ class StatisticsController < ApplicationController
   def show
     @year = params[:id].to_i
 
+    @corrections[@year] = {} unless @corrections[@year]
+
     @decided = Submission.year_submitted(@year).with_decision.count
     @decided += @corrections[@year][:decided].to_i
     @withdrawn = Submission.year_submitted(@year).where(withdrawn: true).count
@@ -79,7 +81,7 @@ class StatisticsController < ApplicationController
     submissions = Submission.select(:id)
                             .select(:decision_entered_at)
                             .select(:created_at)
-                            .original                            
+                            .original
                             .year_submitted(@year)
                             .with_decision
                             .not_externally_reviewed
@@ -291,7 +293,7 @@ class StatisticsController < ApplicationController
           :resubmissions_denominator => 2
         }
       }
-      @corrections[2015] = {} if Rails.env.test?
+      @corrections[2016] = {} if Rails.env.test?
     end
 
     def ttd(submission)
