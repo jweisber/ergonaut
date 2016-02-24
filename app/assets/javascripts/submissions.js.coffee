@@ -3,12 +3,13 @@
 # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
 
 
-# confirm before submitting
+# warn if approving "No Decision"
 jQuery ->
-  $("#submitBtn").click (event) ->
-    decision = $("#submission_decision option:selected").text()
-    if decision != "No Decision"
-      confirm "#{JournalSettings.current.number_of_reports_expected} referee reports are usually required once a manuscript has been sent out for external review. Do you want to enter a decision anyway?"
+  $(".edit_submission").submit (event) ->
+    decision = $("#submission_decision").find(":selected").text()
+    decision_approved = $("#submission_decision_approved").is(':checked')
+    if decision == "No Decision" && decision_approved
+      confirm "No decision has been entered. Are you sure you want to \"approve\" this \"decision\"?"
 
 
 # tooltips
@@ -26,6 +27,7 @@ jQuery ->
 			e.preventDefault()
 			return true
   )
+
 
 # popovers: hide on outside-click
 jQuery ->
