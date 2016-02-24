@@ -37,9 +37,9 @@ end
 
 RSpec::Matchers.define :include_email do |params|
   match do |delivered_emails|
-    
+
     switch = false
-    
+
     delivered_emails.each do |email|
       if params[:from]
         next unless email.from.include?(params[:from])
@@ -48,40 +48,40 @@ RSpec::Matchers.define :include_email do |params|
       if params[:to]
         next unless email.to.include?(params[:to])
       end
-      
+
       if params[:cc]
         next unless email.cc.include?(params[:cc])
       end
-      
+
       if params[:subject]
         next unless email.subject == params[:subject]
       end
-      
+
       if params[:subject_begins]
         next unless email.subject[0,10] == params[:subject_begins][0,10]
       end
-      
+
       if params[:body_includes]
         next unless email.body.include?(params[:body_includes])
       end
-      
+
       switch = true
     end
-    
+
     switch
   end
 end
 
 RSpec::Matchers.define :include_record do |params|
   match do |records|
-    
+
     switch = false
-    
+
     records.each do |record|
       if params[:to]
         next unless record.to.include?(params[:to])
       end
-      
+
       if params[:cc]
         next unless record.cc.include?(params[:cc])
       end
@@ -89,18 +89,18 @@ RSpec::Matchers.define :include_record do |params|
       if params[:subject]
         next unless record.subject == params[:subject]
       end
-      
+
       if params[:subject_begins]
         next unless record.subject[0,10] == params[:subject_begins][0,10]
       end
-      
+
       if params[:body_includes]
         next unless record.body.include?(params[:body_includes])
       end
-      
+
       switch = true
     end
-    
+
     switch
   end
 end
