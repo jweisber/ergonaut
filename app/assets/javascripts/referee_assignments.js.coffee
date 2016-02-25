@@ -9,7 +9,7 @@ jQuery ->
 	$(".user-fuzzy-search").typeahead
 		source: (query, process) ->
 			$.post '/users/fuzzy_search',
-			  query: query, no_editors: $('#no_editors').val()
+			  query: query
 			, (data) ->
 			    map = data
 			    users = []

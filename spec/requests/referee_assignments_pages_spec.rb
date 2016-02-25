@@ -34,21 +34,7 @@ describe "Referee assignment pages" do
         visit new_submission_referee_assignment_path(submission)
       end
 
-      context "when searching for an editor", js: true do
-        before { fill_in 'Search', with: managing_editor.full_name }
-        it "doesn't show them in the search results" do
-          expect(page).not_to have_link(managing_editor.full_name_affiliation_email)
-        end
-      end
-
-      context "when searching for a non-editor", js: true do
-        before { fill_in 'Search', with: existing_user.full_name }
-        it "does show them in the search results" do
-          expect(page).to have_link(existing_user.full_name_affiliation_email)
-        end
-      end
-
-      context "selecting the existing user with typeahead", js: true do
+      context "selecting a non-editor with typeahead", js: true do
         before do
           fill_in 'Search', with: existing_user.full_name
           click_link existing_user.full_name_affiliation_email
@@ -58,6 +44,25 @@ describe "Referee assignment pages" do
         it "presents a request email for editing" do
           opening_field = find_field('custom_email_opening')
           expect(opening_field.value).to match("Dear #{existing_user.full_name}")
+        end
+
+        it "displays no warning about the user being an editor" do
+          expect(page).not_to have_content "Warning: #{managing_editor.first_name} is an editor"
+          expect(page).not_to have_link "click here to go back"
+        end
+      end
+
+      context "selecting an editor with typeahead", js: true do
+        before do
+          fill_in 'Search', with: assigned_area_editor.full_name
+          sleep 0.5
+          click_link assigned_area_editor.full_name_affiliation_email
+          page.find_button('existing_user_submit_button').trigger(:click)
+        end
+
+        it "displays a warning that the user is an editor" do
+          expect(page).to have_content "Warning: #{assigned_area_editor.first_name} is an editor"
+          expect(page).to have_link "click here to go back"
         end
       end
 

@@ -1,0 +1,9 @@
+<div class="span7 alert alert-block fade in">
+	<a class="close" data-dismiss="alert">&times;</a>
+	<p>
+		<b>Warning:</b> <%= @referee.first_name %> is an editor for Ergo. Using editors as referees is generally discouraged. Are you sure you want to continue?
+	</p>
+	<p>
+		If not, <%= link_to 'click here to go back.', :back %>
+ 	</p>
+</div>
