@@ -1,81 +1,95 @@
-
-
 <div class="row">
 	<div class="offset3 span6">
 		<%= form_for(@user, html: { class: "form-horizontal" }) do |f| %>
 			<legend>Edit profile</legend>
-			
+
 			<%= render 'shared/error_messages', object: f.object %>
-			
+
 			<div class="control-group">
 	      <%= f.label :first_name, class: "control-label" %>
 				<div class="controls">
 					<%= f.text_field :first_name %>
 		    </div>
 		  </div>
-			
+
 			<div class="control-group">
 	      <%= f.label :middle_name, class: "control-label" %>
 				<div class="controls">
 					<%= f.text_field :middle_name %>
 		    </div>
 		  </div>
-			
+
 			<div class="control-group">
 	      <%= f.label :last_name, class: "control-label" %>
 				<div class="controls">
 					<%= f.text_field :last_name %>
 		    </div>
 		  </div>
-			
+
 			<div class="control-group">
 	      <%= f.label :email, class: "control-label" %>
 				<div class="controls">
 					<%= f.text_field :email %>
 		    </div>
 		  </div>
-			
+
 			<div class="control-group">
 	      <%= f.label :affiliation, class: "control-label" %>
 				<div class="controls">
 					<%= f.text_field :affiliation %>
 		    </div>
 		  </div>
-			
+
 			<% if current_user && (@user == current_user || current_user.managing_editor?) %>
-			
+
 				<div class="control-group">
 		      <%= f.label :password, class: "control-label" %>
 					<div class="controls">
 						<%= f.password_field :password, value: "12345678" %>
 			    </div>
 			  </div>
-			
+
 				<div class="control-group">
 		      <%= f.label :password_confirmation, "Confirm password", class: "control-label" %>
 					<div class="controls">
 						<%= f.password_field :password_confirmation, value: "12345678" %>
 			    </div>
 			  </div>
-			
+
 			<% end %>
-			
+
 			<% if current_user && current_user.managing_editor? %>
-			
 				<div class="control-group">
-					<div clas="controls">
-						<div class="radio offset2">
-							<% User.roles.each do |role| %>
-								<label>
-									<%= f.radio_button :role, role %>
-									<%= role %>
-								</label>
+		      <%= f.label :gender, class: "control-label" %>
+					<div class="controls radio">
+							<%= f.label :gender_female, class: "radio inline" do %>
+								<%= f.radio_button :gender, 'Female' %>
+								Female
 							<% end %>
-						</div>
+							<%= f.label :gender_male, class: "radio inline" do %>
+								<%= f.radio_button :gender, 'Male' %>
+								Male
+							<% end %>
+							<%= f.label :gender_unknown, class: "radio inline" do %>
+								<%= f.radio_button :gender, 'Unknown' %>
+								Unknown
+							<% end %>
+			    </div>
+			  </div>
+
+				<div class="control-group">
+				  <%= f.label 'Role', class: "control-label" %>
+					<div class="controls radio">
+						<% User.roles.each do |role| %>
+							<label class="radio">
+								<%= f.radio_button :role, role %>
+								<%= role %>
+							</label>
+						<% end %>
 					</div>
 				</div>
 			<% end %>
-			
+
 			<div class="control-group">
 				<div class="controls">
 					<%= link_to 'Cancel', @user, class: "btn" %> <%= f.submit "Save", class: "btn btn-primary" %>

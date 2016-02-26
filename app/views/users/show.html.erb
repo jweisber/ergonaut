@@ -4,14 +4,14 @@
 		Profile
 		<% if current_user.managing_editor? %>
 			<span class="pull-right">
-			<%= link_to fa_icon('sign-in'), 
-									sessions_path(session: {user_id: @user.id}), 
-									method: :post, 
+			<%= link_to fa_icon('sign-in'),
+									sessions_path(session: {user_id: @user.id}),
+									method: :post,
 									class: "btn btn-mini" %>
 			</span>
 		<% end %>
 		</legend>
-		
+
 		<dl class="dl-horizontal">
 		    <dt style="text-align: right;">
 		      Name
@@ -45,6 +45,14 @@
 		    <dd>
 	        <span class="muted"><em>encrypted <%= fa_icon("lock") %></em></span>
 		    </dd>
+		    <% if current_user.managing_editor? %>
+				<dt>
+					Gender
+				</dt>
+				<dd>
+					<%= @user.gender.to_s %>
+				</dd>
+				<% end %>
 		</dl>
 
 		<% if @user == current_user || current_user.managing_editor? || (current_user.editor? && !@user.editor?) %>
@@ -54,7 +62,7 @@
 				</div>
 			</div>
 		<% end %>
-		
+
 	</div>
 </div>
 <br/>

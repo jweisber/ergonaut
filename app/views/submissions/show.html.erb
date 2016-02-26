@@ -11,7 +11,10 @@
 		</h3>
 		<% if current_user.managing_editor? %>
 			<h4 class="center">
-				by <%= link_to @submission.author.full_name, 											 											 user_path(@submission.author) %>
+				by <%= link_to @submission.author.full_name,
+											 user_path(@submission.author) %>
+				<%= link_to gender_icon(@submission.author.gender),
+										edit_user_path(@submission.author) %>
 			</h4>
 		<% end %>
 

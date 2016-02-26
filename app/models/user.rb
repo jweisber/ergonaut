@@ -23,7 +23,7 @@
 class User < ActiveRecord::Base
   attr_accessor :query # for the referee search form in app/views/referee_assignment/new.html.erb
   fuzzily_searchable :full_name_affiliation_email
-  
+
   has_secure_password
   has_many :submissions
   has_many :area_editor_assignments
@@ -42,6 +42,8 @@ class User < ActiveRecord::Base
                     uniqueness: { case_sensitive: false }
   validates :password, presence: true, length: { minimum: 6 }, if: :password_changed?
   validates :password_confirmation, presence: true, if: :password_changed?
+  validates :gender, inclusion: { in: [ 'Female', 'Male', 'Unknown' ],
+      message: "must be Female, Male, or Unknown" }
 
   # validate just one role (except author == referee)
   validates :managing_editor, inclusion: { in: [true] }, if: '!area_editor? && !author?'
@@ -55,7 +57,7 @@ class User < ActiveRecord::Base
 
 
   # roles
-  
+
   def role=(role)
     if role == 'Managing editor'
       self.managing_editor = true
@@ -81,11 +83,11 @@ class User < ActiveRecord::Base
       "Author/referee"
     end
   end
-  
+
   def self.roles
     ['Managing editor', 'Area editor', 'Author/referee']
   end
-  
+
   def editor?
     self.managing_editor || self.area_editor
   end
@@ -144,8 +146,8 @@ class User < ActiveRecord::Base
     end
     false
   end
-  
-  
+
+
   # formatting
 
   def full_name
@@ -154,7 +156,7 @@ class User < ActiveRecord::Base
     full_name += "#{last_name}"
     full_name
   end
-  
+
   def full_name_brackets_email
     full_name = "#{first_name} "
     full_name += "#{middle_name} " if self.middle_name && self.middle_name.length > 0
@@ -162,7 +164,7 @@ class User < ActiveRecord::Base
     full_name += " <#{email}>"
     full_name
   end
-  
+
   def full_name_affiliation_email
     string = full_name
     string += " ("
@@ -170,28 +172,28 @@ class User < ActiveRecord::Base
     string += email
     string += ")"
   end
-  
+
   def full_name_affiliation_email_changed?
-    first_name_changed? || 
-    middle_name_changed? || 
+    first_name_changed? ||
+    middle_name_changed? ||
     last_name_changed? ||
     affiliation_changed? ||
     email_changed?
   end
 
-  
+
   # creating & updating
-  
+
   def create_another_user(params)
     new_user = User.new(self.permitted_params(params))
-    
+
     unless self.managing_editor? && !new_user.password.blank?
       password = SecureRandom.urlsafe_base64(6)
       new_user.assign_attributes(password: password, password_confirmation: password)
     end
-    
+
     NotificationMailer.notify_creator_registration(new_user, self, password).save_and_deliver if new_user.save
-    
+
     return new_user
   end
 
@@ -204,8 +206,8 @@ class User < ActiveRecord::Base
       params.permit()
     end
   end
-  
-  
+
+
   # password resets
 
   def new_password_reset_token
@@ -223,7 +225,7 @@ class User < ActiveRecord::Base
 
 
   private
-  
+
     def set_defaults
       self.managing_editor = false if self.managing_editor.nil?
       self.area_editor = false if self.area_editor.nil?
@@ -236,7 +238,7 @@ class User < ActiveRecord::Base
     def new_remember_token
       self.remember_token = SecureRandom.urlsafe_base64 if self.changed?
     end
-    
+
     def password_changed?
       self.password_digest.blank? || !self.password.blank? || !self.password_confirmation.blank?
     end

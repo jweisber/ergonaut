@@ -115,4 +115,14 @@ module SubmissionsHelper
 
     return text
   end
+
+  def gender_icon(gender)
+    if gender == 'Female'
+      return fa_icon('venus').html_safe
+    elsif gender == 'Male'
+      return fa_icon('mars').html_safe
+    else
+      return fa_icon('genderless').html_safe
+    end
+  end
 end
