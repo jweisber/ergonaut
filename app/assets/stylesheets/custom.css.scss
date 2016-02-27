@@ -51,6 +51,16 @@ textarea {
 }
 
 
+/* NAV PILLS */
+
+.centered-pills { text-align:center; }
+.centered-pills ul.nav-pills { display:inline-block; }
+.centered-pills li { display:inline; }
+.centered-pills a { float:left; }
+* html .centered-pills ul.nav-pills { display:inline; } /* IE6 */
+*+html .centered-pills ul.nav-pills { display:inline; } /* IE7 */
+
+
 /* TYPOGRAPHY */
 
 h1 {
@@ -103,7 +113,7 @@ legend {
 
 .legend-sans-rule {
 	font-family: $legendFont;
-	font-size: 19px; 
+	font-size: 19px;
 	padding: 10px 0px 10px 0px;
 	.btn {
 		font-family: $defaultFont;
@@ -159,11 +169,11 @@ td {
 }
 
 td.text-center {
-   text-align: center;   
+   text-align: center;
 }
 
 th.text-center {
-   text-align: center;   
+   text-align: center;
 }
 
 .ellips7 {
@@ -188,8 +198,8 @@ th.text-center {
 
 .ellips10 {
 	max-width: 10em;
-	white-space: nowrap; 
-	overflow: hidden; 
+	white-space: nowrap;
+	overflow: hidden;
 	text-overflow: ellipsis;
 	.tooltip-inner {
 	  white-space: normal;
@@ -198,8 +208,8 @@ th.text-center {
 
 .ellips15 {
 	max-width: 15em;
-	white-space: nowrap; 
-	overflow: hidden; 
+	white-space: nowrap;
+	overflow: hidden;
 	text-overflow: ellipsis;
 	.tooltip-inner {
 	  white-space: normal;
@@ -208,8 +218,8 @@ th.text-center {
 
 .ellips25 {
 	max-width: 25em;
-	white-space: nowrap; 
-	overflow: hidden; 
+	white-space: nowrap;
+	overflow: hidden;
 	text-overflow: ellipsis;
 	.tooltip-inner {
 	  white-space: normal;
@@ -259,12 +269,12 @@ footer {
   color: $grayLight;
   a {
     color: $gray;
-    &:hover { 
+    &:hover {
       color: $grayDarker;
     }
-  }  
-  small { 
-    float: left; 
+  }
+  small {
+    float: left;
   }
   ul {
     float: right;

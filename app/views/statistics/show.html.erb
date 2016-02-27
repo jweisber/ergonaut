@@ -1,12 +1,14 @@
 <h1>Statistics</h1>
 
-<ul class="nav nav-pills">
-	<% for y in (2013..Time.now.year).reverse_each %>
-	  <li class="<%= 'active' if @year == y %>">
-			<%= link_to "#{y}", statistic_path(y) %>
-		</li>
-	<% end %>
-</ul>
+<div class="centered-pills">
+	<ul class="nav nav-pills">
+		<% for y in (2013..Time.now.year).reverse_each %>
+		  <li class="<%= 'active' if @year == y %>">
+				<%= link_to "#{y}", statistic_path(y) %>
+			</li>
+		<% end %>
+	</ul>
+</div>
 
 <%= pie_chart({
 			"Desk reject" => @desk_reject,
