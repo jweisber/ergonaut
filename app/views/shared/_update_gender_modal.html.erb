@@ -1,0 +1,44 @@
+<div class="modal hide fade" id="update-gender-modal">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h4>Update Author Gender</h4>
+	</div>
+
+	<div class="modal-body">
+
+		<div class="row">
+			<div class="offset2 span1 center">
+
+			<%= form_for :user, remote: true, method: :put,
+						url: { controller: "users", action: "update_gender" } do |f| %>
+			  <%= f.hidden_field :id, value: @submission.author.id %>
+			  <%= f.hidden_field :gender, value: "Female" %>
+			  <%= f.button gender_icon('Female'), type: "submit", class: "btn" %>
+			  <br/>
+			  Female
+			<% end %>
+			</div>
+			<div class="span1 center">
+			<%= form_for :user, remote: true, method: :put,
+						url: { controller: "users", action: "update_gender" } do |f| %>
+				<%= f.hidden_field :id, value: @submission.author.id %>
+			  <%= f.hidden_field :gender, value: "Male" %>
+			  <%= f.button gender_icon('Male'), type: "submit", class: "btn" %>
+			  <br/>
+			  Male
+			<% end %>
+			</div>
+			<div class="span1 center">
+			<%= form_for :user, remote: true, method: :put,
+						url: { controller: "users", action: "update_gender" } do |f| %>
+			  <%= f.hidden_field :id, value: @submission.author.id %>
+			  <%= f.hidden_field :gender, value: "Unknown" %>
+			  <%= f.button gender_icon('Unknown'), type: "submit", class: "btn" %>
+			  <br/>
+			  Unknown
+			<% end %>
+			</div>
+		</div>
+
+	</div>
+</div>

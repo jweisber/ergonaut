@@ -6,15 +6,14 @@
 			<% if current_user.managing_editor? %>
 				<%= link_to fa_icon('upload'),
 										edit_manuscript_file_submission_path(@submission),
-										class: "btn btn-mini"%>
+										class: "btn btn-mini" %>
 			<% end %>
 		</h3>
 		<% if current_user.managing_editor? %>
 			<h4 class="center">
 				by <%= link_to @submission.author.full_name,
 											 user_path(@submission.author) %>
-				<%= link_to gender_icon(@submission.author.gender),
-										edit_user_path(@submission.author) %>
+				<%= render 'shared/update_gender_link' %>
 			</h4>
 		<% end %>
 

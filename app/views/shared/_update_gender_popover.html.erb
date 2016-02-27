@@ -1,0 +1,32 @@
+<div class="center" style="margin-top: .5em;">
+<%= form_for :user, remote: true, method: :put, class: "gender-form",
+			url: { controller: "users", action: "update_gender" } do |f| %>
+  <%= f.hidden_field :id, value: @user.id %>
+  <%= f.hidden_field :gender, value: "Female" %>
+  <%= f.button gender_icon("Female"), type: "submit", class: "btn", id: "female_submit_btn" %>
+  <br/>
+  Female
+<% end %>
+</div>
+
+<div class="center">
+<%= form_for :user, remote: true, method: :put, class: "gender-form",
+			url: { controller: "users", action: "update_gender" } do |f| %>
+	<%= f.hidden_field :id, value: @user.id %>
+  <%= f.hidden_field :gender, value: "Male" %>
+  <%= f.button gender_icon("Male"), type: "submit", class: "btn", id: "male_submit_btn" %>
+  <br/>
+  Male
+<% end %>
+</div>
+
+<div class="center" style="margin-bottom: -1em;">
+<%= form_for :user, remote: true, method: :put, class: "gender-form",
+			url: { controller: "users", action: "update_gender" } do |f| %>
+  <%= f.hidden_field :id, value: @user.id %>
+  <%= f.hidden_field :gender, value: "nil" %>
+  <%= f.button gender_icon("Unknown"), type: "submit", class: "btn", id: "unknown_submit_btn" %>
+  <br/>
+  ?
+<% end %>
+</div>

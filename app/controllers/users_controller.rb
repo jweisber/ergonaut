@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   skip_before_filter :signed_in_user, only: [:new, :create]
-  before_filter :managing_editor, only: [:destroy]
+  before_filter :managing_editor, only: [:update_gender, :destroy]
   before_filter :editor, only: [:index, :fuzzy_search]
   before_filter :owner_or_editor, only: [:show]
   before_filter :owner_or_superior, only: [:edit, :update]
@@ -89,6 +89,11 @@ class UsersController < ApplicationController
     end
   end
 
+  def update_gender
+    @user = User.find(params[:user][:id])
+    @user.update_attributes(permitted_params(params[:user]))
+  end
+
   private
 
     def managing_editor
@@ -113,6 +118,7 @@ class UsersController < ApplicationController
     end
 
     def permitted_params(params)
+      params[:gender] = nil if params[:gender] == 'nil'
       if current_user.managing_editor?
         params.permit!
       elsif current_user == @user

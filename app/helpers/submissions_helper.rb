@@ -125,4 +125,16 @@ module SubmissionsHelper
       return fa_icon('genderless').html_safe
     end
   end
+
+  def gender_popover_link(user)
+    @user = user
+    content = render 'shared/update_gender_popover'
+    link_to(gender_icon(@user.gender),
+            '#',
+            id: "gender_popover_link",
+            style: "width: 1em; display: inline-block;",
+            class: "popover-link",
+            placement: "right",
+            "data-content" => %Q[#{content}])
+  end
 end

@@ -42,7 +42,7 @@ class User < ActiveRecord::Base
                     uniqueness: { case_sensitive: false }
   validates :password, presence: true, length: { minimum: 6 }, if: :password_changed?
   validates :password_confirmation, presence: true, if: :password_changed?
-  validates :gender, inclusion: { in: [ 'Female', 'Male', 'Unknown' ],
+  validates :gender, inclusion: { in: [ 'Female', 'Male', nil ],
       message: "must be Female, Male, or Unknown" }
 
   # validate just one role (except author == referee)

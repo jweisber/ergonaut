@@ -87,6 +87,9 @@ Ergonaut::Application.routes.draw do
     collection do
       post 'fuzzy_search'
     end
+    member do
+      put 'update_gender'
+    end
   end
   resources :sessions, only: [:new, :create, :destroy]
   resources :password_resets

@@ -113,8 +113,29 @@ class StatisticsController < ApplicationController
                   "Externally reviewed" => average_ttd_external_review,
                   "Resubmissions" => average_ttd_resubmissions }
 
-    @genders_hash = { 'Male' => @corrections[@year][:male_authors],
-                      'Female' => @corrections[@year][:female_authors] }
+    male_authors = Submission.year_submitted(@year)
+                             .original
+                             .with_decision
+                             .author_gender('Male')
+                             .count
+    male_authors += @corrections[@year][:male_authors] if @corrections[@year][:male_authors]
+
+    female_authors = Submission.year_submitted(@year)
+                               .original
+                               .with_decision
+                               .author_gender('Female')
+                               .count
+    female_authors += @corrections[@year][:female_authors] if @corrections[@year][:female_authors]
+
+    unknown_gender_authors = Submission.year_submitted(@year)
+                                       .original
+                                       .with_decision
+                                       .gender_unknown
+                                       .count
+
+    @genders_hash = { 'Male' => male_authors,
+                      'Female' => female_authors,
+                      'Unknown' => unknown_gender_authors }
   end
 
 
@@ -157,6 +178,18 @@ class StatisticsController < ApplicationController
 
         scope :resubmission, -> do
           where('submissions.revision_number > 0')
+        end
+
+        scope :author_gender, ->(gender) do
+          joins(:author)
+          .uniq
+          .where('users.gender = ?', gender)
+        end
+
+        scope :gender_unknown, -> do
+          joins(:author)
+          .uniq
+          .where('users.gender IS NULL')
         end
       end
     end
@@ -259,8 +292,8 @@ class StatisticsController < ApplicationController
           :accept => 0,
           :resubmissions_rejected => 1,
           :resubmissions_accepted => 1,
-          :male_authors => 232,
-          :female_authors => 38,
+          :male_authors => 17,
+          :female_authors => 1,
           'Continental Philosophy' => 0,
           'Epistemology' => 4,
           'Ethics' => 2,

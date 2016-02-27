@@ -1,15 +1,16 @@
 <div class="row">
 	<div class="offset2 span8">
-		
+
 		<h3 class="center">
 			<%= link_to "\"#{@submission.title}\"", @submission.manuscript_file.to_s %>
 		</h3>
 		<% if current_user.managing_editor? %>
 			<h4 class="center">
 				by <%= link_to @submission.author.full_name, 											 											 user_path(@submission.author) %>
+				<%= render 'shared/update_gender_link' %>
 			</h4>
 		<% end %>
-		
+
 		<% if @submission.original != @submission %>
 			<h5 class="center">
 				Previously <%= link_to "Submission \##{@submission.original.id}", @submission.original %>
@@ -22,11 +23,11 @@
 			Submitted <%= @submission.date_submitted_pretty %>
 		</h5>
 		<% end %>
-	
+
 		<h6 class="center">
 			<%= "Area: #{@submission.area.name}" %>
 		</h6>
-		
+
 		<div class="legend-sans-rule">
 			Internal review
 			<span class="pull-right">
@@ -36,7 +37,7 @@
 				<% end %>
 			</span>
 		</div>
-		
+
 		<div class="well">
 			<dl class="dl-horizontal">
 			    <dt style="text-align: right;">
@@ -84,22 +85,22 @@
 	</div>
 
   <table class="table table-striped">
-    <thead>  
-      <tr>  
+    <thead>
+      <tr>
         <th>Referee</th>
         <th>Assigned</th>
 				<th>Accepted</th>
 				<th>Due</th>
 				<th>Completed</th>
 				<th>Recommend</th>
-        <th class="text-center">Comments</th>  
-				<th class="text-center">Emails</th>  
-      </tr>  
+        <th class="text-center">Comments</th>
+				<th class="text-center">Emails</th>
+      </tr>
     </thead>
-		<tbody>  
+		<tbody>
     	<% if @referee_assignments %>
         <% @referee_assignments.each do |r| %>
-		      <tr>  
+		      <tr>
 		        <td>
 							<%= link_to r.referee.full_name, user_path(r.referee) %>
 						</td>
@@ -108,28 +109,28 @@
 						</td>
 		        <td>
 							<%= r.agreed_at ? r.date_agreed_pretty : "\u2014" %>
-						</td> 
+						</td>
 		        <td>
 							<%= r.report_due_at ? r.date_due_pretty : "\u2014" %>
 						</td>
 		        <td>
 							<%= r.report_completed_at ? r.date_completed_pretty : "\u2014" %>
-						</td>   
+						</td>
 		        <td>
               <% if r.report_completed? %>
                 <%= r.recommendation %>
               <% else %>
                 <%= "\u2014" %>
               <% end %>
-						</td>  
+						</td>
 		        <td class="text-center">
 	            <% if r.report_completed? %>
 	              <%= link_to fa_icon('comment'), archive_referee_assignment_path(r.submission, r) %>
 							<% elsif r.agreed == false %>
-								<%= link_to(fa_icon('comment', style: 'font-size: 1.2em;'), 
-														'#', 
+								<%= link_to(fa_icon('comment', style: 'font-size: 1.2em;'),
+														'#',
 														class: "popover-link",
-														placement: "left", 
+														placement: "left",
 														"data-content" => ( r.decline_comment && r.decline_comment.length > 0 ? r.decline_comment : "N/A")) %>
 	            <% else %>
 	              <%= "\u2014" %>
@@ -137,12 +138,12 @@
 						</td>
 		        <td class="text-center">
 							<%= link_to fa_icon('envelope', style: 'font-size: 1.2em;'), archive_referee_assignment_sent_emails_path(@submission, r) %>
-						</td> 
+						</td>
 		      </tr>
 				<% end %>
 			<% end %>
 			<% if @referee_assignments.size < 1 %>
-      	<tr>  
+      	<tr>
       		<td colspan="10" style="text-align: center;">
 						<span class="muted"><em>No referees assigned</em></span>
 					</td>
@@ -150,12 +151,12 @@
 			<% end %>
 		</tbody>
 	</table>
-	
+
 	<div class="center">
 		<%= link_to fa_icon('envelope', style: 'font-size: 1.2em;'), archive_sent_emails_path(@submission) %>
 		<%= link_to 'Email log', archive_sent_emails_path(@submission) %>
 	</div>
-	
+
 </div>
 </div>
 

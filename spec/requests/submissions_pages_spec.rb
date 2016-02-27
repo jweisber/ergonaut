@@ -98,6 +98,28 @@ describe "SubmissionsPages" do
         expect(page).to have_content(@submission.author.full_name)
       end
 
+      it "can record the author's gender", js: true do
+        expect(page).not_to have_button("female_submit_btn")
+        click_link("gender_popover_link")
+        expect(page).to have_button("female_submit_btn")
+        click_button("female_submit_btn")
+        sleep 1
+        expect(page).not_to have_button("female_submit_btn")
+        expect(@submission.author.reload.gender).to eq 'Female'
+
+        click_link("gender_popover_link")
+        click_button("male_submit_btn")
+        sleep 1
+        expect(page).not_to have_button("male_submit_btn")
+        expect(@submission.author.reload.gender).to eq 'Male'
+
+        click_link("gender_popover_link")
+        click_button("unknown_submit_btn")
+        sleep 1
+        expect(page).not_to have_button("unknown_submit_btn")
+        expect(@submission.author.reload.gender).to eq nil
+      end
+
       it "displays information about the submission" do
         expect(page).to have_link(@submission.title, href: @submission.manuscript_file)
         expect(page).to have_link('', href: edit_manuscript_file_submission_path(@submission))
@@ -598,6 +620,10 @@ describe "SubmissionsPages" do
 
       it "doesn't display the author's name" do
         expect(page).not_to have_content(@submission.author.full_name)
+      end
+
+      it "doesn't display the author's gender" do
+        expect(page).not_to have_link("gender_popover_link")
       end
 
       it "displays information about the submission" do
