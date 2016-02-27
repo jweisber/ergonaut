@@ -78,86 +78,80 @@
 </div>
 
 
-<div class="row">
 
-	<div class="legend-sans-rule">
-		External review
-	</div>
+<div class="legend-sans-rule">
+	External review
+</div>
 
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Referee</th>
-        <th>Assigned</th>
-				<th>Accepted</th>
-				<th>Due</th>
-				<th>Completed</th>
-				<th>Recommend</th>
-        <th class="text-center">Comments</th>
-				<th class="text-center">Emails</th>
-      </tr>
-    </thead>
-		<tbody>
-    	<% if @referee_assignments %>
-        <% @referee_assignments.each do |r| %>
-		      <tr>
-		        <td>
-							<%= link_to r.referee.full_name, user_path(r.referee) %>
-						</td>
-		        <td>
-							<%= r.assigned_at ? r.date_assigned_pretty : "\u2014" %>
-						</td>
-		        <td>
-							<%= r.agreed_at ? r.date_agreed_pretty : "\u2014" %>
-						</td>
-		        <td>
-							<%= r.report_due_at ? r.date_due_pretty : "\u2014" %>
-						</td>
-		        <td>
-							<%= r.report_completed_at ? r.date_completed_pretty : "\u2014" %>
-						</td>
-		        <td>
-              <% if r.report_completed? %>
-                <%= r.recommendation %>
-              <% else %>
-                <%= "\u2014" %>
-              <% end %>
-						</td>
-		        <td class="text-center">
-	            <% if r.report_completed? %>
-	              <%= link_to fa_icon('comment'), archive_referee_assignment_path(r.submission, r) %>
-							<% elsif r.agreed == false %>
-								<%= link_to(fa_icon('comment', style: 'font-size: 1.2em;'),
-														'#',
-														class: "popover-link",
-														placement: "left",
-														"data-content" => ( r.decline_comment && r.decline_comment.length > 0 ? r.decline_comment : "N/A")) %>
-	            <% else %>
-	              <%= "\u2014" %>
-	            <% end %>
-						</td>
-		        <td class="text-center">
-							<%= link_to fa_icon('envelope', style: 'font-size: 1.2em;'), archive_referee_assignment_sent_emails_path(@submission, r) %>
-						</td>
-		      </tr>
-				<% end %>
-			<% end %>
-			<% if @referee_assignments.size < 1 %>
-      	<tr>
-      		<td colspan="10" style="text-align: center;">
-						<span class="muted"><em>No referees assigned</em></span>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Referee</th>
+      <th>Assigned</th>
+			<th>Accepted</th>
+			<th>Due</th>
+			<th>Completed</th>
+			<th>Recommend</th>
+      <th class="text-center">Comments</th>
+			<th class="text-center">Emails</th>
+    </tr>
+  </thead>
+	<tbody>
+  	<% if @referee_assignments %>
+      <% @referee_assignments.each do |r| %>
+	      <tr>
+	        <td>
+						<%= link_to r.referee.full_name, user_path(r.referee) %>
 					</td>
-        <td>
+	        <td>
+						<%= r.assigned_at ? r.date_assigned_pretty : "\u2014" %>
+					</td>
+	        <td>
+						<%= r.agreed_at ? r.date_agreed_pretty : "\u2014" %>
+					</td>
+	        <td>
+						<%= r.report_due_at ? r.date_due_pretty : "\u2014" %>
+					</td>
+	        <td>
+						<%= r.report_completed_at ? r.date_completed_pretty : "\u2014" %>
+					</td>
+	        <td>
+            <% if r.report_completed? %>
+              <%= r.recommendation %>
+            <% else %>
+              <%= "\u2014" %>
+            <% end %>
+					</td>
+	        <td class="text-center">
+            <% if r.report_completed? %>
+              <%= link_to fa_icon('comment'), archive_referee_assignment_path(r.submission, r) %>
+						<% elsif r.agreed == false %>
+							<%= link_to(fa_icon('comment', style: 'font-size: 1.2em;'),
+													'#',
+													class: "popover-link",
+													placement: "left",
+													"data-content" => ( r.decline_comment && r.decline_comment.length > 0 ? r.decline_comment : "N/A")) %>
+            <% else %>
+              <%= "\u2014" %>
+            <% end %>
+					</td>
+	        <td class="text-center">
+						<%= link_to fa_icon('envelope', style: 'font-size: 1.2em;'), archive_referee_assignment_sent_emails_path(@submission, r) %>
+					</td>
+	      </tr>
 			<% end %>
-		</tbody>
-	</table>
+		<% end %>
+		<% if @referee_assignments.size < 1 %>
+    	<tr>
+    		<td colspan="10" style="text-align: center;">
+					<span class="muted"><em>No referees assigned</em></span>
+				</td>
+      <td>
+		<% end %>
+	</tbody>
+</table>
 
-	<div class="center">
-		<%= link_to fa_icon('envelope', style: 'font-size: 1.2em;'), archive_sent_emails_path(@submission) %>
-		<%= link_to 'Email log', archive_sent_emails_path(@submission) %>
-	</div>
-
+<div class="center">
+	<%= link_to fa_icon('envelope', style: 'font-size: 1.2em;'), archive_sent_emails_path(@submission) %>
+	<%= link_to 'Email log', archive_sent_emails_path(@submission) %>
 </div>
-</div>
-
-
