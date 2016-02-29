@@ -12,7 +12,7 @@ class StatisticsController < ApplicationController
 
     @corrections[@year] = {} unless @corrections[@year]
 
-    @decided = Submission.year_submitted(@year).with_decision.count
+    @decided = Submission.original.year_submitted(@year).with_decision.count
     @decided += @corrections[@year][:decided].to_i
     @withdrawn = Submission.year_submitted(@year).where(withdrawn: true).count
     @withdrawn += @corrections[@year][:withdrawn].to_i
