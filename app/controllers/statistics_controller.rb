@@ -4,7 +4,7 @@ class StatisticsController < ApplicationController
   before_filter :add_scopes, :set_annual_corrections
 
   def index
-    redirect_to statistic_path(Time.now.year)
+    redirect_to statistic_path("last_12_months")
   end
 
   def show
@@ -162,14 +162,24 @@ class StatisticsController < ApplicationController
         end
 
         scope :year_submitted, ->(year) do
-          where("submissions.created_at >= ? AND submissions.created_at < ?", DateTime.new(year), DateTime.new(year+1))
+          if year > 0
+            start_date = DateTime.new(year)
+          else
+            start_date = DateTime.now - 1.year
+          end
+          where("submissions.created_at >= ? AND submissions.created_at < ?", start_date, start_date + 1.year)
         end
 
         scope :year_originally_submitted, ->(year) do
+          if year > 0
+            start_date = DateTime.new(year)
+          else
+            start_date = DateTime.now - 1.year
+          end
           joins('LEFT OUTER JOIN submissions originals ON submissions.original_id = originals.id')
           .where("originals.created_at >= ? AND originals.created_at < ?",
-                 DateTime.new(year),
-                 DateTime.new(year+1))
+                 start_date,
+                 start_date + 1.year)
         end
 
         scope :original, -> do

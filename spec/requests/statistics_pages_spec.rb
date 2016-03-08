@@ -6,46 +6,77 @@ describe "Statistics pages" do
     before { visit statistics_path }
 
     it "redirects to the show page for the current year" do
-      expect(current_path).to eq(statistic_path(Time.now.year))
+      expect(current_path).to match(/last_12_months/)
     end
   end
 
-  describe "show page for current year" do
+  describe "show page for the last 12 months" do
     before do
       create(:managing_editor)
 
-      2.times do
-        create(:submission)
-      end
-      2.times do
-        s = create(:desk_rejected_submission)
-        s.update_attributes(decision_entered_at: 5.days.from_now)
-        s.author.update_attributes(gender: 'Male')
-      end
-      2.times do
-        s = create(:rejected_after_review_submission)
-        s.update_attributes(decision_entered_at: 10.days.from_now)
-        s.author.update_attributes(gender: 'Female')
-      end
-      2.times do
-        s = create(:first_revision_submission_minor_revisions_requested)
-        s.original.update_attributes(decision_entered_at: 15.days.from_now)
-        s.update_attributes(decision: Decision::ACCEPT)
-        s.update_attributes(decision_entered_at: 20.days.from_now)
-      end
-      2.times do
-        s = create(:first_revision_submission_minor_revisions_requested)
-        s.original.update_attributes(decision_entered_at: 25.days.from_now)
-        s.update_attributes(decision: Decision::REJECT)
-        s.update_attributes(decision_entered_at: 30.days.from_now)
-      end
-      2.times do
-        s = create(:accepted_submission)
-        s.update_attributes(decision_entered_at: 35.days.from_now)
-        s.author.update_attributes(gender: 'Female')
-      end
+      create(:submission, created_at: 11.months.ago)
 
-      visit statistic_path(Time.now.year)
+      new_years_2010 = DateTime.new(2010)
+
+      s = create(:desk_rejected_submission,
+                 created_at: new_years_2010,
+                 decision_entered_at: new_years_2010 + 1.month)
+      s.author.update_attributes(gender: 'Male')
+
+      s = create(:desk_rejected_submission,
+                 created_at: 11.months.ago,
+                 decision_entered_at: 10.months.ago)
+      s.author.update_attributes(gender: 'Male')
+
+      s = create(:rejected_after_review_submission,
+                 created_at: new_years_2010,
+                 decision_entered_at: new_years_2010 + 1.month)
+      s.author.update_attributes(gender: 'Female')
+
+      s = create(:rejected_after_review_submission,
+                 created_at: 11.months.ago,
+                 decision_entered_at: 10.months.ago)
+      s.author.update_attributes(gender: 'Female')
+
+      s = create(:first_revision_submission,
+                 decision: Decision::REJECT,
+                 created_at: 11.months.ago,
+                 decision_entered_at: 10.months.ago,
+                 decision_approved: true)
+      s.original.update_attributes(created_at: new_years_2010, decision_entered_at: new_years_2010 + 1.month)
+      s.author.update_attributes(gender: 'Male')
+
+      s = create(:first_revision_submission,
+                 decision: Decision::ACCEPT,
+                 created_at: 7.months.ago,
+                 decision_entered_at: 6.months.ago,
+                 decision_approved: true)
+      s.original.update_attributes(created_at: 11.months.ago, decision_entered_at: 10.months.ago)
+      s.author.update_attributes(gender: 'Male')
+
+      s = create(:first_revision_submission,
+                 decision: Decision::REJECT,
+                 created_at: 11.months.ago,
+                 decision_entered_at: 10.months.ago,
+                 decision_approved: true)
+      s.original.update_attributes(decision: Decision::MAJOR_REVISIONS)
+      s.original.update_attributes(created_at: new_years_2010, decision_entered_at: new_years_2010 + 1.month)
+      s.author.update_attributes(gender: 'Female')
+
+      s = create(:first_revision_submission,
+                 created_at: 7.months.ago,
+                 decision_entered_at: 6.months.ago,
+                 decision: Decision::REJECT,
+                 decision_approved: true)
+      s.original.update_attributes(decision: Decision::MINOR_REVISIONS)
+      s.original.update_attributes(created_at: 11.months.ago, decision_entered_at: 9.months.ago)
+      s.author.update_attributes(gender: 'Female')
+
+      s = create(:accepted_submission, created_at: 5.months.ago)
+      s.update_attributes(decision_entered_at: 4.months.ago)
+      s.author.update_attributes(gender: 'Male')
+
+      visit statistics_path
     end
 
     it "has links to pages for previous years" do
@@ -57,41 +88,85 @@ describe "Statistics pages" do
     it "loads the statistics for first-round decisions" do
       chart_scripts = page.html.scan(/<script type="text\/javascript">(.*?)<\/script>/m)
 
-      expect(chart_scripts[0][0]).to match(/"Desk reject":2/)
-      expect(chart_scripts[0][0]).to match(/"Reject after external review":2/)
-      expect(chart_scripts[0][0]).to match(/"Major revisions":4/)
-      expect(chart_scripts[0][0]).to match(/"Minor revisions":0/)
-      expect(chart_scripts[0][0]).to match(/"Accept":2/)
+      expect(chart_scripts[0][0]).to match(/"Desk reject":1/)
+      expect(chart_scripts[0][0]).to match(/"Reject after external review":1/)
+      expect(chart_scripts[0][0]).to match(/"Major revisions":1/)
+      expect(chart_scripts[0][0]).to match(/"Minor revisions":1/)
+      expect(chart_scripts[0][0]).to match(/"Accept":1/)
     end
 
     it "loads the statistics for second-round decisions" do
       chart_scripts = page.html.scan(/<script type="text\/javascript">(.*?)<\/script>/m)
 
-      expect(chart_scripts[1][0]).to match(/"Accept":2/)
-      expect(chart_scripts[1][0]).to match(/"Reject":2/)
+      expect(chart_scripts[1][0]).to match(/"Accept":1/)
+      expect(chart_scripts[1][0]).to match(/"Reject":1/)
     end
 
     it "loads the statistics for average times to a decision" do
       chart_scripts = page.html.scan(/<script type="text\/javascript">(.*?)<\/script>/m)
 
-      expect(chart_scripts[2][0]).to match(/"All submissions":20/)
-      expect(chart_scripts[2][0]).to match(/"Desk rejections":5/)
-      expect(chart_scripts[2][0]).to match(/"Externally reviewed":21/)
-      expect(chart_scripts[2][0]).to match(/"Resubmissions":25/)
+      expect(chart_scripts[2][0]).to match(/"All submissions":34/)
+      expect(chart_scripts[2][0]).to match(/"Desk rejections":30/)
+      expect(chart_scripts[2][0]).to match(/"Externally reviewed":38/)
+      expect(chart_scripts[2][0]).to match(/"Resubmissions":31/)
     end
 
     it "loads the statistics for authors by gender" do
       chart_scripts = page.html.scan(/<script type="text\/javascript">(.*?)<\/script>/m)
 
-      expect(chart_scripts[3][0]).to match(/"Female":4/)
-      expect(chart_scripts[3][0]).to match(/"Male":2/)
-      expect(chart_scripts[3][0]).to match(/"Unknown":4/)
+      expect(chart_scripts[3][0]).to match(/"Female":2/)
+      expect(chart_scripts[3][0]).to match(/"Male":3/)
+      expect(chart_scripts[3][0]).to match(/"Unknown":0/)
     end
 
     it "loads the statistics for submissions by area" do
       chart_scripts = page.html.scan(/<script type="text\/javascript">(.*?)<\/script>/m)
 
       expect(chart_scripts[4][0]).to match(/"Ar\. \d* ":1/)
+    end
+
+    describe "show page for previous calendar year" do
+      before { visit statistic_path("2010") }
+
+      it "loads the statistics for first-round decisions" do
+        chart_scripts = page.html.scan(/<script type="text\/javascript">(.*?)<\/script>/m)
+
+        expect(chart_scripts[0][0]).to match(/"Desk reject":1/)
+        expect(chart_scripts[0][0]).to match(/"Reject after external review":1/)
+        expect(chart_scripts[0][0]).to match(/"Major revisions":2/)
+        expect(chart_scripts[0][0]).to match(/"Minor revisions":0/)
+        expect(chart_scripts[0][0]).to match(/"Accept":0/)
+      end
+
+      it "loads the statistics for second-round decisions" do
+        chart_scripts = page.html.scan(/<script type="text\/javascript">(.*?)<\/script>/m)
+
+        expect(chart_scripts[1][0]).to match(/"Accept":0/)
+        expect(chart_scripts[1][0]).to match(/"Reject":2/)
+      end
+
+      it "loads the statistics for average times to a decision" do
+        chart_scripts = page.html.scan(/<script type="text\/javascript">(.*?)<\/script>/m)
+
+        expect(chart_scripts[2][0]).to match(/"All submissions":31/)
+        expect(chart_scripts[2][0]).to match(/"Desk rejections":31/)
+        expect(chart_scripts[2][0]).to match(/"Externally reviewed":31/)
+        expect(chart_scripts[2][0]).to match(/"Resubmissions":30/)
+      end
+
+      it "loads the statistics for authors by gender" do
+        chart_scripts = page.html.scan(/<script type="text\/javascript">(.*?)<\/script>/m)
+
+        expect(chart_scripts[3][0]).to match(/"Female":2/)
+        expect(chart_scripts[3][0]).to match(/"Male":2/)
+        expect(chart_scripts[3][0]).to match(/"Unknown":0/)
+      end
+
+      it "loads the statistics for submissions by area" do
+        chart_scripts = page.html.scan(/<script type="text\/javascript">(.*?)<\/script>/m)
+
+        expect(chart_scripts[4][0]).to match(/"Ar\. \d* ":1/)
+      end
     end
   end
 
@@ -107,7 +182,7 @@ describe "Statistics pages" do
     end
 
     it "has links for 2013 up through the current year" do
-      for year in 2013..Time.now.year do
+      for year in 2013..(Time.now.year-1) do
         expect(page).to have_link(year.to_s, href: statistic_path(year)) unless year == 2014
       end
     end
@@ -123,7 +198,7 @@ describe "Statistics pages" do
     end
 
     it "has links for 2014 up through the current year" do
-      for year in 2014..Time.now.year do
+      for year in 2014..(Time.now.year - 1) do
         expect(page).to have_link(year.to_s, href: statistic_path(year)) unless year == 2013
       end
     end

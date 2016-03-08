@@ -2,7 +2,10 @@
 
 <div class="centered-pills">
 	<ul class="nav nav-pills">
-		<% for y in (2013..Time.now.year).reverse_each %>
+		<li class="<%= 'active' if @year == 0 %>">
+			<%= link_to "Last 12 months", statistic_path("last_12_months") %>
+		</li>
+		<% for y in (2013...Time.now.year).reverse_each %>
 		  <li class="<%= 'active' if @year == y %>">
 				<%= link_to "#{y}", statistic_path(y) %>
 			</li>
