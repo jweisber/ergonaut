@@ -1,7 +1,7 @@
 class StatisticsController < ApplicationController
 
   skip_before_filter :signed_in_user
-  before_filter :add_scopes, :set_annual_corrections
+  before_filter :set_annual_corrections
 
   def index
     redirect_to statistic_path("last_12_months")
@@ -9,129 +9,120 @@ class StatisticsController < ApplicationController
 
   def show
     @year = params[:id].to_i
-
     @corrections[@year] = {} unless @corrections[@year]
 
-    @decided = Submission.original.year_submitted(@year).with_decision.count
+    # DECISIONS
+    # Submissions with Decisions
+    arel = Submission.original.year_submitted(@year).with_decision
+    @decided = arel.count
     @decided += @corrections[@year][:decided].to_i
-    @withdrawn = Submission.year_submitted(@year).where(withdrawn: true).count
+    @ae_decided = area_editor_count(arel)
+
+    # Withdrawn Submissions
+    arel = Submission.year_submitted(@year).where(withdrawn: true)
+    @withdrawn = arel.count
     @withdrawn += @corrections[@year][:withdrawn].to_i
+    @ae_withdrawn = area_editor_count(arel)
 
-    @reject = Submission.original
-                        .year_submitted(@year)
-                        .with_decision.where(decision: Decision::REJECT).count
+    # Round 1: Rejected Submissions
+    arel = Submission.original.year_submitted(@year).with_decision.where(decision: Decision::REJECT)
+    @reject = arel.count
     @reject += @corrections[@year][:reject].to_i
-    @reject_after_review = Submission.original
-                                     .year_submitted(@year)
-                                     .with_decision
-                                     .where(decision: Decision::REJECT)
-                                     .externally_reviewed
-                                     .count
+    @ae_reject = area_editor_count(arel)
+
+    # Round 1: Rejected After Review
+    arel = Submission.original.year_submitted(@year).with_decision.where(decision: Decision::REJECT).externally_reviewed
+    @reject_after_review = arel.count
     @reject_after_review += @corrections[@year][:reject_after_review].to_i
+    @ae_reject_after_review = area_editor_count(arel)
+
+    # Round 1: Desk Rejected
     @desk_reject = @reject - @reject_after_review
-    @major_revisions = Submission.original
-                                 .year_submitted(@year)
-                                 .with_decision
-                                 .where(decision: Decision::MAJOR_REVISIONS)
-                                 .count
+    @ae_desk_reject = @ae_reject - @ae_reject_after_review
+
+    # Round 1: Major Revisions
+    arel = Submission.original.year_submitted(@year).with_decision.where(decision: Decision::MAJOR_REVISIONS)
+    @major_revisions = arel.count
     @major_revisions += @corrections[@year][:major_revisions].to_i
-    @minor_revisions = Submission.original
-                                 .year_submitted(@year)
-                                 .with_decision
-                                 .where(decision: Decision::MINOR_REVISIONS)
-                                 .count
+    @ae_major_revisions = area_editor_count(arel)
+
+    # Round 1: Minor Revisions
+    arel = Submission.original.year_submitted(@year).with_decision.where(decision: Decision::MINOR_REVISIONS)
+    @minor_revisions = arel.count
     @minor_revisions += @corrections[@year][:minor_revisions].to_i
-    @accept = Submission.original
-                        .year_submitted(@year)
-                        .with_decision.where(decision: Decision::ACCEPT).count
+    @ae_minor_revisions = area_editor_count(arel)
+
+    # Round 1: Accept
+    arel = Submission.original.year_submitted(@year).with_decision.where(decision: Decision::ACCEPT)
+    @accept = arel.count
     @accept += @corrections[@year][:accept].to_i
+    @ae_accept = area_editor_count(arel)
 
-    @resubmissions_rejected = Submission.resubmission
-                                     .year_originally_submitted(@year)
-                                     .with_decision
-                                     .where(decision: Decision::REJECT)
-                                     .count
+
+    # Round 2: Reject
+    arel = Submission.resubmission.year_originally_submitted(@year).with_decision.where(decision: Decision::REJECT)
+    @resubmissions_rejected = arel.count
     @resubmissions_rejected += @corrections[@year][:resubmissions_rejected].to_i
-    @resubmissions_accepted = Submission.resubmission
-                                     .year_originally_submitted(@year)
-                                     .with_decision
-                                     .where(decision: Decision::ACCEPT)
-                                     .count
-    @resubmissions_accepted += @corrections[@year][:resubmissions_accepted].to_i
-    @resubmissions = @resubmissions_rejected + @resubmissions_accepted
+    @ae_resubmissions_rejected = area_editor_count(arel)
 
+    # Round 2: Accept
+    arel = Submission.resubmission.year_originally_submitted(@year).with_decision.where(decision: Decision::ACCEPT)
+    @resubmissions_accepted = arel.count
+    @resubmissions_accepted += @corrections[@year][:resubmissions_accepted].to_i
+    @ae_resubmissions_accepted = area_editor_count(arel)
+
+    # Round 2: Total
+    @resubmissions = @resubmissions_rejected + @resubmissions_accepted
+    @ae_resubmissions = @ae_resubmissions_rejected + @ae_resubmissions_accepted
+
+
+    # AREAS
     @areas_hash = Hash.new
     Area.active_ordered_by_name.each do |area|
-      @areas_hash[area.short_name] = Submission.original
-                                               .year_submitted(@year)
-                                               .with_decision
-                                               .in_area(area.name)
-                                               .count
+      @areas_hash[area.short_name] = Submission.original.year_submitted(@year).with_decision.in_area(area.name).count
       @areas_hash[area.short_name] += @corrections[@year][area.name].to_i
     end
 
-    submissions = Submission.select(:decision_entered_at)
-                            .select(:created_at)
-                            .year_submitted(@year)
-                            .with_decision
-    average_ttd_overall = average_ttd(submissions,
-                                      @corrections[@year][:overall_numerator],
-                                      @corrections[@year][:overall_denominator])
 
-    submissions = Submission.select(:id)
-                            .select(:decision_entered_at)
-                            .select(:created_at)
-                            .original
-                            .year_submitted(@year)
-                            .with_decision
-                            .not_externally_reviewed
-    average_ttd_desk_rejections = average_ttd(submissions,
-                              @corrections[@year][:desk_rejections_numerator],
-                              @corrections[@year][:desk_rejections_denominator])
+    # TIMES TO DECISION
+    submissions = Submission.select('submissions.decision_entered_at').select('submissions.created_at').year_submitted(@year).with_decision
+    average_ttd_overall = average_ttd(submissions, @corrections[@year][:overall_numerator], @corrections[@year][:overall_denominator])
+    ae_average_ttd_overall = average_ttd(submissions.area_editor(current_user))
 
-    submissions = Submission.select(:decision_entered_at)
-                            .select(:created_at)
-                            .original
-                            .year_submitted(@year)
-                            .with_decision
-                            .externally_reviewed
-    average_ttd_external_review = average_ttd(submissions,
-                              @corrections[@year][:external_review_numerator],
-                              @corrections[@year][:external_review_denominator])
+    submissions = Submission.select('submissions.id').select('submissions.decision_entered_at').select('submissions.created_at').original.year_submitted(@year).with_decision.not_externally_reviewed
+    average_ttd_desk_rejections = average_ttd(submissions, @corrections[@year][:desk_rejections_numerator], @corrections[@year][:desk_rejections_denominator])
+    ae_average_ttd_desk_rejections = average_ttd(submissions.area_editor(current_user))
 
-    submissions = Submission.select('submissions.decision_entered_at')
-                            .select('submissions.created_at')
-                            .resubmission
-                            .year_originally_submitted(@year)
-                            .with_decision
-    average_ttd_resubmissions = average_ttd(submissions,
-                                              @corrections[@year][:resubmissions_numerator],
-                                              @corrections[@year][:resubmissions_denominator])
+    submissions = Submission.select('submissions.decision_entered_at').select('submissions.created_at').original.year_submitted(@year).with_decision.externally_reviewed
+    average_ttd_external_review = average_ttd(submissions, @corrections[@year][:external_review_numerator], @corrections[@year][:external_review_denominator])
+    ae_average_ttd_external_review = average_ttd(submissions.area_editor(current_user))
 
-    @ttd_hash = { "All submissions" => average_ttd_overall,
+    submissions = Submission.select('submissions.decision_entered_at').select('submissions.created_at').resubmission.year_originally_submitted(@year).with_decision
+    average_ttd_resubmissions = average_ttd(submissions, @corrections[@year][:resubmissions_numerator], @corrections[@year][:resubmissions_denominator])
+    ae_average_ttd_resubmissions = average_ttd(submissions.area_editor(current_user))
+
+    @ttd_hash = {
+                  "All submissions" => average_ttd_overall,
                   "Desk rejections" => average_ttd_desk_rejections,
                   "Externally reviewed" => average_ttd_external_review,
-                  "Resubmissions" => average_ttd_resubmissions }
+                  "Resubmissions" => average_ttd_resubmissions
+                }
+    @ae_ttd_hash = {
+                     "All submissions" => ae_average_ttd_overall,
+                     "Desk rejections" => ae_average_ttd_desk_rejections,
+                     "Externally reviewed" => ae_average_ttd_external_review,
+                     "Resubmissions" => ae_average_ttd_resubmissions
+                   }
 
-    male_authors = Submission.year_submitted(@year)
-                             .original
-                             .with_decision
-                             .author_gender('Male')
-                             .count
+
+    # GENDERS
+    male_authors = Submission.year_submitted(@year).original.with_decision.author_gender('Male').count
     male_authors += @corrections[@year][:male_authors] if @corrections[@year][:male_authors]
 
-    female_authors = Submission.year_submitted(@year)
-                               .original
-                               .with_decision
-                               .author_gender('Female')
-                               .count
+    female_authors = Submission.year_submitted(@year).original.with_decision.author_gender('Female').count
     female_authors += @corrections[@year][:female_authors] if @corrections[@year][:female_authors]
 
-    unknown_gender_authors = Submission.year_submitted(@year)
-                                       .original
-                                       .with_decision
-                                       .gender_unknown
-                                       .count
+    unknown_gender_authors = Submission.year_submitted(@year).original.with_decision.gender_unknown.count
 
     @genders_hash = { 'Male' => male_authors,
                       'Female' => female_authors,
@@ -140,69 +131,6 @@ class StatisticsController < ApplicationController
 
 
   private
-
-    def add_scopes
-      Submission.class_eval do
-        scope :with_decision, -> do
-          where(decision_approved: true)
-        end
-
-        scope :externally_reviewed, -> do
-          where('EXISTS (SELECT 1 FROM referee_assignments AS r WHERE submissions.id = r.submission_id AND r.report_completed = ?)', true)
-        end
-
-        scope :not_externally_reviewed, -> do
-          where('NOT EXISTS (SELECT 1 FROM referee_assignments AS r WHERE submissions.id = r.submission_id AND r.report_completed = ?)', true)
-        end
-
-        scope :in_area, ->(area_name) do
-          joins(:area)
-          .uniq
-          .where(areas: { name: area_name } )
-        end
-
-        scope :year_submitted, ->(year) do
-          if year > 0
-            start_date = DateTime.new(year)
-          else
-            start_date = DateTime.now - 1.year
-          end
-          where("submissions.created_at >= ? AND submissions.created_at < ?", start_date, start_date + 1.year)
-        end
-
-        scope :year_originally_submitted, ->(year) do
-          if year > 0
-            start_date = DateTime.new(year)
-          else
-            start_date = DateTime.now - 1.year
-          end
-          joins('LEFT OUTER JOIN submissions originals ON submissions.original_id = originals.id')
-          .where("originals.created_at >= ? AND originals.created_at < ?",
-                 start_date,
-                 start_date + 1.year)
-        end
-
-        scope :original, -> do
-          where('submissions.revision_number = 0')
-        end
-
-        scope :resubmission, -> do
-          where('submissions.revision_number > 0')
-        end
-
-        scope :author_gender, ->(gender) do
-          joins(:author)
-          .uniq
-          .where('users.gender = ?', gender)
-        end
-
-        scope :gender_unknown, -> do
-          joins(:author)
-          .uniq
-          .where('users.gender IS NULL')
-        end
-      end
-    end
 
     def set_annual_corrections
       @corrections = {
@@ -339,11 +267,19 @@ class StatisticsController < ApplicationController
       @corrections[2016] = {} if Rails.env.test?
     end
 
+    def area_editor_count(arel)
+      if current_user && current_user.area_editor?
+        arel.area_editor(current_user).count
+      else
+        0
+      end
+    end
+
     def ttd(submission)
       (submission.decision_entered_at.to_date - submission.created_at.to_date).to_i
     end
 
-    def average_ttd(submissions, numerator_correction, denominator_correction)
+    def average_ttd(submissions, numerator_correction = 0, denominator_correction = 0)
       total_days = submissions.inject(0) { |sum, s| sum + ttd(s) }
       total_days += numerator_correction.to_i
       if total_days > 0

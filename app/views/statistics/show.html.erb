@@ -21,34 +21,74 @@
 			"Accept" => @accept,
 			"Withdrawn" => @withdrawn
 		},
-		library: { title: first_round_decisions_chart_title,
-							 colors: ['Red', 'Purple', 'DarkOrange', 'Blue', 'Green', 'LightGray' ],
-							 is3D: true }) %>
-<br/>
+		library: {
+			title: first_round_decisions_chart_title,
+			colors: ['Red', 'Purple', 'DarkOrange', 'Blue', 'Green', 'LightGray' ],
+			is3D: true
+		})
+%><br/>
 
-<% if @resubmissions > 0%>
-<%= pie_chart({
-			"Accept" => @resubmissions_accepted,
-			"Reject" => @resubmissions_rejected
-		},
-		library: { title: "Second round decisions: #{@resubmissions}",
-							 colors: ['Green', 'Red'],
-							 is3D: true }) %>
-<br/>
+<% if show_area_editor_stats %>
+	<%= pie_chart({
+				"Desk reject" => @ae_desk_reject,
+				"Reject after external review" => @ae_reject_after_review,
+				"Major revisions" => @ae_major_revisions,
+				"Minor revisions" => @ae_minor_revisions,
+				"Accept" => @ae_accept,
+				"Withdrawn" => @ae_withdrawn
+			},
+			library: { title: first_round_decisions_chart_title(current_user),
+								 colors: ['Red', 'Purple', 'DarkOrange', 'Blue', 'Green', 'LightGray' ],
+								 is3D: true }) %>
+	<br/>
+<% end %>
+
+<% if @resubmissions > 0 %>
+	<%= pie_chart({
+				"Accept" => @resubmissions_accepted,
+				"Reject" => @resubmissions_rejected
+			},
+			library: { title: "Second round decisions: #{@resubmissions}",
+								 colors: ['Green', 'Red'],
+								 is3D: true }) %>
+	<br/>
+
+	<% if show_area_editor_stats %>
+		<%= pie_chart({
+					"Accept" => @ae_resubmissions_accepted,
+					"Reject" => @ae_resubmissions_rejected
+				},
+				library: {
+					title: "My second round decisions: #{@ae_resubmissions}",
+					colors: ['Green', 'Red'],
+					is3D: true
+			})
+		%><br/>
+	<% end %>
 <% end %>
 
 <%= bar_chart @ttd_hash,
-							library: { title: 'Average days to decision', hAxis: { title: 'Days' } } %>
-<br/>
+							library: {
+								title: 'Average days to decision',
+								hAxis: { title: 'Days' }
+							}
+%><br/>
 
+<% if show_area_editor_stats %>
+	<%= bar_chart @ae_ttd_hash,
+								library: {
+									title: 'My average days to decision',
+									hAxis: { title: 'Days' }
+								}
+	%><br/>
+<% end %>
 
 <%= pie_chart @genders_hash,
-								 library: { title: 'Submissions by author gender',
-								 						colors: ['Red',
-								 										 'Blue',
-								 										 'LightGray'],
-								 						is3D: true } %>
+							library: {
+								title: 'Submissions by author gender',
+								colors: ['Red', 'Blue', 'LightGray'],
+								is3D: true
+							}
+%><br/>
 
-
-<%= column_chart @areas_hash,
-								 library: { title: 'Submissions by area' } %>
+<%= column_chart @areas_hash, library: { title: 'Submissions by area' } %>
