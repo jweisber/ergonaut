@@ -265,6 +265,29 @@ class RefereeAssignment < ActiveRecord::Base
       persisted? && RefereeAssignment.find(id).report_completed
     end
 
+    def previous_referee_letter_or_next_available
+      existing_assignments = RefereeAssignment.joins(:submission)
+                                              .where(submissions: { original_id: self.submission.original_id } )
+                                              .order(referee_assignments: { id: :asc } )
+
+      previous_assignments = existing_assignments.where(referee_assignments: { user_id: self.user_id } )
+                                                 .order(referee_assignments: { id: :asc } )
+
+      previous_completed_assignments = previous_assignments.where(referee_assignments: { report_completed: true } )
+                                                           .order(referee_assignments: { id: :asc } )
+
+      if previous_completed_assignments.size > 0
+        return previous_completed_assignments.last.referee_letter
+      elsif previous_assignments.reload.size > 0
+        return previous_assignments.last.referee_letter
+      elsif existing_assignments.reload.size > 0
+        alphas = ('A'..'ZZ').to_a
+        return alphas[existing_assignments.size]
+      else
+        return 'A'
+      end
+    end
+
     def set_defaults
       self.report_completed = false if self.report_completed.nil?
       self.recommend_reject = false if self.recommend_reject.nil?
@@ -286,7 +309,7 @@ class RefereeAssignment < ActiveRecord::Base
       self.report_due_at = Time.current + JournalSettings.days_for_external_review.days
       self.report_originally_due_at = self.report_due_at
 
-      self.referee_letter = (65 + self.submission.referee_assignments.size).chr   # 65.chr == 'A'
+      self.referee_letter = previous_referee_letter_or_next_available
 
       begin
         self.auth_token = SecureRandom.urlsafe_base64
