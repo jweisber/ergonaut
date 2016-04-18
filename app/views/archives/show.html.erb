@@ -86,7 +86,8 @@
 <table class="table table-striped">
   <thead>
     <tr>
-      <th>Referee</th>
+    	<th>Ref.</th>
+      <th>Name</th>
       <th>Assigned</th>
 			<th>Accepted</th>
 			<th>Due</th>
@@ -100,6 +101,9 @@
   	<% if @referee_assignments %>
       <% @referee_assignments.each do |r| %>
 	      <tr>
+	      	<td class="text-center">
+						<%= r.referee_letter %>
+					</td>
 	        <td>
 						<%= link_to r.referee.full_name, user_path(r.referee) %>
 					</td>

@@ -102,7 +102,8 @@
   <thead>
     <tr>
 			<th></th>
-      <th>Referee</th>
+			<th>Ref.</th>
+      <th>Name</th>
       <th>Assigned</th>
 			<th>Agreed</th>
 			<th>Due</th>
@@ -124,6 +125,9 @@
 											method: :delete,
 											class: "btn btn-mini btn-danger",
 											style: 'width: 3em;' %>
+				</td>
+				<td class="text-center">
+					<%= r.referee_letter %>
 				</td>
         <td class="ellips15">
 					<%= link_to r.referee.full_name, user_path(r.referee) %>

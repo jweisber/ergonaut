@@ -1,9 +1,8 @@
 <div class="well">
   <legend>
+  	Referee <%= "#{@referee_assignment.referee_letter}" %>
 		<% if current_user.editor? %>
-			<%= "#{@referee_assignment.referee.full_name}'s review" %>
-		<% else %>
-			Referee <%= "#{@referee_assignment.referee_letter}" %>
+			<%= "(#{@referee_assignment.referee.full_name})" %>
 		<% end %>
     <% if current_user.managing_editor? %>
       <span class="pull-right">
