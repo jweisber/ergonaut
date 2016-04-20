@@ -119,12 +119,14 @@
       <tr class="<%= referee_assignment_tr_class(r) %>">
 				<td class="ellips15" style="text-align: right;">
 					<% confirm_message = r.declined? ? nil :  "A cancellation notice will be emailed to the reviewer. Do you want to proceed?" %>
-					<%= link_to "Cancel",
-											submission_referee_assignment_path(r.submission, r),
-											confirm: confirm_message,
-											method: :delete,
-											class: "btn btn-mini btn-danger",
-											style: 'width: 3em;' %>
+					<% if show_cancel_button?(r) %>
+						<%= link_to "Cancel",
+												submission_referee_assignment_path(r.submission, r),
+												confirm: confirm_message,
+												method: :delete,
+												class: "btn btn-mini btn-danger",
+												style: 'width: 3em;' %>
+					<% end %>
 				</td>
 				<td class="text-center">
 					<%= r.referee_letter %>

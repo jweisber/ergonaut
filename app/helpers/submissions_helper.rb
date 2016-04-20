@@ -146,4 +146,8 @@ module SubmissionsHelper
       'View report'
     end
   end
+
+  def show_cancel_button?(assignment)
+    !assignment.canceled && !assignment.report_completed && !assignment.declined?
+  end
 end
