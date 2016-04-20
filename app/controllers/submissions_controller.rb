@@ -17,7 +17,7 @@ class SubmissionsController < ApplicationController
   def show
     @submission = Submission.find(params[:id])
     redirect_to archive_path(@submission) if @submission.archived?
-    @referee_assignments = active_referee_assignments(@submission)
+    @referee_assignments = @submission.referee_assignments.includes(:referee)
   end
 
   def edit

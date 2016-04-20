@@ -153,7 +153,7 @@ describe "SubmissionsPages" do
         delete_link = first(:link, 'Cancel', href: submission_referee_assignment_path(@submission, assignment))
         delete_link.click
         expect(assignment.reload).to be_canceled
-        expect(page).not_to have_content(assignment.referee.full_name)
+        expect(page).to have_content('Canceled')
       end
 
       context "when there are pending and declined referee assignments" do
@@ -659,7 +659,7 @@ describe "SubmissionsPages" do
         delete_link = first(:link, 'Cancel', href: submission_referee_assignment_path(@submission, assignment))
         delete_link.click
         expect(assignment.reload).to be_canceled
-        expect(page).not_to have_content(assignment.referee.full_name)
+        expect(page).to have_content('Canceled')
       end
 
       context "when there are pending and declined referee assignments" do

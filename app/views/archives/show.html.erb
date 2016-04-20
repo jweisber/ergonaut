@@ -111,10 +111,16 @@
 						<%= r.assigned_at ? r.date_assigned_pretty : "\u2014" %>
 					</td>
 	        <td>
-						<%= r.agreed_at ? r.date_agreed_pretty : "\u2014" %>
+						<% if r.agreed %>
+							<%= r.date_agreed_pretty %>
+						<% elsif r.agreed != nil %>
+							Declined
+						<% else %>
+							&mdash;
+						<% end %>
 					</td>
 	        <td>
-						<%= r.report_due_at ? r.date_due_pretty : "\u2014" %>
+						<%= due_date_text_or_link(@submission, r) %>
 					</td>
 	        <td>
 						<%= r.report_completed_at ? r.date_completed_pretty : "\u2014" %>
@@ -128,7 +134,7 @@
 					</td>
 	        <td class="text-center">
             <% if r.report_completed? %>
-              <%= link_to fa_icon('comment'), archive_referee_assignment_path(r.submission, r) %>
+              <%= link_to report_link_text(r), archive_referee_assignment_path(r.submission, r) %>
 						<% elsif r.agreed == false %>
 							<%= link_to(fa_icon('comment', style: 'font-size: 1.2em;'),
 													'#',

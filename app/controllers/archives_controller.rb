@@ -1,10 +1,10 @@
 class ArchivesController < ApplicationController
-  
+
   before_filter :editor
   before_filter :assigned_area_editor_or_managing_editor
   before_filter :managing_editor, only: [:update]
   before_filter :bread_crumbs
-  
+
   def index
     if current_user.managing_editor?
       @submissions = Submission.order("updated_at DESC").where(archived: true).includes(:area).page(params[:page])
@@ -15,12 +15,12 @@ class ArchivesController < ApplicationController
 
   def show
     @submission = Submission.find(params[:id])
-    @referee_assignments = @submission.referee_assignments.where("canceled = ? OR canceled IS NULL", false).includes(:referee)
+    @referee_assignments = @submission.referee_assignments.includes(:referee)
   end
 
   def update
     redirect_to security_breach_path unless current_user.managing_editor?
-    
+
     @submission = Submission.find(params[:id])
     if @submission.unarchive(current_user)
       redirect_to submissions_path
@@ -29,10 +29,10 @@ class ArchivesController < ApplicationController
       render :show
     end
   end
-  
-  
+
+
   private
-  
+
     def editor
       unless current_user.editor?
         redirect_to security_breach_path

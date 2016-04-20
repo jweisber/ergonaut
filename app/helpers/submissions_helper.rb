@@ -108,6 +108,7 @@ module SubmissionsHelper
 
   def due_date_text_or_link(s,r)
     text = (r.awaiting_response? || r.agreed) ? r.date_due_pretty : "\u2014".html_safe
+    text = 'Canceled' if r.canceled
 
     if current_user.managing_editor? && (r.awaiting_response? || r.awaiting_report?)
       text = link_to(text, edit_due_date_submission_referee_assignment_path(s,r))
