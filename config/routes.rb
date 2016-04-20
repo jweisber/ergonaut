@@ -54,6 +54,7 @@ Ergonaut::Application.routes.draw do
         put 'update_due_date'
         get 'edit_report'
         put 'update_report'
+        put 'hide_report_from_author'
       end
     end
     resources :sent_emails, only: [:index, :show]

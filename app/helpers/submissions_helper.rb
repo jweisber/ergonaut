@@ -137,4 +137,12 @@ module SubmissionsHelper
             placement: "right",
             "data-content" => %Q[#{content}])
   end
+
+  def report_link_text(assignment)
+    if assignment.hide_report_from_author
+      'Hidden'
+    else
+      'View report'
+    end
+  end
 end

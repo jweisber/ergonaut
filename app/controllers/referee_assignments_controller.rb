@@ -2,7 +2,7 @@ class RefereeAssignmentsController < ApplicationController
 
   before_filter :assigned_area_editor_or_managing_editor, only: [:new, :select_existing_user, :register_new_user, :create, :agree_on_behalf, :decline_on_behalf, :destroy]
   before_filter :author_or_assigned_referee_or_assigned_area_editor_or_managing_editor, only: [:show, :edit, :update, :download_attachment_for_editor, :download_attachment_for_author]
-  before_filter :managing_editor, only: [:edit_due_date, :update_due_date, :edit_report, :update_report]
+  before_filter :managing_editor, only: [:edit_due_date, :update_due_date, :edit_report, :update_report, :hide_report_from_author]
   before_filter :bread_crumbs
 
   def new
@@ -148,6 +148,19 @@ class RefereeAssignmentsController < ApplicationController
     else
       render :edit_report
     end
+  end
+
+  def hide_report_from_author
+    @assignment = RefereeAssignment.find(params[:id])
+    new_value = !@assignment.hide_report_from_author
+
+    if @assignment.update_attributes(hide_report_from_author: new_value)
+      flash[:success] = "Report successfully #{ !new_value ? 'un' : '' }hidden."
+    else
+      flash[:error] = "Something went wrong, I wasn't able to #{ !new_value ? 'un' : '' }hide the report."
+    end
+
+    redirect_to submission_referee_assignment_path(@assignment.submission, @assignment)
   end
 
   private

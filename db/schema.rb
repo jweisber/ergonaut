@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160225035343) do
+ActiveRecord::Schema.define(:version => 20160418013132) do
 
   create_table "area_editor_assignments", :force => true do |t|
     t.integer  "user_id"
@@ -73,6 +73,7 @@ ActiveRecord::Schema.define(:version => 20160225035343) do
     t.datetime "report_originally_due_at"
     t.string   "attachment_for_editor"
     t.string   "attachment_for_author"
+    t.boolean  "hide_report_from_author"
   end
 
   create_table "sent_emails", :force => true do |t|

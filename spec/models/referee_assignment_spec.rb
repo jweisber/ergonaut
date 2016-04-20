@@ -61,6 +61,7 @@ describe RefereeAssignment do
   it { should respond_to(:referee_letter) }
   it { should respond_to(:response_due_at) }
   it { should respond_to(:custom_email_opening) }
+  it { should respond_to(:hide_report_from_author) }
   it { should be_valid }
 
 

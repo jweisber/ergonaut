@@ -27,6 +27,7 @@
 #  recommend_accept          :boolean
 #  referee_letter            :string(255)
 #  response_due_at           :datetime
+#  hide_report_from_author   :boolean
 #
 
 
@@ -114,7 +115,8 @@ class RefereeAssignment < ActiveRecord::Base
   end
 
   def visible_to_author?
-    self.report_completed_at < 7.days.ago || self.submission.decision_approved?
+    !self.hide_report_from_author &&
+      (self.report_completed_at < 7.days.ago || self.submission.decision_approved?)
   end
 
   # finders

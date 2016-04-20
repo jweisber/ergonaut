@@ -349,6 +349,38 @@ describe "Referee assignment pages" do
         expect(@assignment.recommendation).to eq Decision::REJECT
       end
     end
+
+    # hide_report_from_author
+    describe "show/hide report from the author" do
+      context "when report is not yet hidden" do
+        before do
+          @assignment = submission.referee_assignments.first
+          visit submission_referee_assignment_path(submission, @assignment)
+          click_link 'Hide'
+        end
+
+        it "sets hide_report_from_author to true and shows a warning" do
+          expect(@assignment.reload.hide_report_from_author).to be_true
+          expect(page).to have_success_message 'Report successfully hidden'
+          expect(page).to have_content 'This report is hidden'
+        end
+      end
+
+      context "when report is already hidden" do
+        before do
+          @assignment = submission.referee_assignments.first
+          @assignment.update_attributes(hide_report_from_author: true)
+          visit submission_referee_assignment_path(submission, @assignment)
+          click_link 'Unhide'
+        end
+
+        it "sets hide_report_from_author to false and doesn't show the warning" do
+          expect(@assignment.reload.hide_report_from_author).to eq(false)
+          expect(page).to have_success_message 'Report successfully unhidden'
+          expect(page).not_to have_content 'This report is hidden'
+        end
+      end
+    end
   end
 
   shared_examples "managing editor actions are not accessible" do
@@ -402,6 +434,20 @@ describe "Referee assignment pages" do
       it "doesn't update the report and redirects to security breach" do
         @assignment.reload
         expect(@assignment.comments_for_editor).not_to eq('Foo bar')
+        expect(response).to redirect_to(security_breach_path)
+      end
+    end
+
+    # hide_report_from_author
+    describe "hide the report from the author" do
+      before do
+        @assignment = submission.referee_assignments.first
+        put hide_report_from_author_submission_referee_assignment_path(submission, @assignment)
+      end
+
+      it "leaves hide_report_from_author nil and redirects to security breach" do
+        @assignment.reload
+        expect(@assignment.hide_report_from_author).to be_nil
         expect(response).to redirect_to(security_breach_path)
       end
     end

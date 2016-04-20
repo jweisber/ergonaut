@@ -7,6 +7,7 @@
     <% if current_user.managing_editor? %>
       <span class="pull-right">
         <%= link_to 'Edit', edit_report_submission_referee_assignment_path(@referee_assignment.submission, @referee_assignment), class: "btn btn-small" %>
+        <%= link_to show_hide_report_button_label(@referee_assignment), hide_report_from_author_submission_referee_assignment_path(@referee_assignment.submission, @referee_assignment), method: :put, class: "btn btn-small btn-danger" %>
       </span>
     <% end %>
 	</legend>

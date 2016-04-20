@@ -7,4 +7,12 @@ module RefereeAssignmentsHelper
               attachment.url, target: '_blank'
     end
   end
+
+  def show_hide_report_button_label(assignment)
+  	if assignment.hide_report_from_author
+  		'Unhide'
+  	else
+  		'Hide'
+  	end
+  end
 end

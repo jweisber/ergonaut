@@ -167,7 +167,7 @@
 				</td>
         <td class="ellips15 text-center">
           <% if r.report_completed? %>
-            <%= link_to "Click to read", submission_referee_assignment_path(r.submission, r) %>
+        		<%= link_to report_link_text(r), submission_referee_assignment_path(r.submission, r) %>
 					<% elsif r.agreed == false %>
 						<%= link_to(fa_icon('comment', style: 'font-size: 1.2em;'),
 												'#',

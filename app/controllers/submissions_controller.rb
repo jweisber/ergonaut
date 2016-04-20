@@ -1,14 +1,14 @@
 class SubmissionsController < ApplicationController
-  
+
   before_filter :assigned_area_editor_or_managing_editor, except: [:index, :download]
-  before_filter :editor, only: [:index]  
+  before_filter :editor, only: [:index]
   before_filter :managing_editor_or_assigned_author_referee_or_area_editor, only: [:download]
   before_filter :managing_editor, only: [:edit_manuscript_file, :update_manuscript_file]
   before_filter :bread_crumbs
 
 	def index
     if current_user.managing_editor?
-      @submissions = Submission.where(archived: false).includes(:author, :area, :area_editor, :referee_assignments, :referees) 
+      @submissions = Submission.where(archived: false).includes(:author, :area, :area_editor, :referee_assignments, :referees)
     else
       @submissions = current_user.ae_submissions.where(archived: false).includes(:author, :area, :area_editor, :referee_assignments, :referees)
     end
@@ -45,14 +45,14 @@ class SubmissionsController < ApplicationController
       render :edit
     end
   end
-  
+
   def download
     send_file @submission.reload.manuscript_file.current_path, x_sendfile: true
   end
-  
+
   def edit_manuscript_file
   end
-  
+
   def update_manuscript_file
     if params[:submission] && params[:submission][:manuscript_file]
       path = @submission.manuscript_file.current_path
@@ -72,16 +72,16 @@ class SubmissionsController < ApplicationController
   end
 
   private
-  
+
     def managing_editor_or_assigned_author_referee_or_area_editor
       @submission = Submission.find(params[:id])
       if current_user.managing_editor?
-        return 
+        return
       elsif current_user == @submission.author
         return
       elsif current_user == @submission.area_editor
         return
-      elsif (@submission.referees.include?(current_user) || 
+      elsif (@submission.referees.include?(current_user) ||
              @submission.latest_version.referees.include?(current_user))
         return
       else
@@ -91,20 +91,20 @@ class SubmissionsController < ApplicationController
 
     def assigned_area_editor_or_managing_editor
       @submission = Submission.find(params[:id]) if params[:id]
-      
+
       unless current_user.managing_editor? or (@submission and current_user == @submission.area_editor)
         redirect_to security_breach_path
       end
     end
-    
+
     def managing_editor
       redirect_to security_breach_path unless current_user.managing_editor?
     end
-    
+
     def editor
       redirect_to security_breach_path unless current_user.editor?
     end
-    
+
     def permitted_params
       if current_user.managing_editor?
         # reformat first, because accepts_nested_attributes_for sucks with has_one :through
