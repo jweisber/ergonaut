@@ -11,3 +11,7 @@ jQuery ->
 			form.submit()
 		, 500)
 	)
+
+# tooltip
+jQuery ->
+	$("span[data-toggle]").tooltip({ placement: 'top'})

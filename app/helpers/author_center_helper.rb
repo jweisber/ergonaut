@@ -12,17 +12,21 @@ module AuthorCenterHelper
   end
 
   def agreed_y_or_n(assignment)
-		if assignment.agreed
-			'Y'
+    if assignment.canceled
+      tooltip_text = "This assignment was canceled. (Common causes: accidental duplicate, sent to the wrong person, no response from the referee, etc.)"
+      ban_icon = "<span data-toggle=\"tooltip\" title=\"#{tooltip_text}\"> #{fa_icon('ban')} </span>"
+      return ban_icon.html_safe
+		elsif assignment.agreed
+			return 'Y'
 		elsif assignment.agreed.nil?
-			"\u2014"
+			return "\u2014"
 		else
-			'N'
+			return 'N'
 		end
   end
 
   def date_due(assignment)
-		if assignment.agreed
+		if assignment.agreed && !assignment.canceled
 			assignment.date_due_pretty
 		else
 			"\u2014"
@@ -30,8 +34,11 @@ module AuthorCenterHelper
   end
 
   def report_completed_date_and_link(assignment)
-    if assignment.report_completed && (assignment.submission.decision_approved? || assignment.visible_to_author?)
-  		link_to assignment.date_completed_pretty,
+    if assignment.report_completed &&
+       !assignment.canceled &&
+       (assignment.submission.decision_approved? || assignment.visible_to_author?)
+
+      link_to assignment.date_completed_pretty,
               author_center_referee_assignment_path(assignment.submission, assignment)
   	else
   		"\u2014"

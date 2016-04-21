@@ -7,7 +7,7 @@
 
 	<% @submissions.each do |s| %>
 	<table class="table table-bordered">
-		<% @referee_assignments = s.referee_assignments.not_canceled %>
+		<% @referee_assignments = s.referee_assignments %>
 	  <tr>
 			<td width="35%" rowspan="<%= s.referee_assignments.size + 3 %>" style="vertical-align: middle">
 				<dl class="dl-horizontal" style="margin-left: -4em;">
@@ -25,7 +25,7 @@
 				<div class="center">
 					<% unless s.archived %>
 					<%= link_to "Withdraw",
-											withdraw_author_center_path(s.id), 
+											withdraw_author_center_path(s.id),
 											class: 'btn btn-danger btn-mini',
 											confirm: confirm_withdraw_message %>
 					<% end %>
@@ -78,4 +78,4 @@
 	<% end %>
 </em></div>
 
-<% end %> 
+<% end %>
