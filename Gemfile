@@ -20,6 +20,7 @@ group :development do
   gem 'hirb'
   gem 'annotate', '2.5.0'
   gem 'better_errors'
+  gem 'meta_request'
   gem 'rvm-capistrano'
 end
 
