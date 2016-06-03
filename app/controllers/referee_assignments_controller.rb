@@ -115,7 +115,7 @@ class RefereeAssignmentsController < ApplicationController
   def update_due_date
     @referee_assignment = RefereeAssignment.find(params[:id])
     new_due_date = params[:referee_assignment][:report_due_at]
-    if @referee_assignment.update_attributes(report_due_at: new_due_date)
+    if @referee_assignment.update_attributes(report_due_at: new_due_date, report_originally_due_at: new_due_date)
       flash[:success] = "#{@referee_assignment.referee.full_name}'s due date has been updated to #{new_due_date}."
       redirect_to submission_path(@referee_assignment.submission)
     else

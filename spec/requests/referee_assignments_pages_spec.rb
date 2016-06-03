@@ -296,6 +296,7 @@ describe "Referee assignment pages" do
       it "changes the due date, flashes success, and redirects to the submission's page" do
         @referee_assignment.reload
         expect(@referee_assignment.report_due_at.strftime("%b. %-d, %Y")).to eq(@new_due_date)
+        expect(@referee_assignment.report_originally_due_at.strftime("%b. %-d, %Y")).to eq(@new_due_date)
         expect(page).to have_success_message "due date has been updated"
         expect(current_path).to eq(submission_path(submission))
       end
@@ -614,7 +615,7 @@ describe "Referee assignment pages" do
     end
 
     # update_due_date
-    describe "downloading the attachment for the editor" do
+    describe "updating the due date" do
       before do
         @assignment = submission.referee_assignments.last
         new_due_date = (Time.current + 60.days).strftime("%b. %-d, %Y")
