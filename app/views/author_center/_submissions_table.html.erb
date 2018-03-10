@@ -25,9 +25,26 @@
 				<div class="center">
 					<% unless s.archived %>
 					<%= link_to "Withdraw",
-											withdraw_author_center_path(s.id),
+											"#warningModal",
 											class: 'btn btn-danger btn-mini',
-											confirm: confirm_withdraw_message %>
+											"data-toggle" => "modal" %>
+					<div id="warningModal" class="modal hide fade">
+					  <div class="modal-header">
+					    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					    <h3>Stop!</h3>
+					  </div>
+					  <div class="modal-body text-left">
+					    <p>Don't do this if you just want to replace the file you submitted. Email the new version to the managing editors instead: <%= mail_to(JournalSettings.current.journal_email) %>.</p>
+
+							<p>Only click 'Withdraw' if you have no intention to submit a modified version.</p>
+					  </div>
+					  <div class="modal-footer">
+					    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+							<%= link_to "Withdraw",
+													withdraw_author_center_path(s.id),
+													class: 'btn btn-danger'%>
+					  </div>
+					</div>
 					<% end %>
 				</div>
 			</td>
