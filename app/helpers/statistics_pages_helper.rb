@@ -4,18 +4,18 @@ module StatisticsPagesHelper
 
   	if area_editor
   		title = "My first round decisions: #{@ae_decided}"
-  		if @ae_withdrawn > 0
-	    	title += " (and #{@ae_withdrawn} withdrawn)"
-	    else
-	    	title
-	    end
+  		# if @ae_withdrawn > 0
+	    # 	title += " (and #{@ae_withdrawn} withdrawn)"
+	    # else
+	    # 	title
+	    # end
   	else
   		title = "First round decisions: #{@decided}"
-  		if @withdrawn > 0
-	    	title += " (and #{@withdrawn} withdrawn)"
-	    else
-	    	title
-	    end
+  		# if @withdrawn > 0
+	    # 	title += " (and #{@withdrawn} withdrawn)"
+	    # else
+	    # 	title
+	    # end
   	end
   end
 
