@@ -15,6 +15,7 @@ class AuthorCenterController < ApplicationController
     @submission.revision_number = 0
     
     if @submission.save
+      @submission.clear_manuscript_file_metadata
       flash[:success] = "We've received your submission, the editors are being notified."
       redirect_to author_center_index_path
     else
