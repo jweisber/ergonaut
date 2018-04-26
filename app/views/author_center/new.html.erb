@@ -8,6 +8,19 @@
 		<legend>
 			Submit a paper
 		</legend>
+
+		<div class="alert" style="margin-top: 1em;">
+			Manuscripts must be <u>PDF files</u> and 
+				    <span class="wide-popover"><u>
+					<%= link_to 'fully anonymized.',
+								'#',
+								class: 'popover-link wide-popover',
+								placement: 'left',
+								'data-trigger' => 'hover', 
+								'data-content' => "#{render 'anonymization_instructions'}" %>
+			        </u></span>
+			</ul>
+		</div>
 		
 		<%= form_for @submission, 
 								 url: { controller: :author_center, action: :create }, 
@@ -31,20 +44,9 @@
 				</div>
 				
 				<div class="control-group">
-		      <%= f.label :manuscript_file, "File", class: "control-label"  %>
+		      <%= f.label :manuscript_file, "PDF File", class: "control-label"  %>
 					<div class="controls">
-						<%= f.file_field :manuscript_file %>
-						<div class="alert" style="margin-top: 1em;">
-							File must be
-							<span class="wide-popover">
-								<%= link_to 'fully anonymized.',
-														'#',
-													  class: 'popover-link wide-popover',
-													  placement: 'left',
-														'data-trigger' => 'hover', 
-													  'data-content' => "#{render 'anonymization_instructions'}" %>
-							</span>
-						</div>
+						<%= f.file_field :manuscript_file, accept: "application/pdf" %>
 					</div>
 				</div>
 				
