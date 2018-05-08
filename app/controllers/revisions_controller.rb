@@ -14,6 +14,7 @@ class RevisionsController < ApplicationController
     @revised_submission = @original_submission.submit_revision(params[:submission])
 
     if @revised_submission.persisted?
+      @revised_submission.clear_manuscript_file_metadata
       redirect_to author_center_index_path
     else
       @submission = @original_submission
