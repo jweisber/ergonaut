@@ -5,7 +5,7 @@
 			Submit a revision
 		</legend>
 		
-		<p class="alert">Please submit a <b>single</b>, <b>thoroughly anonymized file</b>, comprising the revised manuscript along with any replies to editors/referees.</p>
+		<p class="alert">Please submit a <b>single PDF</b>, <b>thoroughly anonymized</b>, containing both the revised manuscript and any replies to editors/referees.</p>
 						
 		<%= form_for @revised_submission, 
 								 url: { controller: :revisions, action: :create }, 
@@ -15,16 +15,16 @@
 			<fieldset>
 			
 				<div class="control-group">
-		      <%= f.label :title, "Title:", class: "control-label"  %>
+		      <%= f.label :title, "Title", class: "control-label"  %>
 					<div class="controls">
 						<%= f.text_field :title %>
 					</div>
 				</div>
 				
 				<div class="control-group">
-		      <%= f.label :manuscript_file, "File:", class: "control-label"  %>
+		      <%= f.label :manuscript_file, "PDF File", class: "control-label"  %>
 					<div class="controls">
-						<%= f.file_field :manuscript_file %>
+						<%= f.file_field :manuscript_file, accept: "application/pdf" %>
 					</div>
 				</div>
 
