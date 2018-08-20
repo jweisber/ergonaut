@@ -90,10 +90,7 @@ class Submission < ActiveRecord::Base
   end
   
   def clear_manuscript_file_metadata
-    Thread.new do
-      `exiftool -all= -Title="Ergo Submission ##{self.id}" #{File.join(Rails.root.to_s, self.manuscript_file.to_s)}`
-      ActiveRecord::Base.connection.close
-    end
+    `exiftool -all= -Title="Ergo Submission ##{self.id}" #{File.join(Rails.root.to_s, self.manuscript_file.to_s)}`
   end
   
   # queries
