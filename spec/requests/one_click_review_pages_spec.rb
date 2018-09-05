@@ -5,6 +5,43 @@ describe "One-click review pages" do
   let!(:managing_editor) { create(:managing_editor) }
   let(:submission) { create(:submission_sent_out_for_review) }
   let(:assignment) { submission.referee_assignments.first }
+  before { assignment.update_attributes(created_at: 121.seconds.ago) }
+
+  context "when a response comes in right away" do
+    before {assignment.update_attributes(created_at: 100.seconds.ago)}
+
+    describe "agree to review" do
+      before { visit agree_one_click_review_path(assignment.auth_token) }
+
+      it "asks for confirmation" do
+        expect(page).to have_content("Please confirm that you agree")
+      end
+
+      it "doesn't yet record the agreement" do
+        assignment.reload
+        expect(assignment.agreed).to be_nil
+      end
+
+      context "when the agreement is confirmed" do
+        before { click_button "Yes, I Agree" }
+        it "records the agreement and redirects to the edit report page" do
+          assignment.reload
+          expect(assignment.agreed).to be_true
+          expect(current_path).to eq(edit_report_referee_center_path(assignment))
+        end
+      end
+
+      context "when the user cancels" do
+        before { click_link "Cancel" }
+        it "redirects to the edit response page" do
+          assignment.reload
+          expect(assignment.agreed).to be_nil
+          expect(current_path).to eq(edit_response_referee_center_path(assignment))
+        end
+      end
+      
+    end
+  end
 
   context "when supplied auth_token of active referee assignment" do
     # show

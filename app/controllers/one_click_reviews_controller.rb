@@ -2,7 +2,7 @@ class OneClickReviewsController < ApplicationController
 
   skip_before_filter :signed_in_user
   before_filter :authorize, :bread_crumbs, :not_canceled
-  before_filter :no_response_recorded, only: [:show, :agree, :decline]
+  before_filter :no_response_recorded, only: [:show, :agree, :agree_confirmed, :decline, :decline_confirmed]
   before_filter :declined, only: [:record_decline_comments]
 
   def show
@@ -10,22 +10,28 @@ class OneClickReviewsController < ApplicationController
   end
 
   def agree
-    if @referee_assignment.agree!
-      flash[:success] = "Thanks for agreeing to perform this review! It's due #{@referee_assignment.date_due_pretty}"
-      redirect_to edit_report_referee_center_path(@referee_assignment)
+    if @referee_assignment.created_at > 2.minutes.ago
+      render :confirm_agree, id: params[:id]
     else
-      flash[:error] = 'Error: ' + @referee_assignment.errors.full_messages.join('; ')
-      redirect_to edit_response_referee_center_path(@referee_assignment)
+      record_agree(@referee_assignment)
     end
   end
 
-  def decline
-    @submission = @referee_assignment.submission
+  def agree_confirmed
+    record_agree(@referee_assignment)
+  end
 
-    unless @referee_assignment.decline
-      flash[:error] = 'Error: ' + @referee_assignment.errors.full_messages.join('; ')
-      redirect_to referee_center_index_path
+  def decline
+    if @referee_assignment.created_at > 2.minutes.ago
+      render :confirm_decline, id: params[:id]
+    else
+      record_decline(@referee_assignment)
     end
+  end
+
+  def decline_confirmed
+    record_decline(@referee_assignment)
+    render :decline
   end
 
   def record_decline_comments
@@ -82,4 +88,22 @@ class OneClickReviewsController < ApplicationController
         redirect_to edit_report_referee_center_path(@assignment)
       end
     end
+
+    def record_agree(assignment)
+      if assignment.agree!
+        flash[:success] = "Thanks for agreeing to perform this review! It's due #{assignment.date_due_pretty}"
+        redirect_to edit_report_referee_center_path(assignment)
+      else
+        flash[:error] = 'Error: ' + assignment.errors.full_messages.join('; ')
+        redirect_to edit_response_referee_center_path(assignment)
+      end
+    end
+  
+    def record_decline(assignment)
+      @submission = assignment.submission
+      unless assignment.decline
+        flash[:error] = 'Error: ' + assignment.errors.full_messages.join('; ')
+        redirect_to referee_center_index_path
+      end
+    end 
 end

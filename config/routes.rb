@@ -33,6 +33,8 @@ Ergonaut::Application.routes.draw do
       get 'agree'
       get 'decline'
       put 'record_decline_comments'
+      put 'agree_confirmed'
+      put 'decline_confirmed'
     end
   end
 
