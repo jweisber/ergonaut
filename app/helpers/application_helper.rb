@@ -211,11 +211,6 @@ module ApplicationHelper
     end
 
     if controller_name == 'one_click_reviews'
-      if action_name == 'decline'
-        @referee_assignment = RefereeAssignment.find_by_auth_token(params[:id])
-        @bread_crumbs.push BreadCrumb.new("Referee request", referee_center_index_path)
-        @bread_crumbs.push BreadCrumb.new("Suggest alternates", decline_one_click_review_path(params[:id]))
-      end
     end
   end
 
