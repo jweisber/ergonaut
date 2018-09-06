@@ -25,6 +25,7 @@ class User < ActiveRecord::Base
   fuzzily_searchable :full_name_affiliation_email
 
   has_secure_password
+  belongs_to :editor_area, class_name: 'Area'
   has_many :submissions
   has_many :area_editor_assignments
   has_many :ae_submissions, through: :area_editor_assignments, source: :submission, inverse_of: :area_editor

@@ -97,7 +97,6 @@ describe "User pages" do
       before { visit user_path(user) }
 
       it { should have_content(user.first_name) }
-      it { should have_content('Role') }
       it { should have_link('Edit profile') }
     end
 
@@ -117,6 +116,12 @@ describe "User pages" do
     before { valid_sign_in(managing_editor) }
 
     it_behaves_like "all actions are accessible"
+
+    describe "show profile" do
+      before { visit user_path(area_editor) }
+
+      it { should have_content('Area Editor') }
+    end
 
     # create editor
     describe "create editor" do
@@ -240,7 +245,10 @@ describe "User pages" do
       end
 
       context "when the profile is an area editor's" do
-        before { visit edit_user_path(area_editor) }
+        before do
+          @area = create(:area)
+          visit edit_user_path(area_editor)
+        end
 
         describe "with valid info" do
           before do
@@ -251,6 +259,7 @@ describe "User pages" do
             fill_in 'Affiliation', with: 'Foo'
             fill_in 'Password', with: user.password + '2'
             fill_in 'Confirm password', with: user.password + '2'
+            select @area.name
             choose 'Female'
             click_button 'Save'
           end
@@ -262,6 +271,7 @@ describe "User pages" do
           it { should have_content(user.email + '.ca') }
           it { should have_content('Female') }
           it { should have_content('Foo') }
+          it { should have_content(@area.name) }
         end
       end
 
@@ -342,7 +352,7 @@ describe "User pages" do
       before { visit user_path(managing_editor) }
 
       it { should have_content(managing_editor.first_name) }
-      it { should have_content('Role') }
+      it { should_not have_content('Managing Editor') }
       it { should_not have_link('Edit profile') }
     end
 
@@ -514,7 +524,7 @@ describe "User pages" do
       before { visit user_path(user) }
 
       it { should have_content(user.first_name) }
-      it { should have_content('Role') }
+      it { should_not have_content('Role') }
       it { should have_link('Edit profile') }
     end
 
