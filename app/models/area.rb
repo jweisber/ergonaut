@@ -12,6 +12,7 @@
 
 class Area < ActiveRecord::Base
   has_many :submissions
+  has_many :editors, class_name: 'User', foreign_key: :editor_area_id
   before_create :set_defaults
   
   validates :name, presence: true, length: { minimum: 1 }, uniqueness: true

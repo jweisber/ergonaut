@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160418013132) do
+ActiveRecord::Schema.define(:version => 20180906135611) do
 
   create_table "area_editor_assignments", :force => true do |t|
     t.integer  "user_id"
@@ -140,8 +140,10 @@ ActiveRecord::Schema.define(:version => 20160418013132) do
     t.string   "password_reset_token"
     t.datetime "password_reset_sent_at"
     t.string   "gender"
+    t.integer  "editor_area_id"
   end
 
+  add_index "users", ["editor_area_id"], :name => "index_users_on_editor_area_id"
   add_index "users", ["remember_token"], :name => "index_users_on_remember_token"
 
 end

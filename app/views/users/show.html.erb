@@ -13,46 +13,58 @@
 		</legend>
 
 		<dl class="dl-horizontal">
-		    <dt style="text-align: right;">
-		      Name
-				</dt>
-		    <dd>
-		      <%= @user.full_name %>
-		    </dd>
+			<dt style="text-align: right;">
+				Name
+			</dt>
+			<dd>
+				<%= @user.full_name %>
+			</dd>
+			<dt>
+				Email
+			</dt>
+			<dd>
+				<%= mail_to @user.email %>
+			</dd>
+			<dt>
+				Affiliation
+			</dt>
+			<dd>
+				<%= @user.affiliation %>
+			</dd>
+			<dt>
+				Password
+			</dt>
+			<dd>
+				<span class="muted"><em>encrypted <%= fa_icon("lock") %></em></span>
+			</dd>
+
+			<% if current_user && current_user.managing_editor? %>
 				<dt>
-					Email
+					Role
 				</dt>
 				<dd>
-					<%= mail_to @user.email %>
-				</dd>
-				<dt>
-					Affiliation
-				</dt>
-				<dd>
-					<%= @user.affiliation %>
-				</dd>
-		    <dt>
-		      Role
-				</dt>
-		    <dd>
-		      <%= "Managing Editor" if @user.managing_editor? %>
+					<%= "Managing Editor" if @user.managing_editor? %>
 					<%= "Area Editor" if @user.area_editor? %>
 					<%= "Author/Referee" if !@user.managing_editor? && !@user.area_editor %>
-		    </dd>
-		    <dt>
-		      Password
-				</dt>
-		    <dd>
-	        <span class="muted"><em>encrypted <%= fa_icon("lock") %></em></span>
-		    </dd>
-		    <% if current_user.managing_editor? %>
+				</dd>
+				<% if @user.area_editor? %>
+					<dt>
+						Area
+					</dt>
+					<dd>
+					<% if @user.editor_area.present? %>
+						<%= @user.editor_area.name %>
+					<% end %>
+				  </dd>
+				<% end %>
 				<dt>
 					Gender
 				</dt>
 				<dd>
 					<%= @user.gender.to_s %>
 				</dd>
-				<% end %>
+			<% end %>
+
 		</dl>
 
 		<% if @user == current_user || current_user.managing_editor? || (current_user.editor? && !@user.editor?) %>

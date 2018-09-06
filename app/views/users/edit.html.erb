@@ -59,23 +59,6 @@
 			<% end %>
 
 			<% if current_user && current_user.managing_editor? %>
-				<div class="control-group">
-		      <%= f.label :gender, class: "control-label" %>
-					<div class="controls radio">
-							<%= f.label :gender_female, class: "radio inline" do %>
-								<%= f.radio_button :gender, 'Female' %>
-								Female
-							<% end %>
-							<%= f.label :gender_male, class: "radio inline" do %>
-								<%= f.radio_button :gender, 'Male' %>
-								Male
-							<% end %>
-							<%= f.label :gender_unknown, class: "radio inline" do %>
-								<%= f.radio_button :gender, 'nil' %>
-								Unknown
-							<% end %>
-			    </div>
-			  </div>
 
 				<div class="control-group">
 				  <%= f.label 'Role', class: "control-label" %>
@@ -88,6 +71,32 @@
 						<% end %>
 					</div>
 				</div>
+
+				<div class="control-group">
+				  <%= f.label 'Area', class: "control-label" %>
+					<div class="controls">
+					  <%= f.collection_select :editor_area_id, Area.all, :id, :name, prompt: "" %>
+					</div>
+				</div>
+
+				<div class="control-group">
+				<%= f.label :gender, class: "control-label" %>
+				<div class="controls radio">
+						<%= f.label :gender_female, class: "radio inline" do %>
+							<%= f.radio_button :gender, 'Female' %>
+							Female
+						<% end %>
+						<%= f.label :gender_male, class: "radio inline" do %>
+							<%= f.radio_button :gender, 'Male' %>
+							Male
+						<% end %>
+						<%= f.label :gender_unknown, class: "radio inline" do %>
+							<%= f.radio_button :gender, 'nil' %>
+							Unknown
+						<% end %>
+				</div>
+			</div>
+
 			<% end %>
 
 			<div class="control-group">
