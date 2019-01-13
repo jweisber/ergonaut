@@ -8,7 +8,7 @@
 												action: 'decline_confirmed' } do |f| %>
 			<div class="text-center">
 				<p>
-					Please confirm that you are declining to review <%= link_to "\"#{@referee_assignment.submission.title}\"", @referee_assignment.submission.manuscript_file.url, target: "_blank" %>.
+					You are declining to review <%= link_to "\"#{@referee_assignment.submission.title}\"", @referee_assignment.submission.manuscript_file.url, target: "_blank" %>.
 				</p>
 				<%= link_to 'Cancel', edit_response_referee_center_path(@referee_assignment), class: "btn" %>
 				<%= f.submit "Confirmed, I Decline", class: "btn btn-primary text-center" %>
