@@ -10,7 +10,7 @@ class OneClickReviewsController < ApplicationController
   end
 
   def agree
-    if @referee_assignment.created_at > 2.minutes.ago
+    if suspiciously_fast_response
       render :confirm_agree, id: params[:id]
     else
       record_agree(@referee_assignment)
@@ -22,7 +22,7 @@ class OneClickReviewsController < ApplicationController
   end
 
   def decline
-    if @referee_assignment.created_at > 2.minutes.ago
+    if suspiciously_fast_response
       render :confirm_decline, id: params[:id]
     else
       record_decline(@referee_assignment)
@@ -105,5 +105,17 @@ class OneClickReviewsController < ApplicationController
         flash[:error] = 'Error: ' + assignment.errors.full_messages.join('; ')
         redirect_to referee_center_index_path
       end
-    end 
+    end
+
+    def suspiciously_fast_response
+      last_reminder = SentEmail.where(referee_assignment_id: @referee_assignment.id,
+                                      action: 'remind_re_response_overdue').last
+      if @referee_assignment.created_at > 1.hour.ago
+        return true
+      elsif last_reminder.present? && last_reminder.created_at > 1.hour.ago
+        return true
+      else
+        return false
+      end
+    end
 end
