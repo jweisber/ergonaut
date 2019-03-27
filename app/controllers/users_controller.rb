@@ -7,7 +7,17 @@ class UsersController < ApplicationController
   before_filter :bread_crumbs
 
   def index
-    @users = User.order(:last_name).page(params[:page])
+    @role = params[:role]
+    @editor_area_id = params[:editor_area_id]
+    @list_tab = params[:list_tab]
+    
+    query = User
+    query = query.where(editor_area_id: @editor_area_id) if @editor_area_id.present?
+    query = query.where(managing_editor: true ) if @role == "Managing editor"
+    query = query.where(area_editor: true ) if @role == "Area editor"
+    query = query.where(managing_editor: false, area_editor: false) if @role == "Author/referee"
+    
+    @users = query.order(:last_name).page(params[:page])
   end
 
   def show

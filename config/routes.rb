@@ -88,6 +88,7 @@ Ergonaut::Application.routes.draw do
   resources :areas, only: [:create, :destroy]
   resources :users, only: [:index, :new, :show, :create, :edit, :update] do
     collection do
+      put 'index'
       post 'fuzzy_search'
     end
     member do
