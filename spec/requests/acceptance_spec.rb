@@ -65,7 +65,9 @@ describe "Application" do
     # managing editor assigns an area editor
     valid_sign_in(managing_editor)
     click_link submission.title
+    sleep(0.25)
     click_link 'Edit'
+    sleep(0.25)
     select 'Arye Edit'
     click_button 'Save'
     expect(submission.area_editor.full_name).to eq(area_editor.full_name)
@@ -111,6 +113,7 @@ describe "Application" do
 
     # some referees decline, two eventually accept
     visit decline_one_click_review_path(referee_one.referee_assignments.first.auth_token)
+    click_button('Confirmed, I Decline')
     fill_in 'Suggestions:', with: 'Ask someone else.'
     click_button 'Submit'
     expect(deliveries).to include_email(subject_begins: 'Referee Assignment Declined', to: area_editor.email)
@@ -215,7 +218,9 @@ describe "Application" do
     # managing editors assign an area editor
     valid_sign_in(managing_editor)
     click_link revised_submission.title
+    sleep(0.25)
     click_link 'Edit'
+    sleep(0.25)
     select 'Arye Edit'
     click_button 'Save'
     expect(revised_submission.area_editor.full_name).to eq(area_editor.full_name)

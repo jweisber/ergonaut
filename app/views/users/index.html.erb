@@ -1,60 +1,82 @@
-<div class="row">
-	<div class="offset4 span4">
-		<%= form_for User.new,
-								 url: user_path(1), method: :get,
-								 html: { class: 'form-inline', 
-									 			 id: 'user_search_form' } do |f| %>
-
-			<%= render 'shared/error_messages', object: f.object %>
-
-			<%= f.text_field :query, class: 'user-fuzzy-search regular-width-input', 
-															 placeholder: 'Search',
-															 autocomplete: 'off' %>
-  		<%= f.submit 'Go', class: 'btn btn-primary' %>
-
-		<% end %>
-		
-		<div class="center">
-			<%= link_to fa_icon("user-plus", text: 'New User'), new_user_path %>
-		</div>
-	</div>
-</div>
-
 <div class="center">
-	<%= paginate @users, theme: 'twitter-bootstrap' %>
+	<%= link_to fa_icon("user-plus", text: 'New User'), new_user_path %>
 </div>
 
-<table class="table table-striped">
-  <thead>  
-		  <tr>
-		    <th>Last name</th>
-		    <th>First name</th>				
-		    <th>Email</th>
-				<th>Role</th>
-				<% if current_user.managing_editor? %>
-					<th></th>
-				<% end %>
-		  </tr> 
-  </thead>  
+<ul class="nav nav-tabs">
+	<li <%= 'class="active"'.html_safe unless @list_tab %>>
+		<a href="#search" data-toggle="tab">Search</a>
+	</li>
+	<li <%= 'class="active"'.html_safe if @list_tab %>>
+		<a href="#list" data-toggle="tab">List</a>
+	</li>
+</ul>
 
-<% @users.each do |user| %>
-  <tr>
-    <td><%= link_to user.last_name, user %></td>
-		<td><%= link_to user.first_name, user %></td>		
-    <td><%= mail_to user.email %></td>
-		<td><%= user.role %></td>
-		<% if current_user.managing_editor? %>
-		<td>
-			<%= link_to fa_icon('sign-in'), 
-									sessions_path(session: {user_id: user.id}), 
-									method: :post, 
-									class: "btn btn-mini" %>
-		</td>
+<div class="tab-content">
+
+  <% unless @list_tab %>
+		<div class="tab-pane offset4 fade in active" id="search">
+	<% else %>
+	  <div class="tab-pane offset4 fade" id="search">
+	<% end %>
+		<%= form_for User.new,
+		             url: user_path(1), method: :get,
+		             html: { class: 'form-inline', 
+						             id: 'user_search_form' } do |f| %>
+
+		<%= render 'shared/error_messages', object: f.object %>
+
+		<%= f.text_field :query, class: 'user-fuzzy-search regular-width-input', 
+										placeholder: 'Search',
+										autocomplete: 'off' %>
+
+		<%= hidden_field_tag :list_tab, :true %>
+		<%= f.submit 'Go', class: 'btn btn-primary' %>
+
 		<% end %>
-  </tr>
-<% end %>
-</table>
+	</div>
 
+  <% if @list_tab %>
+	  <div class="tab-pane fade in active" id="list">	
+	<% else %>
+	  <div class="tab-pane fade" id="list">
+	<% end %>
+	  <div class="center">
+			<%= form_for(User.new, url: users_path, method: :put, html: { class: "form-inline" }) do |f| %>
+				<div class="control-group">
+					<div class="controls">
+						<%= hidden_field_tag :list_tab, :true %>
+						<%= f.label "Role", class: "control-label" %>
+						<%= select_tag(:role, options_for_select(User.roles, selected: @role), prompt: "Any", onchange: "this.form.submit();") %>
+						&nbsp;
+						<%= f.label "Area", class: "control-label" %>
+						<%= select_tag(:editor_area_id, options_from_collection_for_select(Area.all, :id, :name, selected: @editor_area_id), prompt: "Any", onchange: "this.form.submit();") %>
+					</div>
+				</div>
+			<% end %>
+		</div>
 
+		<table class="table table-striped">
+			<% @users.each do |user| %>
+			<tr>
+				<td><%= link_to user.full_name, user %></td>
+				<td><%= mail_to user.email %></td>
+				<td><%= user.role %></td>
+				<% if current_user.managing_editor? %>
+				<td>
+					<%= link_to fa_icon('sign-in'), 
+											sessions_path(session: {user_id: user.id}), 
+											method: :post, 
+											class: "btn btn-mini" %>
+				</td>
+				<% end %>
+			</tr>
+			<% end %>
+		</table>
 
+		<div class="center">
+		  <%= paginate @users, theme: 'twitter-bootstrap' %>
+	  </div>
+	</div>
+
+</div>
 
