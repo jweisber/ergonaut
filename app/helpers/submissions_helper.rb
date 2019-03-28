@@ -67,42 +67,93 @@ module SubmissionsHelper
 
   end
 
-  def area_editor_histories_table
-    string = <<-eos
-      <table class='table table-striped table-condensed'>
-        <thead>
-          <tr>
-            <th>Editor</th>
-            <th>Active</th>
-            <th>Done</th>
-            <th>Latest</th>
-          </tr>
-        </thead>
-        <tbody>
-    eos
+  def area_editor_histories_table(submission)
 
-    done_hash = User.map_area_editor_ids_to_completed_assignment_counts
-    active_hash = User.map_area_editor_ids_to_active_assignments_counts
-    id_date_hashes = ActiveRecord::Base.connection.select_all('SELECT u.id, a.created_at FROM users u LEFT OUTER JOIN area_editor_assignments a ON u.id = a.user_id WHERE a.id IN (SELECT MAX(area_editor_assignments.id) FROM area_editor_assignments WHERE area_editor_assignments.user_id IS NOT NULL GROUP BY area_editor_assignments.user_id)')
+    assignments = AreaEditorAssignment.where("created_at > ?", Time.now - 3.months)
+                                      .where("user_id IS NOT NULL AND submission_id IS NOT NULL")
+                                      .includes(:submission, :area_editor)
+    area_editors = User.where(area_editor: true)
+    
+    editors_hash = Hash.new
+    area_editors.each do |editor|
+      dates = assignments.select { |a| a.area_editor == editor}
+                         .map(&:created_at)
+                         .sort { |a, b| b <=> a }
+      editors_hash[editor.full_name] = dates
+    end
 
-    User.where(area_editor: true).order(:last_name).each do |ae|
-      index = id_date_hashes.find_index {|i| i['id'] == ae.id}
-      date = index ? (Date.parse id_date_hashes[index]['created_at'].to_s).strftime("%b. %-d, %Y") : "\u2014"
+    area_editors.sort! do |a, b|
+      a_dates = editors_hash[a.full_name]
+      b_dates = editors_hash[b.full_name]
 
+      if a_dates.present? && b_dates.present?
+        a_dates[0] <=> b_dates[0]
+      else
+        a_dates.present? ? 1 : -1
+      end
+    end
+
+    editors_in_area = area_editors.select{ |editor| editor.editor_area_id == submission.area_id}
+    editors_outside_area = area_editors.select{ |editor| editor.editor_area_id != submission.area_id}
+
+    string = String.new
+
+    if editors_in_area.present?
       string += <<-eos
-        <tr>
-          <td>#{ae.last_name}, #{ae.first_name}</td>
-          <td style='text-align: center;'>#{active_hash[ae.id] ? active_hash[ae.id] : 0}</td>
-          <td style='text-align: center;'>#{done_hash[ae.id] ? done_hash[ae.id] : 0}</td>
-          <td>#{date}</td>
-        </tr>
+        <h4>#{submission.area.short_name} Editors</h4>
+        <table class='table table-striped table-condensed'>
+        <tbody>
+      eos
+
+      editors_in_area.each do |editor|
+        dates = editors_hash[editor.full_name]
+        string += <<-eos
+          <tr>
+            <td>#{editor.full_name}</td>
+        eos
+
+        if dates.present?
+          string += "<td>#{pretty_date(dates.shift)}</td>"
+          dates.each { |d| string += "<tr><td>&nbsp;</td><td>#{pretty_date(d)}</td></tr>" }
+        else
+          string += "<td>No Recent Assignments</td>"
+        end
+      end
+      
+      string += <<-eos
+          </tbody>
+        </table>
       eos
     end
 
-    string += <<-eos
-        </tbody>
-      </table>
-    eos
+    if editors_outside_area.present?
+      string += <<-eos
+        <h4>Other Editors</h4>
+        <table class='table table-striped table-condensed'>
+        <tbody>
+      eos
+
+      editors_outside_area.each do |editor|
+        dates = editors_hash[editor.full_name]
+        string += <<-eos
+          <tr>
+            <td>#{editor.full_name}</td>
+        eos
+
+        if dates.present?
+          string += "<td>#{pretty_date(dates.shift)}</td>"
+          dates.each { |d| string += "<tr><td>&nbsp;</td><td>#{pretty_date(d)}</td></tr>" }
+        else
+          string += "<td>No Recent Assignments</td>"
+        end
+      end
+      
+      string += <<-eos
+          </tbody>
+        </table>
+      eos
+    end
+
     string.html_safe
   end
 
