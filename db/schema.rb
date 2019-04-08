@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20180906135611) do
+ActiveRecord::Schema.define(:version => 20190408140402) do
 
   create_table "area_editor_assignments", :force => true do |t|
     t.integer  "user_id"
@@ -144,6 +144,7 @@ ActiveRecord::Schema.define(:version => 20180906135611) do
   end
 
   add_index "users", ["editor_area_id"], :name => "index_users_on_editor_area_id"
+  add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["remember_token"], :name => "index_users_on_remember_token"
 
 end
