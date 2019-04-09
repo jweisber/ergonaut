@@ -38,7 +38,9 @@ class NotificationMailer < ActionMailer::Base
     managing_editors = User.where(managing_editor: true)
     @recipients_list = name_list(managing_editors)
 
-    message = mail(to: mailto_string(managing_editors), subject: 'New Submission')
+    message = mail(to: mailto_string(managing_editors),
+                   cc: mailto_string([@submission.author]),
+                   subject: 'New Submission')
   end
 
   def remind_managing_editors_assignment_overdue(submission)
@@ -465,7 +467,7 @@ class NotificationMailer < ActionMailer::Base
         'notify_re_outcome'
       ]
 
-      message.cc = Mail::AddressContainer.new('cc') # TODO: is this right? Unnecessary?
+      message.cc = Mail::AddressContainer.new('cc') unless message.cc.present?
 
       if cc_managing_editors_actions.include? action_name
         message.cc << mailto_string(managing_editors)
